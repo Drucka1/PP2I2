@@ -3,12 +3,10 @@ LDFLAGS = -fsanitize=address
 LIBS = -lSDL2
 CC = gcc
 
-SRCS = src/struct.c src/game.c src/aux.c src/init.c
+SRCS = src/struct.c src/game.c src/aux.c src/init.c 
 OBJS = $(patsubst src/%.c,outputs/%.o,$(SRCS))
 DEPS = $(SRCS:.c=.h)
 TARGETS = game
-
-LIBS = -lSDL2
 
 all: $(TARGETS)
 

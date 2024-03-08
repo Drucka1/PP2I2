@@ -2,7 +2,7 @@
 #include "../include/aux.h"
 #include "../include/init.h"
 
-void drawSquare(SDL_Renderer* renderer,SDL_Rect* mur,int nb_mur){ 
+void drawWall(SDL_Renderer* renderer,SDL_Rect* mur,int nb_mur){ 
     SDL_SetRenderDrawColor(renderer, 0,0,0, 255);
     SDL_RenderFillRects(renderer, mur,nb_mur);
 }
@@ -31,31 +31,58 @@ void decalage_mur(SDL_Rect* murs,int nb_murs,int decalage){
 }
 
 int main() {
-    int cols,rows;
-    int** terrain = FileToMap("./assets/terrain.txt",&rows,&cols);
-    SDL_Rect* murs = init_terrain(terrain,rows,cols);
-    int nb_murs = sommeMatrice(terrain,rows,cols);
-    mob player = {5*SIZE_WALL_W,5*SIZE_WALL_H,SIZE_WALL_W,SIZE_WALL_H};
 
     if(SDL_Init(SDL_INIT_EVERYTHING)){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in init: %s", SDL_GetError());
     }
     atexit(SDL_Quit);
-    
-    SDL_Event event;
-    int running=1;
 
-    if (SDL_VideoInit(NULL) < 0) { exit(1); }// SDL_VideoInit renvoie 0 en cas de succes
-    
+    //Window
     SDL_Window* window = SDL_CreateWindow("Essai",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,WINDOW_WIDTH,WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
-    
-    // Créer un renderer
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+    //Terrain
+    int cols,rows;
+    int** terrain = FileToMap("./assets/terrain.txt",&rows,&cols);
+    SDL_Rect* murs = init_terrain(terrain,rows,cols);
+    int nb_murs = sommeMatrice(terrain,rows,cols);
+
+    //Player
+    mob player = {SIZE_WALL_W,SIZE_WALL_H,SIZE_WALL_W,SIZE_WALL_H};
+    SDL_Surface* spriteSurface = SDL_LoadBMP("./assets/player.bmp");
+    if (!spriteSurface){
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in sprite surface: %s", SDL_GetError());
+        exit(-1);
+    }
+
+    SDL_Texture* spriteTexture = SDL_CreateTextureFromSurface(renderer, spriteSurface);
+    if (!spriteSurface){
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in sprite texture: %s", SDL_GetError());
+        exit(-1);
+    }
+    SDL_FreeSurface(spriteSurface);
+
+    int spriteFullWIdth,spriteFullHeight;
+    if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWIdth, &spriteFullHeight)){
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in query texture: %s", SDL_GetError());
+        exit(-1);
+    }
+
+    int spriteWidth = 141;
+    int spriteHeight = 221;
+    SDL_Event event;
+    int running=1;int offset = 0;int direction = 0;
+
+    
+    
     while (running ) { //boucle principale 
         if ( SDL_PollEvent(&event) ) { // scrute sans cesse les évènements et renvoie 1
             switch (event.type) {
                 case SDL_QUIT: //évènement fermeture de la fenêtre
                     running=0;
+                    break;
+                case SDL_KEYUP:
+                    offset = 0;
                     break;
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.sym){
@@ -69,6 +96,7 @@ int main() {
                                 decalage_mur(murs,nb_murs,0);
                             }
                         }
+                        direction = 1;offset++;offset %= 4;
                         break;
                     case SDLK_DOWN:
                         // Vérifier la collision avec le mur avant de mettre à jour la position du player
@@ -80,6 +108,7 @@ int main() {
                                 decalage_mur(murs,nb_murs,1);
                             }
                         }
+                        direction = 0;offset++;offset %= 4;
                         break;
                     case SDLK_LEFT:
                         // Vérifier la collision avec le mur avant de mettre à jour la position du player
@@ -91,6 +120,7 @@ int main() {
                                 decalage_mur(murs,nb_murs,2);
                             }
                         }
+                        direction = 2;offset++;offset %= 4;
                         break;
                     case SDLK_RIGHT:
                         // Vérifier la collision avec le mur avant de mettre à jour la position du player
@@ -103,22 +133,22 @@ int main() {
                             }
                             
                         }
+                        direction = 3;offset++;offset %= 4;
                         break;
                     }
             }
-            printf("%lf %lf \n",player.x, player.y);
         }
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
 
-        // Dessiner le carré aux coordonnées (100, 100) de taille (50, 50)
-        drawSquare(renderer, murs,nb_murs);
+        drawWall(renderer, murs,nb_murs);
 
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-        SDL_Rect character = {player.x, player.y, player.width, player.height};
-        SDL_RenderFillRect(renderer, &character);
+        SDL_Rect spriteRect = {.x = offset*spriteWidth ,.y = direction*spriteHeight, .w = spriteWidth, .h = spriteHeight};
+        SDL_Rect destRect = {player.x, player.y, SIZE_WALL_W, SIZE_WALL_H};
+        if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
+            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in render copy: %s", SDL_GetError());
+        }
 
-        // Mettre à jour le rendu
         SDL_RenderPresent(renderer);
     }
     SDL_DestroyWindow(window);

@@ -11,6 +11,7 @@ int** FileToMap(const char *nomFichier, int* rows, int* cols) {
         matrice[i] = malloc(sizeof(int)*(*cols));
         for (int j = 0; j < *cols; j++) {
             fscanf(fichier, "%d ", &matrice[i][j]);
+            
         }
     }
     fclose(fichier);
