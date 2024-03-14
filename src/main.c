@@ -23,6 +23,9 @@ int main(int argc, char* argv[]) {
     wall* murs = init_terrain(terrain,rows,cols,pos_x,pos_y,spriteTextureWall);
     int nb_murs = sommeMatrice(terrain,rows,cols);
 
+    //Ground
+    SDL_Texture* spriteTextureGround = load_sprite(renderer, "./assets/ground.bmp");
+
     //Player
     SDL_Texture* spriteTexture = load_sprite(renderer, "./assets/player.bmp");
     mob player;
@@ -106,6 +109,7 @@ int main(int argc, char* argv[]) {
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
 
+        drawGround(renderer,spriteTextureGround,pos_x,pos_y,rows,cols);
         drawWall(renderer,murs,nb_murs);
 
         SDL_Rect spriteRect = {.x = offset*spriteWidth ,.y = direction*spriteHeight, .w = spriteWidth, .h = spriteHeight};
