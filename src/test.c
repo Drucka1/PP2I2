@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define LIGNES 7
-#define COLONNES 7
-
 int** create_mat(int rows,int cols){
     int** mat = malloc(sizeof(int*)*rows);
     for (int i = 0; i < rows; i++) {
@@ -29,6 +26,9 @@ void afficherMatrice(int** matrice, int rows, int cols) {
 }
 
 
-int main() {
-    afficherMatrice(create_mat(LIGNES,COLONNES),LIGNES,COLONNES);
+int main(int argc, char* argv[]) {
+    int lignes = atoi(argv[1]);
+    int colonnes = atoi(argv[2]);
+    printf("%d %d \n", lignes, colonnes);
+    afficherMatrice(create_mat(lignes,colonnes),lignes,colonnes);
 }

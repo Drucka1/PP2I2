@@ -30,7 +30,7 @@ void decalage_mur(SDL_Rect* murs,int nb_murs,int decalage){
     }
 }
 
-int main() {
+int main(int argc, char* argv[]) {
 
     if(SDL_Init(SDL_INIT_EVERYTHING)){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in init: %s", SDL_GetError());
@@ -43,12 +43,14 @@ int main() {
 
     //Terrain
     int cols,rows;
-    int** terrain = FileToMap("./assets/terrain.txt",&rows,&cols);
-    SDL_Rect* murs = init_terrain(terrain,rows,cols);
+    int** terrain = FileToMap(argv[1],&rows,&cols);
+    int pos_x = MAX(0,SIZE_WALL_W*(NB_WALL_W-cols)/2);
+    int pos_y = MAX(0,SIZE_WALL_H*(NB_WALL_H-rows)/2);
+    SDL_Rect* murs = init_terrain(terrain,rows,cols,pos_x,pos_y);
     int nb_murs = sommeMatrice(terrain,rows,cols);
 
     //Player
-    mob player = {SIZE_WALL_W,SIZE_WALL_H,SIZE_WALL_W,SIZE_WALL_H};
+    mob player = {SIZE_WALL_W+pos_x,SIZE_WALL_H+pos_y,SIZE_WALL_W,SIZE_WALL_H};
     SDL_Surface* spriteSurface = SDL_LoadBMP("./assets/player.bmp");
     if (!spriteSurface){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in sprite surface: %s", SDL_GetError());
@@ -73,8 +75,6 @@ int main() {
     SDL_Event event;
     int running=1;int offset = 0;int direction = 0;
 
-    
-    
     while (running ) { //boucle principale 
         if ( SDL_PollEvent(&event) ) { // scrute sans cesse les évènements et renvoie 1
             switch (event.type) {
@@ -89,7 +89,7 @@ int main() {
                         case SDLK_UP:
                         // Vérifier la collision avec le mur avant de mettre à jour la position du player
                         if (!collisions(&(SDL_Rect){player.x, player.y - VITESSE, player.width, player.height},murs,nb_murs)) {
-                            if (murs[rows-1].y == 0 || (murs[nb_murs-1].y == (NB_WALL_H-1)*SIZE_WALL_H && player.y > SIZE_WALL_H*(NB_WALL_H-1)/2 )){
+                            if ( pos_y || murs[0].y == 0 || (murs[nb_murs-1].y == (NB_WALL_H-1)*SIZE_WALL_H && player.y > SIZE_WALL_H*(NB_WALL_H-1)/2 ) ){
                                 player.y -= VITESSE;
                             }
                             else {
@@ -101,7 +101,7 @@ int main() {
                     case SDLK_DOWN:
                         // Vérifier la collision avec le mur avant de mettre à jour la position du player
                         if (!collisions(&(SDL_Rect){player.x, player.y + VITESSE, player.width, player.height},murs,nb_murs)) {
-                            if ( murs[nb_murs-1].y == (NB_WALL_H-1)*SIZE_WALL_H || (murs[rows-1].y == 0 && player.y < SIZE_WALL_H*(NB_WALL_H-1)/2)){
+                            if ( pos_y || murs[nb_murs-1].y == (NB_WALL_H-1)*SIZE_WALL_H || (murs[0].y == 0 && player.y < SIZE_WALL_H*(NB_WALL_H-1)/2) ){
                                 player.y += VITESSE;
                             }
                             else {
@@ -113,7 +113,7 @@ int main() {
                     case SDLK_LEFT:
                         // Vérifier la collision avec le mur avant de mettre à jour la position du player
                         if (!collisions(&(SDL_Rect){player.x - VITESSE, player.y, player.width, player.height},murs,nb_murs)) {
-                            if (murs[0].x == 0 || (murs[rows-1].x == (NB_WALL_W-1)*SIZE_WALL_W && player.x > SIZE_WALL_W*(NB_WALL_W-1)/2)){
+                            if ( pos_x || murs[0].x == 0 || (murs[nb_murs-1].x == (NB_WALL_W-1)*SIZE_WALL_W && player.x > SIZE_WALL_W*(NB_WALL_W-1)/2) ){
                                 player.x -= VITESSE;
                             }
                             else {
@@ -125,7 +125,7 @@ int main() {
                     case SDLK_RIGHT:
                         // Vérifier la collision avec le mur avant de mettre à jour la position du player
                         if (!collisions(&(SDL_Rect){player.x + VITESSE, player.y, player.width, player.height},murs,nb_murs)) {
-                            if (murs[rows-1].x == (NB_WALL_W-1)*SIZE_WALL_W || (murs[0].x == 0 && player.x < SIZE_WALL_W*(NB_WALL_W-1)/2)){
+                            if ( pos_x || murs[nb_murs-1].x == (NB_WALL_W-1)*SIZE_WALL_W || (murs[0].x == 0 && player.x < SIZE_WALL_W*(NB_WALL_W-1)/2) ){
                                 player.x += VITESSE;
                             }
                             else {
@@ -151,7 +151,12 @@ int main() {
 
         SDL_RenderPresent(renderer);
     }
+
+
+    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
-    exit(0);
+
+
+    return 0;
 }
