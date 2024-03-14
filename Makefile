@@ -3,7 +3,7 @@ LDFLAGS = -fsanitize=address
 LIBS = -lSDL2
 CC = gcc
 
-SRCS = src/struct.c src/game.c src/aux.c src/init.c 
+SRCS = src/struct.c src/game.c src/aux.c src/init.c src/main.c 
 OBJS = $(patsubst src/%.c,outputs/%.o,$(SRCS))
 DEPS = $(SRCS:.c=.h)
 TARGETS = game
@@ -17,10 +17,10 @@ outputs/%.o: src/%.c
 	@mkdir -p $(@D)
 	$(CC) -o $@ $(CFLAGS) -c $< 
 
-test: src/test.c
-	$(CC) -o test src/test.c
+map: src/create_map.c
+	$(CC) -o map src/create_map.c
 
-run: game 
+run: game
 	./game
 	
 clean: 

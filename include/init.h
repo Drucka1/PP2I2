@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <SDL2/SDL.h>
+#include "../include/struct.h"
 
 #define WINDOW_HEIGHT 900
 #define WINDOW_WIDTH 900
@@ -16,10 +17,10 @@
 #define MIN(i, j) (((i) < (j)) ? (i) : (j))
 #define MAX(i, j) (((i) > (j)) ? (i) : (j))
 
-
 int** FileToMap(char *nomFichier, int* rows, int* cols);
-SDL_Rect* init_terrain(int** terrain,int rows,int cols, int pos_x, int pos_y);
+wall* init_terrain(int** terrain,int rows,int cols, int pos_x, int pos_y,SDL_Texture* sprite);
 void free_terrain(int** terrain,int rows);
-
+SDL_Texture* load_sprite(SDL_Renderer* renderer, char chemin[]);
+void free_walls(wall* murs, int nb_murs);
 
 #endif
