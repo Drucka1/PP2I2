@@ -35,3 +35,9 @@ SDL_Rect* init_terrain(int** terrain,int rows,int cols, int pos_x, int pos_y){
     return mur_terrain;
 }
 
+void free_terrain(int** terrain,int rows){
+    for(int i = 0;i<rows;i++){
+        free(terrain[i]);
+    }
+    free(terrain);
+}

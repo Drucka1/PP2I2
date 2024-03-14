@@ -148,15 +148,16 @@ int main(int argc, char* argv[]) {
         if (SDL_RenderCopy(renderer, spriteTexture, &spriteRect, &destRect)){
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in render copy: %s", SDL_GetError());
         }
-
+        
         SDL_RenderPresent(renderer);
     }
 
-
+    free(murs);
+    free_terrain(terrain, rows);
+    SDL_DestroyTexture(spriteTexture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
-
 
     return 0;
 }

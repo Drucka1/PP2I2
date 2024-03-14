@@ -19,5 +19,7 @@
 
 int** FileToMap(char *nomFichier, int* rows, int* cols);
 SDL_Rect* init_terrain(int** terrain,int rows,int cols, int pos_x, int pos_y);
+void free_terrain(int** terrain,int rows);
+
 
 #endif

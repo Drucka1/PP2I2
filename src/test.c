@@ -15,7 +15,6 @@ int** create_mat(int rows,int cols){
     return mat;
 }
 
-
 void afficherMatrice(int** matrice, int rows, int cols) {
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
@@ -24,7 +23,6 @@ void afficherMatrice(int** matrice, int rows, int cols) {
         printf("\n");
     }
 }
-
 
 int main(int argc, char* argv[]) {
     int lignes = atoi(argv[1]);
