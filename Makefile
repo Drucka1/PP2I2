@@ -1,11 +1,11 @@
 CC = gcc
-CFLAGS = -std=c99 -Wall -Wextra -pedantic -fsanitize=address
+CFLAGS = -std=c99 -Wall -Wextra -pedantic -g3 -fsanitize=address
 LDFLAGS = -fsanitize=address
 
-SRCS = src/struct.c src/game.c src/utils.c src/aux.c src/init.c src/main.c 
+SRCS = src/main.c src/game/init.c src/utils.c src/map.c src/game/player.c
 OBJS = $(patsubst src/%.c,outputs/%.o,$(SRCS))
 DEPS = $(SRCS:.c=.h)
-TARGETS = main
+TARGETS = main main_test
 
 LIBS = -lSDL2
 
@@ -14,20 +14,18 @@ all: $(TARGETS)
 main: $(OBJS)
 	$(CC) -o $@ $(LDFLAGS) $^ $(LIBS)
 
+main_test: outputs/main_test.o outputs/game.o
+	$(CC) -o $@ $(LDFLAGS) $^
+
 outputs/%.o: src/%.c
 	@mkdir -p $(@D)
 	$(CC) -o $@ $(CFLAGS) -c $< 
 
-map: src/create_map.c
-	$(CC) -o map src/create_map.c
-
-run: main
-	./main ./assets/test_10_20.txt
+run: main 
+	./main
 	
+test: main_test
+	./main_test
+
 clean: 
 	rm -rf $(TARGETS) outputs
- 	
-
-
-
-

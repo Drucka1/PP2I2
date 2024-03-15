@@ -7,7 +7,7 @@ void initSDL(SDL_Window **window, SDL_Renderer **renderer)
     exit(-1);
   }
 
-  (*window) = SDL_CreateWindow("Grid Drawing", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+  (*window) = SDL_CreateWindow("Grid Drawing", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
   if (!(*window)) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize window: %s", SDL_GetError());
     exit(-1);
