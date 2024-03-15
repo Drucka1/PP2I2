@@ -1,11 +1,11 @@
 #ifndef INIT_H
-#define INIT_h
+#define INIT_H
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include <SDL2/SDL.h>
-#include "../include/struct.h"
+#include "struct.h"
+#include "utils.h"
 
 #define WINDOW_HEIGHT 900
 #define WINDOW_WIDTH 900

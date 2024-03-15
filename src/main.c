@@ -1,20 +1,18 @@
-#include "../include/struct.h"
 #include "../include/aux.h"
 #include "../include/init.h"
 #include "../include/game.h"
+#include "../include/utils.h"
 
 int main(int argc, char* argv[]) {
 
-    if(SDL_Init(SDL_INIT_EVERYTHING)){
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in init: %s", SDL_GetError());
-    }
-    atexit(SDL_Quit);
+  (void) argc;
+  (void) argv;
+  
+  SDL_Window *window;
+  SDL_Renderer *renderer;
+  initSDL(&window, &renderer);
 
-    //Window
-    SDL_Window* window = SDL_CreateWindow("Essai",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,WINDOW_WIDTH,WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
-    //Terrain
+  //Terrain
     int cols,rows;
     int** terrain = FileToMap(argv[1],&rows,&cols);
     int pos_x = MAX(0,SIZE_WALL_W*(NB_WALL_W-cols)/2);
@@ -124,9 +122,6 @@ int main(int argc, char* argv[]) {
     free_walls(murs,nb_murs);
     free_terrain(terrain, rows);
     SDL_DestroyTexture(spriteTexture);
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-
-    return 0;
+    quitSDL(window, renderer);
+  return 0;
 }
