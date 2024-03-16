@@ -1,9 +1,27 @@
 #include "../../include/game/init.h"
 
+void render(SDL_Renderer *renderer, Map *map, Entity *player)
+{
+  SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+  SDL_RenderClear(renderer);
+
+  renderMap(map, renderer);
+  renderPlayer(player, renderer);
+
+  SDL_RenderPresent(renderer);
+  SDL_Delay(10);
+}
+
+void freeGame(Entity *player, Map *map)
+{
+  freePlayer(player);
+  freeMap(map);
+}
+
 void launchGame(SDL_Renderer *renderer)
 {
   Map *map = loadMap(renderer);
-  // initPlayer(map, renderer);
+  Entity *player = loadPlayer(0, 0, renderer);
 
   int quit = 0;
   SDL_Event e;
@@ -13,8 +31,8 @@ void launchGame(SDL_Renderer *renderer)
         quit = 1;
       }
     }
-    renderMap(map, renderer);
+    render(renderer, map, player);
   }
   
-  freeMap(map); 
+  freeGame(player, map);
 }

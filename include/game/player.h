@@ -1,8 +1,11 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "../map.h"
+#include "map.h"
 
-void initPlayer(Map *map, SDL_Renderer *renderer);
+Entity *loadPlayer(int i, int j, SDL_Renderer *renderer);
+void freePlayer(Entity *player);
+
+void renderPlayer(Entity *player, SDL_Renderer *renderer);
 
 #endif

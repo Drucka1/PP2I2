@@ -1,4 +1,4 @@
-#include "../include/map.h"
+#include "../../include/game/map.h"
 
 SDL_Texture *loadTexture(char *tag, SDL_Renderer *renderer)
 {
@@ -102,15 +102,9 @@ void renderCell(Cell *cell, SDL_Renderer* renderer)
 
 void renderMap(Map *map, SDL_Renderer* renderer)
 {
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderClear(renderer);
-
-    for (int i = 0; i < MAP_MAX_HEIGHT; i++) {
-      for (int j = 0; j < MAP_MAX_WIDTH; j++) {
-        renderCell(cell(i, j), renderer);
-      }
+  for (int i = 0; i < MAP_MAX_HEIGHT; i++) {
+    for (int j = 0; j < MAP_MAX_WIDTH; j++) {
+      renderCell(cell(i, j), renderer);
     }
-
-    SDL_RenderPresent(renderer);
-    SDL_Delay(10);
+  }
 }

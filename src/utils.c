@@ -18,6 +18,12 @@ void initSDL(SDL_Window **window, SDL_Renderer **renderer)
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize renderer: %s", SDL_GetError());
     exit(-1);
   }
+
+  int imgFlags = IMG_INIT_PNG;
+  if (!(IMG_Init(imgFlags) & imgFlags)) {
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_image could not initialize! SDL_image Error: %s", IMG_GetError());
+    exit(-1);
+  }
 }
 
 void quitSDL(SDL_Window *window, SDL_Renderer *renderer)

@@ -1,3 +1,4 @@
 *.o
 main
-
+*.xcf
+*.png

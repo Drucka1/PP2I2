@@ -1,8 +1,8 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "structs.h"
-#include <string.h>
+#include "../structs.h"
+#include <SDL2/SDL_image.h>
 
 SDL_Texture *loadTexture(char *tag, SDL_Renderer *renderer);
 Object *loadObject(char *tag, int i, int j, int facing, SDL_Renderer *renderer);
