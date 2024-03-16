@@ -8,4 +8,11 @@ void freePlayer(Entity *player);
 
 void renderPlayer(Entity *player, SDL_Renderer *renderer);
 
+void movePlayer(Entity *player, int iDest, int jDest);
+void moveRight(Entity *player);
+void moveUp(Entity *player);
+void moveLeft(Entity *player);
+void moveDown(Entity *player);
+
+
 #endif

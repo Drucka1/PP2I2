@@ -61,7 +61,6 @@ Map *loadMap(SDL_Renderer *renderer)
   return map;
 }
 
-
 void freeObject(Object *object)
 {
   free(object->buffer);
@@ -102,8 +101,8 @@ void renderCell(Cell *cell, SDL_Renderer* renderer)
 
 void renderMap(Map *map, SDL_Renderer* renderer)
 {
-  for (int i = 0; i < MAP_MAX_HEIGHT; i++) {
-    for (int j = 0; j < MAP_MAX_WIDTH; j++) {
+  for (int i = 0; i < GRID_MAX_ROW; i++) {
+    for (int j = 0; j < GRID_MAX_COLUMN; j++) {
       renderCell(cell(i, j), renderer);
     }
   }

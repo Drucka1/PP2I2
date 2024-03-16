@@ -31,3 +31,33 @@ void renderPlayer(Entity *player, SDL_Renderer *renderer)
 {
   SDL_RenderCopy(renderer, player->texture, NULL, player->buffer);
 }
+
+void movePlayer(Entity *player, int iDest, int jDest) {
+  player->i = iDest;
+  player->j = jDest;
+
+  player->buffer->x = indexToPixel(player->j);
+  player->buffer->y = indexToPixel(player->i);
+}
+
+void moveRight(Entity *player) 
+{
+  movePlayer(player, player->i, player->j + 1);
+  player->facing = FACING_RIGHT;
+}
+void moveUp(Entity *player) 
+{
+  movePlayer(player, player->i - 1, player->j);
+  player->facing = FACING_UP;
+}
+void moveLeft(Entity *player) 
+{
+  movePlayer(player, player->i, player->j - 1);
+  player->facing = FACING_LEFT;
+}
+void moveDown(Entity *player) 
+{
+  movePlayer(player, player->i + 1, player->j);
+  player->facing = FACING_DOWN;
+}
+
