@@ -12,7 +12,7 @@ void launchGame(SDL_Renderer *renderer)
       if (event.type == SDL_QUIT) {
         quit = 1;
       }
-      play(event, player);
+      play(event, player, map);
     }
     render(renderer, map, player);
   }
@@ -25,7 +25,7 @@ void render(SDL_Renderer *renderer, Map *map, Entity *player)
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderClear(renderer);
 
-  renderMap(map, renderer);
+  renderMap(map, player, renderer);
   renderPlayer(player, renderer);
 
   SDL_RenderPresent(renderer);

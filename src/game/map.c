@@ -1,19 +1,5 @@
 #include "../../include/game/map.h"
-
-SDL_Texture *loadTexture(char *tag, SDL_Renderer *renderer)
-{
-  char path[100];
-  snprintf(path, sizeof(path), "assets/%s.bmp", tag);
-
-  SDL_Surface* surface = SDL_LoadBMP(path);
-  if (!surface) {
-    printf("Unable to load image %s! SDL Error: %s\n", path, SDL_GetError());
-    return NULL;
-  }
-  SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-  SDL_FreeSurface(surface);
-  return texture;
-}
+#include <stdio.h>
 
 Object *loadObject(char *tag, int i, int j, int facing, SDL_Renderer *renderer)
 {
@@ -99,10 +85,13 @@ void renderCell(Cell *cell, SDL_Renderer* renderer)
   }
 }
 
-void renderMap(Map *map, SDL_Renderer* renderer)
+void renderMap(Map *map, Entity *player, SDL_Renderer* renderer)
 {
-  for (int i = 0; i < GRID_MAX_ROW; i++) {
-    for (int j = 0; j < GRID_MAX_COLUMN; j++) {
+  printf("imin = %d ; imax = %d ; jmin = %d ; jmax = %d\n", RENDER_MIN_I, RENDER_MAX_I, RENDER_MIN_J, RENDER_MAX_J);
+  // printf("player(i, j) = (%d, %d)\n", player->i, player->j);
+  // printf("player->render_i = %d ; player->render_j = %d\n", RENDER_I(player), RENDER_J(player));
+  for (int i = RENDER_MIN_I; i < RENDER_MAX_I; i++) {
+    for (int j = RENDER_MIN_J; j < RENDER_MAX_J; j++) {
       renderCell(cell(i, j), renderer);
     }
   }

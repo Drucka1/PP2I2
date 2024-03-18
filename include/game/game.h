@@ -3,6 +3,6 @@
 
 #include "player.h"
 
-void play(SDL_Event event, Entity *player);
+void play(SDL_Event event, Entity *player, Map *map);
 
 #endif

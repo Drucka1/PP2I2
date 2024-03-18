@@ -46,4 +46,6 @@ typedef struct {
   Cell *data[MAP_MAX_HEIGHT][MAP_MAX_WIDTH];
 } Map;
 
+SDL_Texture *loadTexture(char *tag, SDL_Renderer *renderer);
+
 #endif 

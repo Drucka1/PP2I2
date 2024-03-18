@@ -1,24 +1,24 @@
 #include "../../include/game/game.h"
 
-void play(SDL_Event event, Entity *player)
+void play(SDL_Event event, Entity *player, Map* map)
 {
   if (event.type == SDL_KEYDOWN) {
     switch (event.key.keysym.sym) {
       case SDLK_UP:
       case SDLK_z:
-        moveUp(player);
+        moveUp(player, map);
         break;
       case SDLK_DOWN:
       case SDLK_s:
-        moveDown(player);
+        moveDown(player, map);
         break;
       case SDLK_LEFT:
       case SDLK_q:
-        moveLeft(player);
+        moveLeft(player, map);
         break;
       case SDLK_RIGHT:
       case SDLK_d:
-        moveRight(player);
+        moveRight(player, map);
         break;
       default:
         break;

@@ -1,4 +1,5 @@
 #include "../../include/game/player.h"
+#include <stdio.h>
 
 Entity *loadPlayer(int i, int j, SDL_Renderer *renderer) 
 {
@@ -32,32 +33,60 @@ void renderPlayer(Entity *player, SDL_Renderer *renderer)
   SDL_RenderCopy(renderer, player->texture, NULL, player->buffer);
 }
 
-void movePlayer(Entity *player, int iDest, int jDest) {
-  player->i = iDest;
-  player->j = jDest;
-
-  player->buffer->x = indexToPixel(player->j);
-  player->buffer->y = indexToPixel(player->i);
+void moveObjectBuffer(Object *object, Entity *player)
+{
+  // printf("object(i, j) = (%d, %d) ; topleft(i, j) = (%d, %d) ; render(i, j) = (%d, %d)\n", object->i, object->j, RENDER_MIN_I, RENDER_MIN_J, RENDER_I(object), RENDER_J(object));
+  object->buffer->x = indexToPixel(RENDER_J(object)); 
+  object->buffer->y = indexToPixel(RENDER_I(object)); 
 }
 
-void moveRight(Entity *player) 
+void moveCellBuffer(Cell *cell, Entity *player)
 {
-  movePlayer(player, player->i, player->j + 1);
+  for (size_t k = 0; k < cell->numberObjects; k++) {
+    moveObjectBuffer(cell->objects[k], player);
+  }
+}
+
+void moveMapBuffer(Map *map, Entity *player)
+{
+  for (int i = RENDER_MIN_I; i < RENDER_MAX_I; i++) {
+    for (int j = RENDER_MIN_J; j < RENDER_MAX_J; j++) {
+      moveCellBuffer(cell(i, j), player);
+    }
+  }
+}
+
+void movePlayer(Entity *player, Map *map, int i_dest, int j_dest) 
+{
+  if (VALID_INDEX(i_dest, j_dest)) {
+    player->i = i_dest;
+    player->j = j_dest;
+
+    moveMapBuffer(map, player);
+
+    player->buffer->x = indexToPixel(RENDER_J(player));
+    player->buffer->y = indexToPixel(RENDER_I(player));
+  }
+}
+
+void moveRight(Entity *player, Map *map) 
+{
+  movePlayer(player, map, player->i, player->j + 1);
   player->facing = FACING_RIGHT;
 }
-void moveUp(Entity *player) 
+void moveUp(Entity *player, Map *map) 
 {
-  movePlayer(player, player->i - 1, player->j);
+  movePlayer(player, map, player->i - 1, player->j);
   player->facing = FACING_UP;
 }
-void moveLeft(Entity *player) 
+void moveLeft(Entity *player, Map *map) 
 {
-  movePlayer(player, player->i, player->j - 1);
+  movePlayer(player, map, player->i, player->j - 1);
   player->facing = FACING_LEFT;
 }
-void moveDown(Entity *player) 
+void moveDown(Entity *player, Map *map) 
 {
-  movePlayer(player, player->i + 1, player->j);
+  movePlayer(player, map, player->i + 1, player->j);
   player->facing = FACING_DOWN;
 }
 
