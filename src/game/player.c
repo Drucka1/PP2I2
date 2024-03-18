@@ -57,7 +57,7 @@ void moveMapBuffer(Map *map, Entity *player)
 
 void movePlayer(Entity *player, Map *map, int i_dest, int j_dest) 
 {
-  if (VALID_INDEX(i_dest, j_dest)) {
+  if (VALID_INDEX(i_dest, j_dest) && cell(i_dest, j_dest)->steppable) {
     player->i = i_dest;
     player->j = j_dest;
 
