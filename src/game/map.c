@@ -1,5 +1,4 @@
 #include "../../include/game/map.h"
-#include <stdio.h>
 
 Object *loadObject(char *tag, int i, int j, int facing, SDL_Renderer *renderer)
 {
@@ -17,6 +16,8 @@ Object *loadObject(char *tag, int i, int j, int facing, SDL_Renderer *renderer)
   object->buffer->h = TILE_SIZE;
 
   object->texture = loadTexture(tag, renderer);
+
+  object->action = nothing; 
     
   return object;
 }

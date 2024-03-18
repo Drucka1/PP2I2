@@ -12,22 +12,27 @@ void launchGame(SDL_Renderer *renderer)
       if (event.type == SDL_QUIT) {
         quit = 1;
       }
+      // Intéraction entre joueur et jeu
       play(event, player, map);
     }
+    // Affichage du jeu
     render(renderer, map, player);
   }
-  
+  // Libération de la carte et du joueur
   freeGame(player, map);
 }
 
 void render(SDL_Renderer *renderer, Map *map, Entity *player)
 {
+  // (Ré)initialisation de rendu 
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderClear(renderer);
 
+  // Affichage de la carte et du joueur
   renderMap(map, player, renderer);
   renderPlayer(player, renderer);
 
+  // Affichage dans le moteur de rendu
   SDL_RenderPresent(renderer);
   SDL_Delay(10);
 }

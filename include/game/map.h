@@ -2,7 +2,7 @@
 #define MAP_H
 
 #include "player.h"
-#include <SDL2/SDL_image.h>
+#include "interact.h"
 
 Object *loadObject(char *tag, int i, int j, int facing, SDL_Renderer *renderer);
 Cell *loadCell(int i, int j, SDL_Renderer *renderer);

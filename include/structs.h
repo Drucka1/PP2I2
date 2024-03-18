@@ -3,6 +3,7 @@
 
 #include "defs.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 #define cell(i, j) (map->data[i][j])
 #define objects(i, j) (map->data[i][j]->objects)
@@ -13,8 +14,12 @@
 #define FACING_LEFT 2
 #define FACING_DOWN 3
 
+// Conversion indice / pixel
 #define indexToPixel(index) (index * TILE_SIZE)
 #define pixelToIndex(pixel) (pixel / TILE_SIZE)
+
+// Vérification des indices
+#define VALID_INDEX(i, j) ((((i) < 0) || ((j) < 0) || ((i) >= MAP_MAX_HEIGHT) || ((j) >= MAP_MAX_WIDTH)) ? (0) : (1))
 
 typedef struct {
   char *tag;
@@ -27,18 +32,30 @@ typedef struct {
 } Entity;
 
 typedef struct {
+  // Nom de l'objet (pour le chemin vers l'image)
   char *tag;
-  int i;
+  // Indices de l'objet dans la carte
+  int i; 
   int j;
 
+  // Orientation
   int facing;
+
+  // Où l'image sera affiché
   SDL_Rect *buffer;
+  // Image 
   SDL_Texture *texture;
+
+  // Action éventuelle réalisée par l'objet
+  void (*action)(void);
 } Object;
 
 typedef struct {
+  // Obstacle ou pas
   int steppable;
+  // Listes des objets contenus dans la cellule
   Object **objects;
+  // Nombre d'objets contenus dans la cellule
   size_t numberObjects;
 } Cell;
 
@@ -46,6 +63,7 @@ typedef struct {
   Cell *data[MAP_MAX_HEIGHT][MAP_MAX_WIDTH];
 } Map;
 
+// Charge une image
 SDL_Texture *loadTexture(char *tag, SDL_Renderer *renderer);
 
 #endif 

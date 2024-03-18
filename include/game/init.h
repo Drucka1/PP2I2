@@ -3,7 +3,6 @@
 
 #include <SDL2/SDL.h>
 #include "game.h"
-#include "map.h"
 
 void launchGame(SDL_Renderer *renderer);
 

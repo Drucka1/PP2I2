@@ -61,6 +61,7 @@ void movePlayer(Entity *player, Map *map, int i_dest, int j_dest)
     player->i = i_dest;
     player->j = j_dest;
 
+    // Décalage de la carte selon la position du joueur
     moveMapBuffer(map, player);
 
     player->buffer->x = indexToPixel(RENDER_J(player));

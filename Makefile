@@ -2,12 +2,12 @@ CC = gcc
 CFLAGS = -std=c99 -Wall -Wextra -pedantic -g3 -fsanitize=address
 LDFLAGS = -fsanitize=address
 
-SRCS = src/main.c src/game/init.c src/utils.c src/structs.c src/game/map.c src/game/player.c src/game/game.c
+SRCS = src/main.c src/game/init.c src/utils.c src/structs.c src/game/map.c src/game/player.c src/game/game.c src/game/interact.c
 OBJS = $(patsubst src/%.c,outputs/%.o,$(SRCS))
 DEPS = $(SRCS:.c=.h)
 TARGETS = main main_test
 
-LIBS = -lSDL2 -lSDL2_image
+LIBS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 
 all: $(TARGETS)
 
