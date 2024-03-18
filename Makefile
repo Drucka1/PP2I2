@@ -17,7 +17,11 @@ main: $(OBJS)
 main_test: outputs/main_test.o 
 	$(CC) -o $@ $(LDFLAGS) $^
 
-outputs/%.o: src/%.c
+outputs/main.o: src/main.c
+	@mkdir -p $(@D)
+	$(CC) -o $@ $(CFLAGS) -c $< 
+
+outputs/%.o: src/%.c include/%.h
 	@mkdir -p $(@D)
 	$(CC) -o $@ $(CFLAGS) -c $< 
 

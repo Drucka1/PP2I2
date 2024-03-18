@@ -35,7 +35,6 @@ void renderPlayer(Entity *player, SDL_Renderer *renderer)
 
 void moveObjectBuffer(Object *object, Entity *player)
 {
-  // printf("object(i, j) = (%d, %d) ; topleft(i, j) = (%d, %d) ; render(i, j) = (%d, %d)\n", object->i, object->j, RENDER_MIN_I, RENDER_MIN_J, RENDER_I(object), RENDER_J(object));
   object->buffer->x = indexToPixel(RENDER_J(object)); 
   object->buffer->y = indexToPixel(RENDER_I(object)); 
 }

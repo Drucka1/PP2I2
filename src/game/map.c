@@ -87,9 +87,6 @@ void renderCell(Cell *cell, SDL_Renderer* renderer)
 
 void renderMap(Map *map, Entity *player, SDL_Renderer* renderer)
 {
-  printf("imin = %d ; imax = %d ; jmin = %d ; jmax = %d\n", RENDER_MIN_I, RENDER_MAX_I, RENDER_MIN_J, RENDER_MAX_J);
-  // printf("player(i, j) = (%d, %d)\n", player->i, player->j);
-  // printf("player->render_i = %d ; player->render_j = %d\n", RENDER_I(player), RENDER_J(player));
   for (int i = RENDER_MIN_I; i < RENDER_MAX_I; i++) {
     for (int j = RENDER_MIN_J; j < RENDER_MAX_J; j++) {
       renderCell(cell(i, j), renderer);
