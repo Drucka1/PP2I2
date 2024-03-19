@@ -1,5 +1,4 @@
 #include "../../include/game/interact.h"
-#include <stdio.h>
 
 void activeCell(Cell *cell)
 {
@@ -30,5 +29,5 @@ void interact(Entity *player, Map *map)
 }
 
 void nothing(void) {
-  printf("Do nothing\n");
+  printf("There is nothing to do\n");
 }
