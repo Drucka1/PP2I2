@@ -1,9 +1,17 @@
 #include "../../include/game/init.h"
+#include <stdio.h>
 
 void launchGame(SDL_Renderer *renderer)
 {
-  Map *map = loadMap(renderer);
-  Entity *player = loadPlayer(0, 0, renderer);
+  int row = 11;
+  int column = 20;
+
+  createMap(row, column);
+  char filePath[100];
+  sprintf(filePath, "assets/map/test_%d_%d.txt", row, column);
+
+  Map *map = loadMap(filePath, renderer);
+  Entity *player = loadPlayer(map->i_spawn, map->j_spawn, map, renderer);
 
   int quit = 0;
   SDL_Event event;

@@ -2,3 +2,4 @@
 main
 *.xcf
 *.png
+assets/map/test*.txt

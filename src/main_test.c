@@ -1,8 +1,8 @@
-#include "../include/game.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 int main(int argc, char *argv[])
 {
-  printf("main_test runned\n");
+  printf("rand() = %d\n", rand());
   return 0;
 }

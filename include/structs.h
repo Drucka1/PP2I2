@@ -19,7 +19,7 @@
 #define pixelToIndex(pixel) (pixel / TILE_SIZE)
 
 // Vérification des indices
-#define VALID_INDEX(i, j) ((((i) < 0) || ((j) < 0) || ((i) >= MAP_MAX_HEIGHT) || ((j) >= MAP_MAX_WIDTH)) ? (0) : (1))
+#define VALID_INDEX(i, j) ((((i) < 0) || ((j) < 0) || ((i) >= map->height) || ((j) >= map->width)) ? (0) : (1))
 
 typedef struct {
   char *tag;
@@ -61,6 +61,11 @@ typedef struct {
 
 typedef struct {
   Cell *data[MAP_MAX_HEIGHT][MAP_MAX_WIDTH];
+  int width;
+  int height;
+
+  int i_spawn;
+  int j_spawn;
 } Map;
 
 // Charge une image

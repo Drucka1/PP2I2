@@ -17,6 +17,9 @@ main: $(OBJS)
 main_test: outputs/main_test.o 
 	$(CC) -o $@ $(LDFLAGS) $^
 
+outputs/main_test.o: src/main_test.c
+	$(CC) -o $@ $(CFLAGS) -c $< 
+
 outputs/main.o: src/main.c
 	@mkdir -p $(@D)
 	$(CC) -o $@ $(CFLAGS) -c $< 

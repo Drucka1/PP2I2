@@ -7,5 +7,6 @@ void activeCell(Cell *cell);
 void interact(Entity *player, Map *map);
 
 void nothing();
+void justWall();
 
 #endif

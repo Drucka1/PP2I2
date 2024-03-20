@@ -1,6 +1,7 @@
 #include "../include/utils.h"
 
-int main(int argc, char* args[]) {
+int main(int argc, char* args[]) 
+{
   // Pour éviter les messages d'erreurs puisqu'on utilise pas encore les arguments de main
   (void) argc;
   (void) args;

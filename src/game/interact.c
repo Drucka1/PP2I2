@@ -29,5 +29,8 @@ void interact(Entity *player, Map *map)
 }
 
 void nothing(void) {
-  printf("There is nothing to do\n");
+}
+
+void justWall(void) {
+  printf("just a wall\n");
 }

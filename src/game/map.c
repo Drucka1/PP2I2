@@ -36,16 +36,72 @@ Cell *loadCell(int i, int j, SDL_Renderer *renderer)
   return cell;
 }
 
-Map *loadMap(SDL_Renderer *renderer) 
+Map *loadMap(char* filePath, SDL_Renderer *renderer) 
 {
+  FILE *file = fopen(filePath, "r");
   Map *map = malloc(sizeof(Map));
-  
-  for (int i = 0; i < MAP_MAX_HEIGHT; i++) {
-    for (int j = 0; j < MAP_MAX_WIDTH; j++) {
+
+  int row, col;
+  fscanf(file, "%d %d", &row, &col);
+  map->height = row;
+  map->width = col;
+
+  fscanf(file, "%d %d", &row, &col);
+  map->i_spawn = row;
+  map->j_spawn = col;
+
+  for (int i = 0; i < map->height; i++) {
+    for (int j = 0; j < map->width; j++) {
       cell(i,j) = loadCell(i, j, renderer);
+
+      int object;
+      fscanf(file, "%d ", &object);
+
+      if (object == 1) {
+        Object *wall = loadObject("wall", i, j, FACING_RIGHT, renderer);
+        wall->action = justWall;
+        addObject(wall, 0, &cell(i, j));
+      }
     }
   }
+
+  fclose(file);
   return map;
+}
+
+void addObject(Object *object, int steppable, Cell **cell)
+{
+  (*cell)->steppable = (*cell)->steppable && steppable;
+  (*cell)->numberObjects++;
+  (*cell)->objects = realloc((*cell)->objects, ((*cell)->numberObjects + 1) * sizeof(Object *));
+  (*cell)->objects[(*cell)->numberObjects - 1] = object;
+  (*cell)->objects[(*cell)->numberObjects] = NULL;
+}
+
+void createMap(int numberRows, int numberColumns)
+{
+  srand(time(NULL));
+  char path[100];
+  sprintf(path, "assets/map/test_%d_%d.txt", numberRows, numberColumns);
+  FILE *file = fopen(path, "w");
+  if (file == NULL) {
+    fprintf(stderr, "Error: Unable to create file %s\n", path);
+    exit(0);
+  }
+  
+  fprintf(file, "%d %d\n", numberRows, numberColumns);
+  fprintf(file, "%d %d\n", numberRows/2, numberColumns/2);
+  for (int i = 0; i < numberRows; i++) {
+    for (int j = 0; j < numberColumns; j++) {
+      if (i == numberRows/2 && j == numberColumns/2){
+        fprintf(file, "%d ", 0);
+      } else {
+        fprintf(file, "%d ", RANDOM_INT(0, 1));
+      }
+    } 
+    fprintf(file, "\n");
+  }
+  fclose(file);
 }
 
 void freeObject(Object *object)
@@ -66,8 +122,8 @@ void freeCell(Cell *cell)
 
 void freeMap(Map *map)
 {
-  for (int i = 0; i < MAP_MAX_HEIGHT; i++) {
-    for (int j = 0; j < MAP_MAX_WIDTH; j++) {
+  for (int i = 0; i < map->height; i++) {
+    for (int j = 0; j < map->width; j++) {
       freeCell(cell(i, j));
     }
   }
@@ -88,9 +144,11 @@ void renderCell(Cell *cell, SDL_Renderer* renderer)
 
 void renderMap(Map *map, Entity *player, SDL_Renderer* renderer)
 {
+  // printf("min(i, j) = (%d, %d) ; max(i, j) = (%d, %d)\n", RENDER_MIN_I, RENDER_MIN_J, RENDER_MAX_I, RENDER_MAX_J);
   for (int i = RENDER_MIN_I; i < RENDER_MAX_I; i++) {
     for (int j = RENDER_MIN_J; j < RENDER_MAX_J; j++) {
       renderCell(cell(i, j), renderer);
     }
   }
 }
+
