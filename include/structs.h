@@ -47,7 +47,9 @@ typedef struct {
   SDL_Texture *texture;
 
   // Action éventuelle réalisée par l'objet
-  void (*action)(void);
+  void (*onClick)(void);
+  void (*onStep)(void);
+
 } Object;
 
 typedef struct {

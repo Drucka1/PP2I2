@@ -3,7 +3,7 @@
 void activeCell(Cell *cell)
 {
   for (size_t k = 0; k < cell->numberObjects; k ++) {
-    cell->objects[k]->action();
+    cell->objects[k]->onClick();
   }
 }
 

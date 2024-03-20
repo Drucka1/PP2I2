@@ -17,7 +17,8 @@ Object *loadObject(char *tag, int i, int j, int facing, SDL_Renderer *renderer)
 
   object->texture = loadTexture(tag, renderer);
 
-  object->action = nothing; 
+  object->onClick = nothing; 
+  object->onStep = nothing; 
     
   return object;
 }
@@ -59,7 +60,8 @@ Map *loadMap(char* filePath, SDL_Renderer *renderer)
 
       if (object == 1) {
         Object *wall = loadObject("wall", i, j, FACING_RIGHT, renderer);
-        wall->action = justWall;
+        wall->onClick = justWall;
+        wall->onStep = nothing;
         addObject(wall, 0, &cell(i, j));
       }
     }
