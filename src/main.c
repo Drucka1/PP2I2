@@ -1,6 +1,7 @@
 #include "../include/aux.h"
 #include "../include/init.h"
 #include "../include/game.h"
+#include "../include/utils.h"
 
 int main(int argc, char* argv[]){
 
@@ -13,7 +14,7 @@ int main(int argc, char* argv[]){
     SDL_Renderer *renderer;
     initSDL(&window, &renderer);
 
-    //Terrain
+  //Terrain
     int cols,rows;
     List* **terrain = FileToMap(argv[1],&rows,&cols);
     int pos_x = MAX(0,SIZE_WALL_W*(NB_WALL_W-cols)/2);
@@ -149,3 +150,4 @@ int main(int argc, char* argv[]){
     quitSDL(window, renderer);
     return 0;
 }
+
