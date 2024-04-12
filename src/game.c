@@ -1,6 +1,6 @@
 #include "../include/struct.h"
 #include "../include/aux.h"
-#include "../include/init.h"
+#include "../include/utils.h"
 
 void drawMap(SDL_Renderer* renderer,Map* map){
     for (int i = 0;i<map->rows;i++){

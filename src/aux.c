@@ -38,4 +38,3 @@ void freeSprites(SDL_Texture** textures,int nbSprites){
     }
     free(textures);
 }
-

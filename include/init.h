@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "struct.h"
-#include "utils.h"
 
 #define WINDOW_HEIGHT 900
 #define WINDOW_WIDTH 900

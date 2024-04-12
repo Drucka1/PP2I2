@@ -1,7 +1,6 @@
 #include "../include/aux.h"
 #include "../include/init.h"
 #include "../include/game.h"
-#include "../include/utils.h"
 
 int main(int argc, char* argv[]){
 

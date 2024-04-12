@@ -1,5 +1,4 @@
 CC = gcc
-CC = gcc
 CFLAGS = -std=c99 -Wall -Wextra -pedantic -fsanitize=address
 LDFLAGS = -fsanitize=address
 
@@ -13,7 +12,6 @@ LIBS = -lSDL2 -lSDL2_image
 all: $(TARGETS)
 
 main: $(OBJS)
-main: $(OBJS)
 	$(CC) -o $@ $(LDFLAGS) $^ $(LIBS)
 
 outputs/%.o: src/%.c
@@ -23,10 +21,6 @@ outputs/%.o: src/%.c
 map: src/create_map.c
 	$(CC) -o map src/create_map.c
 
-run: main
-	./main ./assets/test_10_20.txt
-run: main
-	./main ./assets/test_10_20.txt
 	
 clean: 
 	rm -rf $(TARGETS) outputs
