@@ -1,16 +1,17 @@
+CC = gcc
 CFLAGS = -std=c99 -Wall -Wextra -pedantic -fsanitize=address
 LDFLAGS = -fsanitize=address
-LIBS = -lSDL2
-CC = gcc
 
-SRCS = src/struct.c src/game.c src/aux.c src/init.c src/main.c 
+SRCS = src/struct.c src/game.c src/utils.c src/aux.c src/list.c src/init.c src/main.c 
 OBJS = $(patsubst src/%.c,outputs/%.o,$(SRCS))
 DEPS = $(SRCS:.c=.h)
-TARGETS = game
+TARGETS = main
+
+LIBS = -lSDL2 -lSDL2_image
 
 all: $(TARGETS)
 
-game: $(OBJS)
+main: $(OBJS)
 	$(CC) -o $@ $(LDFLAGS) $^ $(LIBS)
 
 outputs/%.o: src/%.c
@@ -20,11 +21,18 @@ outputs/%.o: src/%.c
 map: src/create_map.c
 	$(CC) -o map src/create_map.c
 
-run: game
-	./game
+run: main
+	./main ./assets/test_10_20.txt
 	
 clean: 
 	rm -rf $(TARGETS) outputs
+
+push: 
+	make clean
+	git add .
+	git commit -m "$(COMMENT)"
+	git push
+	
  	
 
 

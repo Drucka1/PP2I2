@@ -1,11 +1,11 @@
 #ifndef INIT_H
-#define INIT_h
+#define INIT_H
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include <SDL2/SDL.h>
-#include "../include/struct.h"
+#include "struct.h"
+#include "utils.h"
 
 #define WINDOW_HEIGHT 900
 #define WINDOW_WIDTH 900
@@ -17,10 +17,21 @@
 #define MIN(i, j) (((i) < (j)) ? (i) : (j))
 #define MAX(i, j) (((i) > (j)) ? (i) : (j))
 
-int** FileToMap(char *nomFichier, int* rows, int* cols);
-wall* init_terrain(int** terrain,int rows,int cols, int pos_x, int pos_y,SDL_Texture* sprite);
-void free_terrain(int** terrain,int rows);
+
+#define UP 1
+#define DOWN 2
+#define LEFT 3
+#define RIGHT 4
+
+#define WALL 1
+#define GROUND 0
+#define DOOR 2
+
+
+Map* initMap(List* **terrain,int rows,int cols, int pos_x, int pos_y, SDL_Renderer* renderer);
+SDL_Rect** getWalls(Map* map, int* numWalls);
+List* **FileToMap(char *nomFichier, int* rows, int* cols);
 SDL_Texture* load_sprite(SDL_Renderer* renderer, char chemin[]);
-void free_walls(wall* murs, int nb_murs);
+
 
 #endif

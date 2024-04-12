@@ -3,7 +3,12 @@
 #include "../include/init.h"
 #include "../include/game.h"
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[]){
+
+    if(argc < 2){
+        printf("Renseignez une map");
+        exit(-1);
+    }
 
     if(SDL_Init(SDL_INIT_EVERYTHING)){
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in init: %s", SDL_GetError());
@@ -16,21 +21,30 @@ int main(int argc, char* argv[]) {
 
     //Terrain
     int cols,rows;
-    int** terrain = FileToMap(argv[1],&rows,&cols);
+    List* **terrain = FileToMap(argv[1],&rows,&cols);
     int pos_x = MAX(0,SIZE_WALL_W*(NB_WALL_W-cols)/2);
     int pos_y = MAX(0,SIZE_WALL_H*(NB_WALL_H-rows)/2);
-    SDL_Texture* spriteTextureWall = load_sprite(renderer, "./assets/wall.bmp");
-    wall* murs = init_terrain(terrain,rows,cols,pos_x,pos_y,spriteTextureWall);
-    int nb_murs = sommeMatrice(terrain,rows,cols);
+    
+    Map* map = initMap(terrain,rows,cols,pos_x,pos_y,renderer);
+    Tuple wall0 = {0,0};
+    Tuple wallf = {(cols-1)*SIZE_WALL_W,(rows-1)*SIZE_WALL_H};
 
-    //Ground
-    SDL_Texture* spriteTextureGround = load_sprite(renderer, "./assets/ground.bmp");
+    
 
+
+
+
+    //int nbWalls = 0;
+    //SDL_Rect** walls = getWalls(map,&nbWalls);
+    //printf("%d\n",nbWalls);
+    
+    //SDL_Rect screenRect = {0, 0, WINDOW_WIDTH,WINDOW_HEIGHT};
+    
     //Player
-    SDL_Texture* spriteTexture = load_sprite(renderer, "./assets/player.bmp");
-    mob player;
+    SDL_Texture* spriteTexture = load_sprite(renderer, "./assets/player.png");
+    Entity player;
     player.pos = &(SDL_Rect){SIZE_WALL_W+pos_x,SIZE_WALL_H+pos_y,SIZE_WALL_W,SIZE_WALL_H};
-    player.sprite = spriteTexture;
+    player.texture = spriteTexture;
 
     int spriteFullWIdth,spriteFullHeight;
     if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWIdth, &spriteFullHeight)){
@@ -41,7 +55,10 @@ int main(int argc, char* argv[]) {
     int spriteWidth = 141;
     int spriteHeight = 221;
     SDL_Event event;
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    
     int running=1;int offset = 0;int direction = 0;
+    int dark = true;
 
     while (running ) { //boucle principale 
         if ( SDL_PollEvent(&event) ) { // scrute sans cesse les évènements et renvoie 1
@@ -54,75 +71,88 @@ int main(int argc, char* argv[]) {
                     break;
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.sym){
+                        case SDLK_a:
+                            dark = !dark;
+                            break;
+
                         case SDLK_UP:
-                        // Vérifier la collision avec le mur avant de mettre à jour la position du player
-                        if (!collisions(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},murs,nb_murs)) {
-                            if ( pos_y || murs[0].pos->y == 0 || (murs[nb_murs-1].pos->y == (NB_WALL_H-1)*SIZE_WALL_H && player.pos->y > SIZE_WALL_H*(NB_WALL_H-1)/2 ) ){
-                                player.pos->y -= VITESSE;
+                            // Vérifier la collision avec le mur avant de mettre à jour la position du player
+                            if (!collisions(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map)) {
+                                if ( pos_y || wall0.y == 0 || (wallf.y == (NB_WALL_H-1)*SIZE_WALL_H && player.pos->y > SIZE_WALL_H*(NB_WALL_H-1)/2 ) ){
+                                    player.pos->y -= VITESSE;
+                                }
+                                else {
+                                    decalageMap(map,DOWN);
+                                    decalageMur(&wall0,DOWN);
+                                    decalageMur(&wallf,DOWN);
+                                }
                             }
-                            else {
-                                decalage_mur(murs,nb_murs,0);
+                            direction = 1;offset++;offset %= 4;
+                            break;
+                        case SDLK_DOWN:
+                            // Vérifier la collision avec le mur avant de mettre à jour la position du player
+                            if (!collisions(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE, player.pos->w, player.pos->h},map)) {
+                                if ( pos_y || wallf.y == (NB_WALL_H-1)*SIZE_WALL_H || (wall0.y == 0 && player.pos->y < SIZE_WALL_H*(NB_WALL_H-1)/2) ){
+                                    player.pos->y += VITESSE;
+                                }
+                                else {
+                                    decalageMap(map,UP);
+                                    decalageMur(&wall0,UP);
+                                    decalageMur(&wallf,UP);
+                                }
                             }
-                        }
-                        direction = 1;offset++;offset %= 4;
-                        break;
-                    case SDLK_DOWN:
-                        // Vérifier la collision avec le mur avant de mettre à jour la position du player
-                        if (!collisions(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE, player.pos->w, player.pos->h},murs,nb_murs)) {
-                            if ( pos_y || murs[nb_murs-1].pos->y == (NB_WALL_H-1)*SIZE_WALL_H || (murs[0].pos->y == 0 && player.pos->y < SIZE_WALL_H*(NB_WALL_H-1)/2) ){
-                                player.pos->y += VITESSE;
+                            direction = 0;offset++;offset %= 4;
+                            break;
+                        case SDLK_LEFT:
+                            // Vérifier la collision avec le mur avant de mettre à jour la position du player
+                            if (!collisions(&(SDL_Rect){player.pos->x - VITESSE, player.pos->y, player.pos->w, player.pos->h},map)) {
+                                if ( pos_x || wall0.x == 0 || (wallf.x == (NB_WALL_W-1)*SIZE_WALL_W && player.pos->x > SIZE_WALL_W*(NB_WALL_W-1)/2) ){
+                                    player.pos->x -= VITESSE;
+                                }
+                                else {
+                                    decalageMap(map,RIGHT);
+                                    decalageMur(&wall0,RIGHT);
+                                    decalageMur(&wallf,RIGHT);
+                                }
                             }
-                            else {
-                                decalage_mur(murs,nb_murs,1);
+                            direction = 2;offset++;offset %= 4;
+                            break;
+                        case SDLK_RIGHT:
+                            // Vérifier la collision avec le mur avant de mettre à jour la position du player
+                            if (!collisions(&(SDL_Rect){player.pos->x + VITESSE, player.pos->y, player.pos->w, player.pos->h},map)) {
+                                if ( pos_x || wallf.x == (NB_WALL_W-1)*SIZE_WALL_W || (wall0.x == 0 && player.pos->x < SIZE_WALL_W*(NB_WALL_W-1)/2) ){
+                                    player.pos->x += VITESSE;
+                                }
+                                else {
+                                    decalageMap(map,LEFT);
+                                    decalageMur(&wall0,LEFT);
+                                    decalageMur(&wallf,LEFT);
+                                }
+                                
                             }
-                        }
-                        direction = 0;offset++;offset %= 4;
-                        break;
-                    case SDLK_LEFT:
-                        // Vérifier la collision avec le mur avant de mettre à jour la position du player
-                        if (!collisions(&(SDL_Rect){player.pos->x - VITESSE, player.pos->y, player.pos->w, player.pos->h},murs,nb_murs)) {
-                            if ( pos_x || murs[0].pos->x == 0 || (murs[nb_murs-1].pos->x == (NB_WALL_W-1)*SIZE_WALL_W && player.pos->x > SIZE_WALL_W*(NB_WALL_W-1)/2) ){
-                                player.pos->x -= VITESSE;
-                            }
-                            else {
-                                decalage_mur(murs,nb_murs,2);
-                            }
-                        }
-                        direction = 2;offset++;offset %= 4;
-                        break;
-                    case SDLK_RIGHT:
-                        // Vérifier la collision avec le mur avant de mettre à jour la position du player
-                        if (!collisions(&(SDL_Rect){player.pos->x + VITESSE, player.pos->y, player.pos->w, player.pos->h},murs,nb_murs)) {
-                            if ( pos_x || murs[nb_murs-1].pos->x == (NB_WALL_W-1)*SIZE_WALL_W || (murs[0].pos->x == 0 && player.pos->x < SIZE_WALL_W*(NB_WALL_W-1)/2) ){
-                                player.pos->x += VITESSE;
-                            }
-                            else {
-                                decalage_mur(murs,nb_murs,3);
-                            }
-                            
-                        }
-                        direction = 3;offset++;offset %= 4;
-                        break;
+                            direction = 3;offset++;offset %= 4;
+                            break;
                     }
             }
         }
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        drawGround(renderer,spriteTextureGround,pos_x,pos_y,rows,cols);
-        drawWall(renderer,murs,nb_murs);
+        drawMap(renderer,map);
 
         SDL_Rect spriteRect = {.x = offset*spriteWidth ,.y = direction*spriteHeight, .w = spriteWidth, .h = spriteHeight};
         SDL_Rect destRect = {player.pos->x, player.pos->y, SIZE_WALL_W, SIZE_WALL_H};
-        if (SDL_RenderCopy(renderer, player.sprite, &spriteRect, &destRect)){
+        if (SDL_RenderCopy(renderer, player.texture, &spriteRect, &destRect)){
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in render copy: %s", SDL_GetError());
+        }
+
+        if (dark){
+            drawTransparency(renderer,player);
         }
         
         SDL_RenderPresent(renderer);
     }
 
-    free_walls(murs,nb_murs);
-    free_terrain(terrain, rows);
     SDL_DestroyTexture(spriteTexture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

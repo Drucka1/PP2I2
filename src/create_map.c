@@ -18,9 +18,15 @@ int** create_mat(int rows,int cols){
 void afficherMatrice(int** matrice, int rows, int cols) {
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-            printf("%d ", matrice[i][j]);
+            if (j == cols-1){
+                printf("%d ", matrice[i][j]);
+            }
+            else{
+                printf("%d | ", matrice[i][j]);
+            }
+            
         }
-        printf("\n");
+        printf("/\n");
     }
 }
 
