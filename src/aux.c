@@ -1,5 +1,5 @@
+
 #include "../include/aux.h"
-#include <stdlib.h>
 
 int sommeMatrice(int** matrice, int rows, int cols) {
     int somme = 0;
@@ -11,9 +11,31 @@ int sommeMatrice(int** matrice, int rows, int cols) {
     return somme;
 }
 
-void free_mat(int** matrice,int rows){
+void freeTerrain(List* **terrain,int rows, int cols){
     for(int i = 0;i<rows;i++){
-        free(matrice[i]);
+        for(int j = 0;j<cols;j++){
+            freeList(terrain[i][j]);
+        }
+        free(terrain[i]);
     }
-    free(matrice);
+    free(terrain);
 }
+
+void freeMap(Map* map){
+    for(int i = 0;i<map->rows;i++){
+        for(int j = 0;j<map->cols;j++){
+            freeListObj(map->grid[i][j].objects);
+        }
+        free(map->grid[i]);
+    }
+    free(map->grid);
+    free(map);
+}
+
+void freeSprites(SDL_Texture** textures,int nbSprites){
+    for(int i = 0;i<nbSprites;i++){
+        SDL_DestroyTexture(textures[i]);
+    }
+    free(textures);
+}
+

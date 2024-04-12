@@ -35,11 +35,12 @@ List* ** FileToMap(char *nomFichier, int* rows, int* cols) {
     return matrice;
 }
 
-Map* initMap(List* **terrain,int rows,int cols, int pos_x, int pos_y, SDL_Renderer* renderer){
+Map* initMap(List* **terrain,int rows,int cols, int pos_x, int pos_y, SDL_Texture** textures){
     Map* map = malloc(sizeof(Map));
-    SDL_Texture* wallSprite = load_sprite(renderer,"assets/wall.png");
-    SDL_Texture* groundSprite = load_sprite(renderer,"assets/ground.png");
-    SDL_Texture* doorSprite = load_sprite(renderer,"assets/door2.png");
+    SDL_Texture* wallSprite = textures[WALL];
+    SDL_Texture* groundSprite = textures[GROUND];
+    SDL_Texture* doorSprite = textures[DOOR];
+    SDL_Texture* keySprite = textures[KEY];
 
     Cell** grid = malloc(sizeof(Cell*)*rows);
     for (int i = 0;i<rows;i++){
@@ -101,6 +102,23 @@ Map* initMap(List* **terrain,int rows,int cols, int pos_x, int pos_y, SDL_Render
 
                     objects = listObjAppend(objects,ground);
                 }
+                if (tmp->x == KEY){
+                    grid[i][j].steppable &= true;
+                    grid[i][j].numberObjects++;
+
+                    SDL_Rect* pos = malloc(sizeof(SDL_Rect));
+                    pos->x = j*SIZE_WALL_W+pos_x;
+                    pos->y = i*SIZE_WALL_H+pos_y;
+                    pos->w = SIZE_WALL_W;
+                    pos->h = SIZE_WALL_H;
+
+                    Object* key = malloc(sizeof(Object));
+                    key->type_object = DOOR;
+                    key->texture = keySprite;
+                    key->pos = pos;
+
+                    objects = listObjAppend(objects,key);
+                }
                 tmp = tmp->next;
             }
             grid[i][j].objects = objects;
@@ -110,31 +128,6 @@ Map* initMap(List* **terrain,int rows,int cols, int pos_x, int pos_y, SDL_Render
     map->grid = grid;
     map->rows = rows;
     return map;
-}
-
-SDL_Rect** getWalls(Map* map, int* numWalls) {
-    // Allouer un tableau de pointeurs SDL_Rect
-    SDL_Rect** walls = malloc(sizeof(SDL_Rect*) * (map->rows * map->cols));
-
-    // Initialiser le nombre de walls trouvées à 0
-    *numWalls = 0;
-
-    // Parcourir la grille de la carte
-    for (int i = 0; i < map->rows; i++) {
-        for (int j = 0; j < map->cols; j++) {
-            // Vérifier si la cellule est non-steppable
-            if (!map->grid[i][j].steppable) {
-                // Ajouter la position de la cellule au tableau
-                walls[*numWalls] = map->grid[i][j].objects->object->pos;
-                (*numWalls)++;
-            }
-        }
-    }
-
-    // Réallouer le tableau à la taille exacte
-    walls = realloc(walls, sizeof(SDL_Rect*) * (*numWalls));
-
-    return walls;
 }
 
 

@@ -15,8 +15,6 @@ typedef struct _List{
     struct _List* next;
 } List;
 
-
-
 typedef struct {
     SDL_Rect *pos;
     SDL_Texture *texture;

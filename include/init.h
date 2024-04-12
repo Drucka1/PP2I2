@@ -26,10 +26,10 @@
 #define WALL 1
 #define GROUND 0
 #define DOOR 2
+#define KEY 3
 
 
-Map* initMap(List* **terrain,int rows,int cols, int pos_x, int pos_y, SDL_Renderer* renderer);
-SDL_Rect** getWalls(Map* map, int* numWalls);
+Map* initMap(List* **terrain,int rows,int cols, int pos_x, int pos_y, SDL_Texture** textures);
 List* **FileToMap(char *nomFichier, int* rows, int* cols);
 SDL_Texture* load_sprite(SDL_Renderer* renderer, char chemin[]);
 

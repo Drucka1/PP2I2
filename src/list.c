@@ -1,4 +1,5 @@
 #include "../include/list.h"
+#include "../include/struct.h"
 
 List* listAppend(List* list, int x){
     if(list == NULL){
@@ -22,8 +23,8 @@ ListObj* listObjAppend(ListObj* list, Object* obj){
     return list;
 }
 
-void freeList(List* list) {
-    if (list != NULL) {
+void freeList(List* list){
+    if (list != NULL){
         freeList(list->next);
         free(list);
     }
@@ -32,6 +33,7 @@ void freeList(List* list) {
 void freeListObj(ListObj* list) {
     if (list != NULL) {
         freeListObj(list->next);
+        free(list->object->pos);
         free(list);
     }
 }

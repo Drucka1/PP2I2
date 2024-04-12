@@ -1,4 +1,3 @@
-#include "../include/struct.h"
 #include "../include/aux.h"
 #include "../include/init.h"
 #include "../include/game.h"
@@ -9,15 +8,10 @@ int main(int argc, char* argv[]){
         printf("Renseignez une map");
         exit(-1);
     }
-
-    if(SDL_Init(SDL_INIT_EVERYTHING)){
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in init: %s", SDL_GetError());
-    }
-    atexit(SDL_Quit);
-
-    //Window
-    SDL_Window* window = SDL_CreateWindow("Essai",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,WINDOW_WIDTH,WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+    initSDL(&window, &renderer);
 
     //Terrain
     int cols,rows;
@@ -25,20 +19,16 @@ int main(int argc, char* argv[]){
     int pos_x = MAX(0,SIZE_WALL_W*(NB_WALL_W-cols)/2);
     int pos_y = MAX(0,SIZE_WALL_H*(NB_WALL_H-rows)/2);
     
-    Map* map = initMap(terrain,rows,cols,pos_x,pos_y,renderer);
+    SDL_Texture** textures = malloc(sizeof(SDL_Texture*)*4);
+    textures[WALL] = load_sprite(renderer,"assets/wall.png");
+    textures[GROUND] = load_sprite(renderer,"assets/ground.png");
+    textures[DOOR] = load_sprite(renderer,"assets/door2.png");
+    textures[KEY] = load_sprite(renderer,"assets/key.png");
+
+    Map* map = initMap(terrain,rows,cols,pos_x,pos_y,textures);
     Tuple wall0 = {0,0};
     Tuple wallf = {(cols-1)*SIZE_WALL_W,(rows-1)*SIZE_WALL_H};
-
-    
-
-
-
-
-    //int nbWalls = 0;
-    //SDL_Rect** walls = getWalls(map,&nbWalls);
-    //printf("%d\n",nbWalls);
-    
-    //SDL_Rect screenRect = {0, 0, WINDOW_WIDTH,WINDOW_HEIGHT};
+    freeTerrain(terrain,rows,cols);
     
     //Player
     SDL_Texture* spriteTexture = load_sprite(renderer, "./assets/player.png");
@@ -153,10 +143,9 @@ int main(int argc, char* argv[]){
         SDL_RenderPresent(renderer);
     }
 
+    freeSprites(textures,4);
+    freeMap(map);
     SDL_DestroyTexture(spriteTexture);
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-
+    quitSDL(window, renderer);
     return 0;
 }
