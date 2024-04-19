@@ -1,6 +1,4 @@
-#include "../include/struct.h"
-#include "../include/aux.h"
-#include "../include/utils.h"
+#include "../include/game.h"
 
 void drawMap(SDL_Renderer* renderer,Map* map){
     for (int i = 0;i<map->rows;i++){
@@ -17,11 +15,22 @@ void drawMap(SDL_Renderer* renderer,Map* map){
                         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in render copy: %s", SDL_GetError());
                     }
                 }
-                else {
-                    if (SDL_RenderCopy(renderer, objs->object->texture,&(SDL_Rect){.x=0,.y=0,.w=256,.h=256},objs->object->pos)){
+                else  if (objs->object->type_object == DOOR) {
+                    if (SDL_RenderCopy(renderer, objs->object->texture,&(SDL_Rect){.x=0,.y=0,.w=89,.h=94},objs->object->pos)){
                         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in render copy: %s", SDL_GetError());
                     }
                 }
+                else  if (objs->object->type_object == LEVER) {
+                    if (SDL_RenderCopy(renderer, objs->object->texture,&(SDL_Rect){.x=115,.y=150,.w=175,.h=200},objs->object->pos)){
+                        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in render copy: %s", SDL_GetError());
+                    }
+                }
+                else {
+                    if (SDL_RenderCopy(renderer, objs->object->texture,NULL,objs->object->pos)){
+                        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in render copy: %s", SDL_GetError());
+                    }
+                }
+            
                 objs = objs->next;
             }
         }
@@ -75,8 +84,6 @@ void decalageMap(Map* map,int decalage){
     }  
 }
 
-
-
 void decalageMur(Tuple* mur,int decalage){
     if (decalage == DOWN){
         mur->y += VITESSE;
@@ -89,3 +96,33 @@ void decalageMur(Tuple* mur,int decalage){
     }
 }
 
+SDL_bool openDoor(ListObj* inventory,int i, int j, int level){ 
+    while (inventory != NULL){
+        if (inventory->object->door->x == i && inventory->object->door->y == j && level == inventory->object->door->level){
+            return SDL_TRUE;
+        }
+        inventory = inventory->next;
+    }
+    return SDL_FALSE;
+}
+
+void interact(Map* map, Entity* player){
+    for (int i = 0;i<map->rows;i++){
+        for (int j = 0;j<map->cols;j++){
+            ListObj* objs = map->grid[i][j].objects;
+            while (objs != NULL){
+                if (objs->object->type_object == KEY && SDL_HasIntersection(player->pos,objs->object->pos)){
+                    player->inventory = listObjAppend(player->inventory,objs->object);
+                    map->grid[i][j].objects = listObjRemove(map->grid[i][j].objects,objs->object);
+                    return;
+                }
+                if (objs->object->type_object == LEVER && SDL_HasIntersection(player->pos,objs->object->pos)){
+                    map->grid[objs->object->door->x][objs->object->door->y].steppable = true;
+                    map->grid[objs->object->door->x][objs->object->door->y].objects = listObjRemoveWall(map->grid[objs->object->door->x][objs->object->door->y].objects);
+                    return;
+                }
+                objs = objs->next;
+            }
+        }
+    }
+}

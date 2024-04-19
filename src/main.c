@@ -1,5 +1,3 @@
-#include "../include/aux.h"
-#include "../include/init.h"
 #include "../include/game.h"
 
 int main(int argc, char* argv[]){
@@ -13,28 +11,29 @@ int main(int argc, char* argv[]){
     SDL_Renderer *renderer;
     initSDL(&window, &renderer);
 
-  //Terrain
+    //Terrain
     int cols,rows;
-    List* **terrain = FileToMap(argv[1],&rows,&cols);
+    dimMap(argv[1],&rows,&cols);
     int pos_x = MAX(0,SIZE_WALL_W*(NB_WALL_W-cols)/2);
     int pos_y = MAX(0,SIZE_WALL_H*(NB_WALL_H-rows)/2);
     
-    SDL_Texture** textures = malloc(sizeof(SDL_Texture*)*4);
+    SDL_Texture** textures = malloc(sizeof(SDL_Texture*)*5);
     textures[WALL] = load_sprite(renderer,"assets/wall.png");
     textures[GROUND] = load_sprite(renderer,"assets/ground.png");
     textures[DOOR] = load_sprite(renderer,"assets/door2.png");
     textures[KEY] = load_sprite(renderer,"assets/key.png");
+    textures[LEVER] = load_sprite(renderer,"assets/lever.png");
 
-    Map* map = initMap(terrain,rows,cols,pos_x,pos_y,textures);
+    Map* map = FileToMap(argv[1],pos_x,pos_y,textures);
     Tuple wall0 = {0,0};
     Tuple wallf = {(cols-1)*SIZE_WALL_W,(rows-1)*SIZE_WALL_H};
-    freeTerrain(terrain,rows,cols);
     
     //Player
     SDL_Texture* spriteTexture = load_sprite(renderer, "./assets/player.png");
     Entity player;
     player.pos = &(SDL_Rect){SIZE_WALL_W+pos_x,SIZE_WALL_H+pos_y,SIZE_WALL_W,SIZE_WALL_H};
     player.texture = spriteTexture;
+    player.inventory = NULL;
 
     int spriteFullWIdth,spriteFullHeight;
     if (SDL_QueryTexture(spriteTexture, NULL, NULL, &spriteFullWIdth, &spriteFullHeight)){
@@ -42,18 +41,38 @@ int main(int argc, char* argv[]){
         exit(-1);
     }
 
-    int spriteWidth = 141;
-    int spriteHeight = 221;
+    int spriteWidth = spriteFullWIdth/4;
+    int spriteHeight = spriteFullHeight/4;
     SDL_Event event;
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     
     int running=1;int offset = 0;int direction = 0;
-    int dark = true;
-
-    while (running ) { //boucle principale 
-        if ( SDL_PollEvent(&event) ) { // scrute sans cesse les évènements et renvoie 1
+    int dark = !true;
+    
+    while (running) { 
+        bool breakLoop = false;
+        for (int i = 0;i<map->rows;i++){
+            for (int j = 0;j<map->cols;j++){
+                if (map->grid[i][j].map_tp){
+                    SDL_Rect* pos = map->grid[i][j].objects->object->pos;
+                    if (player.pos->x == pos->x && player.pos->y == pos->y && openDoor(player.inventory,i,j,map->level)){
+                        dimMap(map->grid[i][j].map_tp,&rows,&cols);
+                        pos_x = MAX(0,SIZE_WALL_W*(NB_WALL_W-cols)/2);
+                        pos_y = MAX(0,SIZE_WALL_H*(NB_WALL_H-rows)/2);
+                        player.pos->x = SIZE_WALL_W+pos_x;
+                        player.pos->y = SIZE_WALL_H+pos_y; 
+                        char* tmp = map->grid[i][j].map_tp;
+                        freeMap(map);
+                        map = FileToMap(tmp,pos_x,pos_y,textures);
+                        breakLoop = true;
+                    }
+                }
+            }
+            if (breakLoop)  break;
+        }
+        if ( SDL_PollEvent(&event) ) { 
             switch (event.type) {
-                case SDL_QUIT: //évènement fermeture de la fenêtre
+                case SDL_QUIT: 
                     running=0;
                     break;
                 case SDL_KEYUP:
@@ -61,8 +80,15 @@ int main(int argc, char* argv[]){
                     break;
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.sym){
+                        case SDLK_ESCAPE:
+                            running = 0;
+                            break;
                         case SDLK_a:
                             dark = !dark;
+                            break;
+
+                        case SDLK_e://Prend la clé dans l'inventaire
+                            interact(map,&player);
                             break;
 
                         case SDLK_UP:
@@ -143,8 +169,9 @@ int main(int argc, char* argv[]){
         SDL_RenderPresent(renderer);
     }
 
-    freeSprites(textures,4);
+    freeSprites(textures,5);
     freeMap(map);
+    freeListObj(player.inventory);
     SDL_DestroyTexture(spriteTexture);
     quitSDL(window, renderer);
     return 0;
