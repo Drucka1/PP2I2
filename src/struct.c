@@ -54,11 +54,20 @@ void freeMap(Map *map) {
     for (int i = 0; i < map->rows; i++) {
         for (int j = 0; j < map->cols; j++) {
             freeListObj(map->grid[i][j].objects);
+            if (map->grid[i][j].map_tp) free(map->grid[i][j].map_tp);
         }
+        
         free(map->grid[i]);
     }
     free(map->grid);
     free(map);
+}
+
+void freeMaps(Map** maps){
+    for(int i = 0;i<NB_LEVEL;i++){
+        freeMap(maps[i]);
+    }
+    free(maps);
 }
 
 void freeEntity(Entity *entity) {
@@ -68,8 +77,8 @@ void freeEntity(Entity *entity) {
     free(entity);
 }
 
-void freeSprites(SDL_Texture** textures,int nbSprites){
-    for(int i = 0;i<nbSprites;i++){
+void freeSprites(SDL_Texture** textures){
+    for(int i = 0;i<NB_SPRITES;i++){
         SDL_DestroyTexture(textures[i]);
     }
     free(textures);

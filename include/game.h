@@ -8,6 +8,7 @@
 void drawMap(SDL_Renderer* renderer,Map* map);
 
 void drawTransparency(SDL_Renderer* renderer,Entity player);
+void drawPlayer(SDL_Renderer* renderer,Entity* player,SDL_Rect* spriteRect);
 SDL_bool collisions(SDL_Rect* player, Map* map);
 void decalageMap(Map* map,int decalage);
 void decalageMur(Tuple* mur,int decalage);

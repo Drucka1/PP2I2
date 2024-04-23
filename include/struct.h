@@ -59,7 +59,8 @@ void freeListObj(ListObj* list);
 void freeObject(Object *object);
 void freeCell(Cell *cell);
 void freeMap(Map *map);
+void freeMaps(Map** maps);
 void freeEntity(Entity *entity);
-void freeSprites(SDL_Texture** textures,int nbSprites);
+void freeSprites(SDL_Texture** textures);
 
 #endif

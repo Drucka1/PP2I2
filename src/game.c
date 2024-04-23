@@ -37,6 +37,13 @@ void drawMap(SDL_Renderer* renderer,Map* map){
     }
 }
 
+void drawPlayer(SDL_Renderer* renderer,Entity* player,SDL_Rect* spriteRect){
+    SDL_Rect destRect = {player->pos->x, player->pos->y, SIZE_WALL_W, SIZE_WALL_H};
+    if (SDL_RenderCopy(renderer, player->texture, spriteRect, &destRect)){
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in render copy: %s", SDL_GetError());
+    }
+}
+
 void drawTransparency(SDL_Renderer* renderer,Entity player){ 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 225);
     SDL_RenderFillRect(renderer, &(SDL_Rect){player.pos->x -2*SIZE_WALL_H , player.pos->y -2*SIZE_WALL_H, SIZE_WALL_W,  SIZE_WALL_H});

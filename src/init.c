@@ -1,5 +1,11 @@
 #include "../include/init.h"
 
+int numLevelFromChar(char* filename){
+    int level;
+    sscanf(filename,"assets/level%d.txt",&level);
+    return level;
+}
+
 Map* FileToMap(char *nomFichier,int pos_x, int pos_y, SDL_Texture** textures){
     Map* map = malloc(sizeof(Map));
     SDL_Texture* wallSprite = textures[WALL];
@@ -8,8 +14,7 @@ Map* FileToMap(char *nomFichier,int pos_x, int pos_y, SDL_Texture** textures){
     SDL_Texture* keySprite = textures[KEY];
     SDL_Texture* leverSprite = textures[LEVER];
 
-    int level;
-    sscanf(nomFichier,"assets/level%d.txt",&level);
+    int level = numLevelFromChar(nomFichier);
     map->level = level;
 
     FILE *fichier = fopen(nomFichier, "r");
@@ -153,7 +158,6 @@ void dimMap(char* nomFichier, int* rows, int* cols){
     fscanf(fichier, "%d %d", rows, cols);
     fclose(fichier);
 }
-
 
 SDL_Texture* load_sprite(SDL_Renderer* renderer, char chemin[]){
     SDL_Surface* spriteSurface = IMG_Load(chemin);

@@ -3,8 +3,7 @@
 int main(int argc, char* argv[]){
 
     if(argc < 2){
-        printf("Renseignez une map");
-        exit(-1);
+        argv[1] = "assets/level1.txt";
     }
     
     SDL_Window *window;
@@ -17,14 +16,21 @@ int main(int argc, char* argv[]){
     int pos_x = MAX(0,SIZE_WALL_W*(NB_WALL_W-cols)/2);
     int pos_y = MAX(0,SIZE_WALL_H*(NB_WALL_H-rows)/2);
     
-    SDL_Texture** textures = malloc(sizeof(SDL_Texture*)*5);
+    SDL_Texture** textures = malloc(sizeof(SDL_Texture*)*NB_SPRITES);
     textures[WALL] = load_sprite(renderer,"assets/wall.png");
     textures[GROUND] = load_sprite(renderer,"assets/ground.png");
     textures[DOOR] = load_sprite(renderer,"assets/door2.png");
     textures[KEY] = load_sprite(renderer,"assets/key.png");
     textures[LEVER] = load_sprite(renderer,"assets/lever.png");
 
-    Map* map = FileToMap(argv[1],pos_x,pos_y,textures);
+    Map** maps = malloc(sizeof(Map*)*NB_LEVEL);
+    for(int i = 1;i<NB_LEVEL;i++){
+        maps[i] = NULL;
+    }
+
+    maps[0] = FileToMap(argv[1],pos_x,pos_y,textures);
+    
+    Map* map = maps[0];
     Tuple wall0 = {0,0};
     Tuple wallf = {(cols-1)*SIZE_WALL_W,(rows-1)*SIZE_WALL_H};
     
@@ -45,11 +51,12 @@ int main(int argc, char* argv[]){
     int spriteHeight = spriteFullHeight/4;
     SDL_Event event;
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-    
+
     int running=1;int offset = 0;int direction = 0;
     int dark = !true;
     
     while (running) { 
+        //Verfie si le joueur peut changer de niveau/se tp
         bool breakLoop = false;
         for (int i = 0;i<map->rows;i++){
             for (int j = 0;j<map->cols;j++){
@@ -62,14 +69,16 @@ int main(int argc, char* argv[]){
                         player.pos->x = SIZE_WALL_W+pos_x;
                         player.pos->y = SIZE_WALL_H+pos_y; 
                         char* tmp = map->grid[i][j].map_tp;
-                        freeMap(map);
-                        map = FileToMap(tmp,pos_x,pos_y,textures);
+                        int numLevel = numLevelFromChar(tmp);
+                        if (!maps[numLevel-1]) maps[numLevel-1] = FileToMap(tmp,pos_x,pos_y,textures);
+                        map = maps[numLevel-1];
                         breakLoop = true;
                     }
                 }
             }
-            if (breakLoop)  break;
+            if (breakLoop) break;
         }
+        //////
         if ( SDL_PollEvent(&event) ) { 
             switch (event.type) {
                 case SDL_QUIT: 
@@ -155,24 +164,20 @@ int main(int argc, char* argv[]){
         SDL_RenderClear(renderer);
 
         drawMap(renderer,map);
-
         SDL_Rect spriteRect = {.x = offset*spriteWidth ,.y = direction*spriteHeight, .w = spriteWidth, .h = spriteHeight};
-        SDL_Rect destRect = {player.pos->x, player.pos->y, SIZE_WALL_W, SIZE_WALL_H};
-        if (SDL_RenderCopy(renderer, player.texture, &spriteRect, &destRect)){
-            SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in render copy: %s", SDL_GetError());
-        }
+        drawPlayer(renderer,&player,&spriteRect);
 
-        if (dark){
-            drawTransparency(renderer,player);
-        }
+        if (dark) drawTransparency(renderer,player);
         
         SDL_RenderPresent(renderer);
     }
 
-    freeSprites(textures,5);
-    freeMap(map);
+    freeSprites(textures);
+    freeMaps(maps);
+    
     freeListObj(player.inventory);
     SDL_DestroyTexture(spriteTexture);
+
     quitSDL(window, renderer);
     return 0;
 }
