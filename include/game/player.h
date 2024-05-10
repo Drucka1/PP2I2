@@ -14,7 +14,7 @@
 #define RENDER_MIN_J (MIN((MAP_MAX_WIDTH - GRID_MAX_COLUMN), MAX(0, (player->j - GRID_MAX_COLUMN / 2))))
 #define RENDER_MAX_J (MIN(MAX(GRID_MAX_COLUMN, (1 + player->j + GRID_MAX_COLUMN / 2)), MAP_MAX_WIDTH))
 
-// Incides des objets affichés dans la fenêtre 
+// Indices des objets affichés dans la fenêtre 
 #define RENDER_I(object) (object->i  - RENDER_MIN_I)
 #define RENDER_J(object) (object->j  - RENDER_MIN_J)
 
