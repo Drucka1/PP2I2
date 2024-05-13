@@ -25,6 +25,12 @@ map: src/create_map.c
 clean: 
 	rm -rf $(TARGETS) outputs
 
+run : main
+	./main
+
+test: 
+	make clean
+	make run
 push: 
 	make clean
 	git add .

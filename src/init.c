@@ -13,6 +13,7 @@ Map* FileToMap(char *nomFichier,int pos_x, int pos_y, SDL_Texture** textures){
     SDL_Texture* doorSprite = textures[DOOR];
     SDL_Texture* keySprite = textures[KEY];
     SDL_Texture* leverSprite = textures[LEVER];
+    SDL_Texture* iceSprite = textures[ICE];
 
     int level = numLevelFromChar(nomFichier);
     map->level = level;
@@ -48,7 +49,7 @@ Map* FileToMap(char *nomFichier,int pos_x, int pos_y, SDL_Texture** textures){
         else if(strcmp(buffer,"|")==0){
             j++;         
         }
-        else if (atoi(buffer) == 0 && strlen(buffer) > 10){
+        else if (atoi(buffer) == 0 && strlen(buffer) > 10){ //detection de tp IG
             grid[i][j].map_tp = malloc(sizeof(char)*(strlen(buffer)+1));
             strcpy(grid[i][j].map_tp,buffer);
         } 
@@ -85,6 +86,23 @@ Map* FileToMap(char *nomFichier,int pos_x, int pos_y, SDL_Texture** textures){
             ground->pos = pos;
             ground->door = NULL;
             grid[i][j].objects = listObjAppend(grid[i][j].objects,ground);
+        }
+        else if(atoi(buffer)==ICE){ //ICI
+            grid[i][j].steppable &= true;
+            grid[i][j].numberObjects++;
+            
+            SDL_Rect* pos = malloc(sizeof(SDL_Rect));
+            pos->x = j*SIZE_WALL_W+pos_x;
+            pos->y = i*SIZE_WALL_H+pos_y;
+            pos->w = SIZE_WALL_W;
+            pos->h = SIZE_WALL_H;
+
+            Object* ice = malloc(sizeof(Object));
+            ice->type_object = ICE;
+            ice->texture = iceSprite;
+            ice->pos = pos;
+            ice->door = NULL;
+            grid[i][j].objects = listObjAppend(grid[i][j].objects,ice);
         }
         else if (atoi(buffer) == DOOR){
             grid[i][j].steppable &= false;

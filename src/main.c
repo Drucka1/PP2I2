@@ -22,6 +22,7 @@ int main(int argc, char* argv[]){
     textures[DOOR] = load_sprite(renderer,"assets/door2.png");
     textures[KEY] = load_sprite(renderer,"assets/key.png");
     textures[LEVER] = load_sprite(renderer,"assets/lever.png");
+    textures[ICE] = load_sprite(renderer,"assets/ice.png");
 
     Map** maps = malloc(sizeof(Map*)*NB_LEVEL);
     for(int i = 1;i<NB_LEVEL;i++){
@@ -54,6 +55,8 @@ int main(int argc, char* argv[]){
 
     int running=1;int offset = 0;int direction = 0;
     int dark = !true;
+    int isIcy =false;
+    int temp = 0;
     
     while (running) { 
         //Verfie si le joueur peut changer de niveau/se tp
@@ -87,6 +90,7 @@ int main(int argc, char* argv[]){
                 case SDL_KEYUP:
                     offset = 0;
                     break;
+                
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.sym){
                         case SDLK_ESCAPE:
@@ -95,13 +99,25 @@ int main(int argc, char* argv[]){
                         case SDLK_a:
                             dark = !dark;
                             break;
-
+                        case SDLK_i:
+                            isIcy = !isIcy;
+                            break;
                         case SDLK_e://Prend la clé dans l'inventaire
                             interact(map,&player);
                             break;
 
                         case SDLK_UP:
+                            if(isIcy==1){
+                                break;
+                            }
                             // Vérifier la collision avec le mur avant de mettre à jour la position du player
+                            if(isice(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map)){
+                                if(isIcy==0){
+                                    isIcy=!isIcy;
+                                    temp= UP;
+                                }
+                            }
+                            
                             if (!collisions(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map)) {
                                 if ( pos_y || wall0.y == 0 || (wallf.y == (NB_WALL_H-1)*SIZE_WALL_H && player.pos->y > SIZE_WALL_H*(NB_WALL_H-1)/2 ) ){
                                     player.pos->y -= VITESSE;
@@ -115,6 +131,16 @@ int main(int argc, char* argv[]){
                             direction = 1;offset++;offset %= 4;
                             break;
                         case SDLK_DOWN:
+                            if(isIcy==1){
+                                break;
+                            }
+                            if(isice(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE, player.pos->w, player.pos->h},map)){
+                                if(isIcy==0){
+                                    isIcy=!isIcy;
+                                    temp = DOWN;
+                                }
+                            }
+                            
                             // Vérifier la collision avec le mur avant de mettre à jour la position du player
                             if (!collisions(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE, player.pos->w, player.pos->h},map)) {
                                 if ( pos_y || wallf.y == (NB_WALL_H-1)*SIZE_WALL_H || (wall0.y == 0 && player.pos->y < SIZE_WALL_H*(NB_WALL_H-1)/2) ){
@@ -129,6 +155,16 @@ int main(int argc, char* argv[]){
                             direction = 0;offset++;offset %= 4;
                             break;
                         case SDLK_LEFT:
+                            if(isIcy==1){
+                                break;
+                            }
+                            if(isice(&(SDL_Rect){player.pos->x - VITESSE, player.pos->y, player.pos->w, player.pos->h},map)){
+                                if(isIcy==0){
+                                    isIcy=!isIcy;
+                                    temp = LEFT;
+                                }
+                            }
+                            
                             // Vérifier la collision avec le mur avant de mettre à jour la position du player
                             if (!collisions(&(SDL_Rect){player.pos->x - VITESSE, player.pos->y, player.pos->w, player.pos->h},map)) {
                                 if ( pos_x || wall0.x == 0 || (wallf.x == (NB_WALL_W-1)*SIZE_WALL_W && player.pos->x > SIZE_WALL_W*(NB_WALL_W-1)/2) ){
@@ -143,6 +179,16 @@ int main(int argc, char* argv[]){
                             direction = 2;offset++;offset %= 4;
                             break;
                         case SDLK_RIGHT:
+                            if(isIcy==1){
+                                break;
+                            }
+                            if(isice(&(SDL_Rect){player.pos->x + VITESSE, player.pos->y, player.pos->w, player.pos->h},map)){
+                                if(isIcy==0){
+                                    isIcy=!isIcy;
+                                    temp = RIGHT;
+                                }
+                            }
+                            
                             // Vérifier la collision avec le mur avant de mettre à jour la position du player
                             if (!collisions(&(SDL_Rect){player.pos->x + VITESSE, player.pos->y, player.pos->w, player.pos->h},map)) {
                                 if ( pos_x || wallf.x == (NB_WALL_W-1)*SIZE_WALL_W || (wall0.x == 0 && player.pos->x < SIZE_WALL_W*(NB_WALL_W-1)/2) ){
@@ -158,6 +204,91 @@ int main(int argc, char* argv[]){
                             direction = 3;offset++;offset %= 4;
                             break;
                     }
+            }
+        }
+        if(temp!=0){
+            switch(temp){
+                case UP:
+                    if (!collisions(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map)) {
+                        if ( pos_y || wall0.y == 0 || (wallf.y == (NB_WALL_H-1)*SIZE_WALL_H && player.pos->y > SIZE_WALL_H*(NB_WALL_H-1)/2 ) ){
+                            player.pos->y -= VITESSE;
+                        }
+                        else {
+                            decalageMap(map,DOWN);
+                            decalageMur(&wall0,DOWN);
+                            decalageMur(&wallf,DOWN);
+                        }
+                    }
+                    else{
+                        isIcy=!isIcy;
+                        temp=0;
+                    }
+                    if(!isice(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map)){
+                        isIcy=!isIcy;
+                        temp=0;
+                    }
+                    break;
+                case DOWN:
+                    if (!collisions(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE, player.pos->w, player.pos->h},map)) {
+                        if ( pos_y || wallf.y == (NB_WALL_H-1)*SIZE_WALL_H || (wall0.y == 0 && player.pos->y < SIZE_WALL_H*(NB_WALL_H-1)/2) ){
+                            player.pos->y += VITESSE;
+                        }
+                        else {
+                            decalageMap(map,UP);
+                            decalageMur(&wall0,UP);
+                            decalageMur(&wallf,UP);
+                        }
+                    }
+                    else{
+                        isIcy=!isIcy;
+                        temp=0;
+                    }
+                    if(!isice(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map)){
+                        isIcy=!isIcy;
+                        temp=0;
+                    }
+                    break;
+                case LEFT:
+                    if (!collisions(&(SDL_Rect){player.pos->x-VITESSE , player.pos->y, player.pos->w, player.pos->h},map)) {
+                        if ( pos_x || wall0.x == 0 || (wallf.x == (NB_WALL_W-1)*SIZE_WALL_W && player.pos->x > SIZE_WALL_W*(NB_WALL_W-1)/2) ){
+                            player.pos->x -= VITESSE;
+                        }
+                        else {
+                            decalageMap(map,RIGHT);
+                            decalageMur(&wall0,RIGHT);
+                            decalageMur(&wallf,RIGHT);
+                        }
+                    }
+                    else{
+                        isIcy=!isIcy;
+                        temp=0;
+                    }
+                    if(!isice(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map)){
+                        isIcy=!isIcy;
+                        temp=0;
+                    }
+                    break;
+                case RIGHT:
+                    if (!collisions(&(SDL_Rect){player.pos->x + VITESSE, player.pos->y, player.pos->w, player.pos->h},map)) {
+                        if ( pos_x || wallf.x == (NB_WALL_W-1)*SIZE_WALL_W || (wall0.x == 0 && player.pos->x < SIZE_WALL_W*(NB_WALL_W-1)/2) ){
+                            player.pos->x += VITESSE;
+                        }
+                        else {
+                            decalageMap(map,LEFT);
+                            decalageMur(&wall0,LEFT);
+                            decalageMur(&wallf,LEFT);
+                        }
+                    }
+                    else{
+                        isIcy=!isIcy;
+                        temp=0;
+                    }
+                    if(!isice(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map)){
+                        isIcy=!isIcy;
+                        temp=0;
+                    }
+                    break;
+                // sleep(1);
             }
         }
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);

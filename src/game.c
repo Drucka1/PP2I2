@@ -32,6 +32,7 @@ void drawMap(SDL_Renderer* renderer,Map* map){
                 }
             
                 objs = objs->next;
+         
             }
         }
     }
@@ -70,7 +71,20 @@ SDL_bool collisions(SDL_Rect* player, Map* map){
     }
     return SDL_FALSE;
 }
-
+SDL_bool isice(SDL_Rect* player,Map* map){
+    for (int i = 0;i<map->rows;i++){
+        for (int j = 0;j<map->cols;j++){
+            ListObj* objs = map->grid[i][j].objects;
+            while (objs != NULL){
+                if (objs->object->type_object == ICE && SDL_HasIntersection(player,objs->object->pos)){
+                    return SDL_TRUE;
+                }
+                objs = objs->next;
+            }
+        }
+    }
+    return SDL_FALSE;
+}
 void decalageMap(Map* map,int decalage){
     for (int i = 0;i<map->rows;i++){
         for (int j = 0;j<map->cols;j++){

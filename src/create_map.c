@@ -7,7 +7,7 @@ int** create_mat(int rows,int cols){
         mat[i] = malloc(sizeof(int)*cols);
         for (int j = 0; j < cols; j++) {
             if( i == 0 || i == rows-1 || j == 0 || j == cols-1 || rand() % 3 == 0){
-                mat[i][j] = 1;
+                mat[i][j] = 1;// place des murs au extremité + 1 bloc sur 3 
             }
             else { mat[i][j] = 0; }
         }
