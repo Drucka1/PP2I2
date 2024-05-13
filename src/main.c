@@ -56,7 +56,7 @@ int main(int argc, char* argv[]){
     int running=1;int offset = 0;int direction = 0;
     int dark = !true;
     int isIcy =false;
-    int temp = 0;
+    int directionInitiale = 0;
     
     while (running) { 
         //Verfie si le joueur peut changer de niveau/se tp
@@ -107,17 +107,17 @@ int main(int argc, char* argv[]){
                             break;
 
                         case SDLK_UP:
-                            if(isIcy==1){
+                            if(isIcy==1){ //Si le joueur est sur de la glace on ne peut pas changer de direction
                                 break;
                             }
-                            // Vérifier la collision avec le mur avant de mettre à jour la position du player
+                            // Vérifier si le joueur se deplace vers de la glace
                             if(isice(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map)){
-                                if(isIcy==0){
+                                if(isIcy==0){ //Si le joueur ne glissait pas avant on le fait glisser
                                     isIcy=!isIcy;
-                                    temp= UP;
+                                    directionInitiale= UP; //directionInitiale sert a savoir dans quelle direction le joueur glisse
                                 }
                             }
-                            
+                            // Vérifier la collision avec le mur avant de mettre à jour la position du player
                             if (!collisions(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map)) {
                                 if ( pos_y || wall0.y == 0 || (wallf.y == (NB_WALL_H-1)*SIZE_WALL_H && player.pos->y > SIZE_WALL_H*(NB_WALL_H-1)/2 ) ){
                                     player.pos->y -= VITESSE;
@@ -137,7 +137,7 @@ int main(int argc, char* argv[]){
                             if(isice(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE, player.pos->w, player.pos->h},map)){
                                 if(isIcy==0){
                                     isIcy=!isIcy;
-                                    temp = DOWN;
+                                    directionInitiale = DOWN;
                                 }
                             }
                             
@@ -161,7 +161,7 @@ int main(int argc, char* argv[]){
                             if(isice(&(SDL_Rect){player.pos->x - VITESSE, player.pos->y, player.pos->w, player.pos->h},map)){
                                 if(isIcy==0){
                                     isIcy=!isIcy;
-                                    temp = LEFT;
+                                    directionInitiale = LEFT;
                                 }
                             }
                             
@@ -185,7 +185,7 @@ int main(int argc, char* argv[]){
                             if(isice(&(SDL_Rect){player.pos->x + VITESSE, player.pos->y, player.pos->w, player.pos->h},map)){
                                 if(isIcy==0){
                                     isIcy=!isIcy;
-                                    temp = RIGHT;
+                                    directionInitiale = RIGHT;
                                 }
                             }
                             
@@ -206,10 +206,10 @@ int main(int argc, char* argv[]){
                     }
             }
         }
-        if(temp!=0){
-            switch(temp){
-                case UP:
-                    if (!collisions(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map)) {
+        if(directionInitiale!=0){ //Si le joueur est sur de la glace (mis ici car je suis sur )
+            switch(directionInitiale){
+                case UP: // je commente que ce cas la car les autres sont les mêmes
+                    if (!collisions(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map)) { //check de colisions avec les murs comme dans les deplacements classiques
                         if ( pos_y || wall0.y == 0 || (wallf.y == (NB_WALL_H-1)*SIZE_WALL_H && player.pos->y > SIZE_WALL_H*(NB_WALL_H-1)/2 ) ){
                             player.pos->y -= VITESSE;
                         }
@@ -219,13 +219,13 @@ int main(int argc, char* argv[]){
                             decalageMur(&wallf,DOWN);
                         }
                     }
-                    else{
+                    else{ //si il y a collision avec un mur on arrete de glisser et directionInitiale=0 pour ne pas refaire le test
                         isIcy=!isIcy;
-                        temp=0;
+                        directionInitiale=0;
                     }
-                    if(!isice(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map)){
+                    if(!isice(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map)){ //si le joueur n'est plus sur de la glace on arrete de glisser + directionInitiale=0
                         isIcy=!isIcy;
-                        temp=0;
+                        directionInitiale=0;
                     }
                     break;
                 case DOWN:
@@ -241,11 +241,11 @@ int main(int argc, char* argv[]){
                     }
                     else{
                         isIcy=!isIcy;
-                        temp=0;
+                        directionInitiale=0;
                     }
                     if(!isice(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map)){
                         isIcy=!isIcy;
-                        temp=0;
+                        directionInitiale=0;
                     }
                     break;
                 case LEFT:
@@ -261,11 +261,11 @@ int main(int argc, char* argv[]){
                     }
                     else{
                         isIcy=!isIcy;
-                        temp=0;
+                        directionInitiale=0;
                     }
                     if(!isice(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map)){
                         isIcy=!isIcy;
-                        temp=0;
+                        directionInitiale=0;
                     }
                     break;
                 case RIGHT:
@@ -281,11 +281,11 @@ int main(int argc, char* argv[]){
                     }
                     else{
                         isIcy=!isIcy;
-                        temp=0;
+                        directionInitiale=0;
                     }
                     if(!isice(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map)){
                         isIcy=!isIcy;
-                        temp=0;
+                        directionInitiale=0;
                     }
                     break;
                 // sleep(1);
