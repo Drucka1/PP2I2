@@ -43,6 +43,8 @@ typedef struct {
     Cell** grid;
     int rows;
     int cols;
+    int remainingmooves;
+    int cleared;
 } Map;
 
 typedef struct {

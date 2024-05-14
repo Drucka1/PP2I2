@@ -24,10 +24,17 @@ Map* FileToMap(char *nomFichier,int pos_x, int pos_y, SDL_Texture** textures){
         return NULL;
     }
 
-    int rows,cols,p,q;
-    fscanf(fichier, "%d %d", &rows, &cols);
+    int rows,cols,p,q,mooves;
+    fscanf(fichier, "%d %d %d", &rows, &cols,&mooves);
     map->cols = cols;
     map->rows = rows;
+    map->cleared = false;
+    if (mooves == 0){
+        map->remainingmooves = -1;
+    }
+    else{
+        map->remainingmooves = mooves;
+    }
     int i = 0; int j = 0;
     char buffer[100];
     Cell** grid = malloc(sizeof(Cell*)*rows);

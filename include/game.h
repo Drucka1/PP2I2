@@ -16,3 +16,4 @@ SDL_bool openDoor(ListObj* objs,int i, int j, int level);
 void interact(Map* map, Entity* player);
 SDL_bool isice(SDL_Rect* player,Map* map);
 #endif
+    

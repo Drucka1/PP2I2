@@ -12,5 +12,6 @@ LES TOUCHES :
     e : interaction avec object (pour l'instant seulement les clés)
     echap : quit de jeu
     i : active/desactive l'état de glace (mouvement impossible)
+    r : place le compteur de mouvement restant à 10
 
-J'adore la glace surtout sur Trackmania donc elle est dispo maintenant(numero 5 ou ICE)
+Il manque l'affichage et il y a un probleme sur la variable clear.

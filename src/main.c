@@ -1,5 +1,5 @@
 #include "../include/game.h"
-
+#include <SDL2/SDL_ttf.h>
 int main(int argc, char* argv[]){
 
     if(argc < 2){
@@ -9,6 +9,7 @@ int main(int argc, char* argv[]){
     SDL_Window *window;
     SDL_Renderer *renderer;
     initSDL(&window, &renderer);
+
 
     //Terrain
     int cols,rows;
@@ -67,6 +68,7 @@ int main(int argc, char* argv[]){
                     SDL_Rect* pos = map->grid[i][j].objects->object->pos;
                     if (player.pos->x == pos->x && player.pos->y == pos->y && openDoor(player.inventory,i,j,map->level)){
                         dimMap(map->grid[i][j].map_tp,&rows,&cols);
+                        map->cleared = true;// j'aime pas trop cette implementation l'idée serait de detecter si le joueur prend la porte vers la salle suivante pas la precedente.
                         pos_x = MAX(0,SIZE_WALL_W*(NB_WALL_W-cols)/2);
                         pos_y = MAX(0,SIZE_WALL_H*(NB_WALL_H-rows)/2);
                         player.pos->x = SIZE_WALL_W+pos_x;
@@ -105,7 +107,9 @@ int main(int argc, char* argv[]){
                         case SDLK_e://Prend la clé dans l'inventaire
                             interact(map,&player);
                             break;
-
+                        case SDLK_r://reset remaining_moves
+                            map->remainingmooves = 10;
+                            break;
                         case SDLK_UP:
                             if(isIcy==1){ //Si le joueur est sur de la glace on ne peut pas changer de direction
                                 break;
@@ -121,6 +125,7 @@ int main(int argc, char* argv[]){
                             if (!collisions(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map)) {
                                 if ( pos_y || wall0.y == 0 || (wallf.y == (NB_WALL_H-1)*SIZE_WALL_H && player.pos->y > SIZE_WALL_H*(NB_WALL_H-1)/2 ) ){
                                     player.pos->y -= VITESSE;
+                                    map->remainingmooves--;
                                 }
                                 else {
                                     decalageMap(map,DOWN);
@@ -145,6 +150,7 @@ int main(int argc, char* argv[]){
                             if (!collisions(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE, player.pos->w, player.pos->h},map)) {
                                 if ( pos_y || wallf.y == (NB_WALL_H-1)*SIZE_WALL_H || (wall0.y == 0 && player.pos->y < SIZE_WALL_H*(NB_WALL_H-1)/2) ){
                                     player.pos->y += VITESSE;
+                                    map->remainingmooves--;
                                 }
                                 else {
                                     decalageMap(map,UP);
@@ -169,6 +175,7 @@ int main(int argc, char* argv[]){
                             if (!collisions(&(SDL_Rect){player.pos->x - VITESSE, player.pos->y, player.pos->w, player.pos->h},map)) {
                                 if ( pos_x || wall0.x == 0 || (wallf.x == (NB_WALL_W-1)*SIZE_WALL_W && player.pos->x > SIZE_WALL_W*(NB_WALL_W-1)/2) ){
                                     player.pos->x -= VITESSE;
+                                    map->remainingmooves--;
                                 }
                                 else {
                                     decalageMap(map,RIGHT);
@@ -193,6 +200,7 @@ int main(int argc, char* argv[]){
                             if (!collisions(&(SDL_Rect){player.pos->x + VITESSE, player.pos->y, player.pos->w, player.pos->h},map)) {
                                 if ( pos_x || wallf.x == (NB_WALL_W-1)*SIZE_WALL_W || (wall0.x == 0 && player.pos->x < SIZE_WALL_W*(NB_WALL_W-1)/2) ){
                                     player.pos->x += VITESSE;
+                                    map->remainingmooves--;
                                 }
                                 else {
                                     decalageMap(map,LEFT);
@@ -227,6 +235,7 @@ int main(int argc, char* argv[]){
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
+                    SDL_Delay(120); //on ralentit le joueur
                     break;
                 case DOWN:
                     if (!collisions(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE, player.pos->w, player.pos->h},map)) {
@@ -247,6 +256,8 @@ int main(int argc, char* argv[]){
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
+                    SDL_Delay(120); //on ralentit le joueur
+
                     break;
                 case LEFT:
                     if (!collisions(&(SDL_Rect){player.pos->x-VITESSE , player.pos->y, player.pos->w, player.pos->h},map)) {
@@ -267,6 +278,7 @@ int main(int argc, char* argv[]){
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
+                    SDL_Delay(120); //on ralentit le joueur
                     break;
                 case RIGHT:
                     if (!collisions(&(SDL_Rect){player.pos->x + VITESSE, player.pos->y, player.pos->w, player.pos->h},map)) {
@@ -287,9 +299,12 @@ int main(int argc, char* argv[]){
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
+                    SDL_Delay(120); //on ralentit le joueur
                     break;
-                // sleep(1);
             }
+        }
+        if(map->remainingmooves==0 && !map->cleared){
+                isIcy=1;
         }
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
