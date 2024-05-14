@@ -222,6 +222,7 @@ int main(int argc, char* argv[]){
             }
         }
         if(directionInitiale!=0){ //Si le joueur est sur de la glace (mis ici car je suis sur )
+             SDL_Delay(120); //on ralentit le joueur
             switch(directionInitiale){
                 case UP: // je commente que ce cas la car les autres sont les mêmes
                     if (!collisions(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map)) { //check de colisions avec les murs comme dans les deplacements classiques
@@ -242,7 +243,6 @@ int main(int argc, char* argv[]){
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
-                    SDL_Delay(120); //on ralentit le joueur
                     break;
                 case DOWN:
                     if (!collisions(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE, player.pos->w, player.pos->h},map)) {
@@ -263,7 +263,6 @@ int main(int argc, char* argv[]){
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
-                    SDL_Delay(120); //on ralentit le joueur
 
                     break;
                 case LEFT:
@@ -285,7 +284,6 @@ int main(int argc, char* argv[]){
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
-                    SDL_Delay(120); //on ralentit le joueur
                     break;
                 case RIGHT:
                     if (!collisions(&(SDL_Rect){player.pos->x + VITESSE, player.pos->y, player.pos->w, player.pos->h},map)) {
@@ -306,7 +304,6 @@ int main(int argc, char* argv[]){
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
-                    SDL_Delay(120); //on ralentit le joueur
                     break;
             }
         }
