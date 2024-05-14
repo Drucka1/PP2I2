@@ -68,13 +68,15 @@ int main(int argc, char* argv[]){
                     SDL_Rect* pos = map->grid[i][j].objects->object->pos;
                     if (player.pos->x == pos->x && player.pos->y == pos->y && openDoor(player.inventory,i,j,map->level)){
                         dimMap(map->grid[i][j].map_tp,&rows,&cols);
-                        map->cleared = true;// j'aime pas trop cette implementation l'idée serait de detecter si le joueur prend la porte vers la salle suivante pas la precedente.
                         pos_x = MAX(0,SIZE_WALL_W*(NB_WALL_W-cols)/2);
                         pos_y = MAX(0,SIZE_WALL_H*(NB_WALL_H-rows)/2);
                         player.pos->x = SIZE_WALL_W+pos_x;
                         player.pos->y = SIZE_WALL_H+pos_y; 
                         char* tmp = map->grid[i][j].map_tp;
                         int numLevel = numLevelFromChar(tmp);
+                        if(numLevel>map->level){
+                            map->cleared = true;
+                        }
                         if (!maps[numLevel-1]) maps[numLevel-1] = FileToMap(tmp,pos_x,pos_y,textures);
                         map = maps[numLevel-1];
                         breakLoop = true;
@@ -109,6 +111,11 @@ int main(int argc, char* argv[]){
                             break;
                         case SDLK_r://reset remaining_moves
                             map->remainingmooves = 10;
+                            break;
+                        case SDLK_t:
+                            if (!map->cleared){
+                                isIcy = 1;
+                            }
                             break;
                         case SDLK_UP:
                             if(isIcy==1){ //Si le joueur est sur de la glace on ne peut pas changer de direction
