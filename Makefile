@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -std=c99 -Wall -Wextra -pedantic -g3 -fsanitize=address
 LDFLAGS = -fsanitize=address
 
-SRCS = src/main.c src/game/init.c src/utils.c src/structs.c src/game/map.c src/game/player.c src/game/game.c src/game/interact.c
+SRCS = src/main.c src/game/init.c src/utils.c src/structs.c src/game/map.c src/game/player.c src/game/game.c src/game/interact.c src/game/rendertext.c
 OBJS = $(patsubst src/%.c,outputs/%.o,$(SRCS))
 DEPS = $(SRCS:.c=.h)
 TARGETS = main main_test

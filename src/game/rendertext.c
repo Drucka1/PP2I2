@@ -14,7 +14,7 @@ void text_display(SDL_Renderer* renderer, TTF_Font* font, const char* text, int 
 
     surface_text = TTF_RenderText_Blended(font, text, color_text);
     if(!surface_text){
-        fprint(stderr, "Erreur lors de la création de surface de texte : %s\n", TTF_GetError());
+        fprintf(stderr, "Erreur lors de la création de surface de texte : %s\n", TTF_GetError());
         return; 
     }
 
@@ -30,6 +30,7 @@ void text_display(SDL_Renderer* renderer, TTF_Font* font, const char* text, int 
     SDL_DestroyTexture(texture_text);
 
 }
+/*
 
 //Générer du texte lettre par lettre 
 
@@ -55,3 +56,6 @@ void display_text_letter_by_letter(SDL_Renderer* renderer, TTF_Font* font, const
     }
 }
 
+
+*/
+//Générer du texte lettre par lettre 
