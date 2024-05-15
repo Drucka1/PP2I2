@@ -58,7 +58,12 @@ int main(int argc, char* argv[]){
     int dark = !true;
     int isIcy =false;
     int directionInitiale = 0;
-    
+
+    ///////ZONE 51 ///////
+
+
+
+    /////////ZONE 51 ///////
     while (running) { 
         //Verfie si le joueur peut changer de niveau/se tp
         bool breakLoop = false;
@@ -103,6 +108,8 @@ int main(int argc, char* argv[]){
                         case SDLK_i:
                             isIcy = !isIcy;
                             break;
+                        
+                        
                         case SDLK_e://Prend la clé dans l'inventaire
                             interact(map,&player);
                             break;
@@ -111,15 +118,17 @@ int main(int argc, char* argv[]){
                             if(isIcy==1){ //Si le joueur est sur de la glace on ne peut pas changer de direction
                                 break;
                             }
-                            if(pushable(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map,UP)){
-                                push(map,&player,UP);
-                            }
-                            else{
-                                direction = 1;offset++;offset %= 4;
+                            if(istype(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map,PUSH)){
+                                if(ispushable(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map,UP)){
+                                    Push(map,&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},UP);
+                                }
+                                else{
+                                    direction = 1;offset++;offset %= 4;
                                 break;
+                                }
                             }
                             // Vérifier si le joueur se deplace vers de la glace
-                            if(isice(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map)){
+                            if(istype(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map,ICE)){
                                 if(isIcy==0){ //Si le joueur ne glissait pas avant on le fait glisser
                                     isIcy=!isIcy;
                                     directionInitiale= UP; //directionInitiale sert a savoir dans quelle direction le joueur glisse
@@ -142,7 +151,7 @@ int main(int argc, char* argv[]){
                             if(isIcy==1){
                                 break;
                             }
-                            if(isice(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE, player.pos->w, player.pos->h},map)){
+                            if(istype(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE, player.pos->w, player.pos->h},map,ICE)){
                                 if(isIcy==0){
                                     isIcy=!isIcy;
                                     directionInitiale = DOWN;
@@ -166,7 +175,10 @@ int main(int argc, char* argv[]){
                             if(isIcy==1){
                                 break;
                             }
-                            if(isice(&(SDL_Rect){player.pos->x - VITESSE, player.pos->y, player.pos->w, player.pos->h},map)){
+                            if (istype(&(SDL_Rect){player.pos->x - VITESSE, player.pos->y, player.pos->w, player.pos->h},map,PUSH)|| istype(&(SDL_Rect){player.pos->x - VITESSE, player.pos->y, player.pos->w, player.pos->h},map,KEY)){
+                                dark=!dark;
+                            }
+                            if(istype(&(SDL_Rect){player.pos->x - VITESSE, player.pos->y, player.pos->w, player.pos->h},map,ICE)){
                                 if(isIcy==0){
                                     isIcy=!isIcy;
                                     directionInitiale = LEFT;
@@ -190,7 +202,7 @@ int main(int argc, char* argv[]){
                             if(isIcy==1){
                                 break;
                             }
-                            if(isice(&(SDL_Rect){player.pos->x + VITESSE, player.pos->y, player.pos->w, player.pos->h},map)){
+                            if(istype(&(SDL_Rect){player.pos->x + VITESSE, player.pos->y, player.pos->w, player.pos->h},map,ICE)){
                                 if(isIcy==0){
                                     isIcy=!isIcy;
                                     directionInitiale = RIGHT;
@@ -231,7 +243,7 @@ int main(int argc, char* argv[]){
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
-                    if(!isice(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map)){ //si le joueur n'est plus sur de la glace on arrete de glisser + directionInitiale=0
+                    if(!istype(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map,ICE)){ //si le joueur n'est plus sur de la glace on arrete de glisser + directionInitiale=0
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
@@ -251,7 +263,7 @@ int main(int argc, char* argv[]){
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
-                    if(!isice(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map)){
+                    if(!istype(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map,ICE)){
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
@@ -271,7 +283,7 @@ int main(int argc, char* argv[]){
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
-                    if(!isice(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map)){
+                    if(!istype(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map,ICE)){
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
@@ -291,7 +303,7 @@ int main(int argc, char* argv[]){
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
-                    if(!isice(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map)){
+                    if(!istype(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map,ICE)){
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }

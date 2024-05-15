@@ -11,6 +11,17 @@ ListObj* listObjAppend(ListObj* list, Object* obj){
     list->next = listObjAppend(list->next,obj);
     return list;
 }
+void printlist(ListObj* list){
+    if(list == NULL) return;
+    printf("%d\n",list->object->type_object);
+    printlist(list->next);
+
+}
+void printobject(Object* obj){
+    if(obj == NULL) return;
+    printf("%d\n",obj->type_object);
+}
+
 Object * getpush(ListObj* list){
     if(list == NULL) return NULL;
     if(list->object->type_object == PUSH) return list->object;
@@ -21,25 +32,31 @@ void Push(Map*map,SDL_Rect*player,int direction){
         for (int j = 0;j<map->cols;j++){
             ListObj* objs = map->grid[i][j].objects;
             if(SDL_HasIntersection(player,objs->object->pos)){
+                Object * apush;
                 switch(direction){
                     case UP:
-                    Object * push = getpush(map->grid[i-1][j].objects);
-                    map->grid[i-2][j].objects = listObjAppend(map->grid[i-2][j].objects,push);
-                    map->grid[i-1][j].objects = listObjRemove(map->grid[i-1][j].objects,push);
-                    break;
+                        apush = getpush(map->grid[i-1][j].objects);
+                        map->grid[i-1][j].objects = listObjRemove(map->grid[i-1][j].objects,apush);
+                        printobject(apush);
+                        freeObject(apush);
+                        //map->grid[i-2][j].numberObjects++;
+                        //map->grid[i-2][j].objects = listObjAppend(map->grid[i-2][j].objects,apush);
+                        break;
                     case DOWN:
-                    Object * push = getpush(map->grid[i+1][j].objects);
-                    map->grid[i+2][j].objects = listObjAppend(map->grid[i+2][j].objects,push);
-                    map->grid[i+1][j].objects = listObjRemove(map->grid[i+1][j].objects,push);
-                    break;
+                        apush = getpush(map->grid[i+1][j].objects);
+                        map->grid[i+2][j].objects = listObjAppend(map->grid[i+2][j].objects,apush);
+                        map->grid[i+1][j].objects = listObjRemove(map->grid[i+1][j].objects,apush);
+                        break;
                     case RIGHT:
-                    map->grid[i][j+2].objects = listObjAppend(map->grid[i][j+2].objects,);
-                    map->grid[i][j+1].objects = listObjRemove(map->grid[i][j+1].objects,push);
-                    break;
+                        apush = getpush(map->grid[i][j+1].objects);
+                        map->grid[i][j+2].objects = listObjAppend(map->grid[i][j+2].objects,apush);
+                        map->grid[i][j+1].objects = listObjRemove(map->grid[i][j+1].objects,apush);
+                        break;
                     case LEFT:
-                    map->grid[i][j-2].objects = listObjAppend(map->grid[i][j-2].objects,PUSH);
-                    map->grid[i][j-1].objects = listObjRemove(map->grid[i][j].objects,PUSH);
-                    break;
+                        apush = getpush(map->grid[i][j-1].objects);
+                        map->grid[i][j-2].objects = listObjAppend(map->grid[i][j-2].objects,apush);
+                        map->grid[i][j-1].objects = listObjRemove(map->grid[i][j-1].objects,apush);
+                        break;
                 }
             }
         }
@@ -68,6 +85,12 @@ ListObj* listObjRemoveWall(ListObj* list) {
     return list;
     
 }
+
+// void exchangeObject(Cell* case1, ListObj* case2, Object* obj) {     
+//     
+//
+// }
+
 
 void freeListObj(ListObj *list) {
     if (list == NULL) return;
