@@ -59,8 +59,8 @@ void Push(Map*map,SDL_Rect*player,int direction,int posx,int posy){
                         nouvpos->y = i*SIZE_WALL_H+posy;
                         exchangeObject(&map->grid[i][j-1],&map->grid[i][j-2],nouvpos,apush);
                         break;
-                free(nouvpos);
                 }
+                free(nouvpos);
             }
         }
     }
