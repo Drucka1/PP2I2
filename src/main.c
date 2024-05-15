@@ -118,9 +118,9 @@ int main(int argc, char* argv[]){
                             if(isIcy==1){ //Si le joueur est sur de la glace on ne peut pas changer de direction
                                 break;
                             }
-                            if(istype(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map,PUSH)){
+                            if(istype(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map,PUSH)){//Verification si le joueur peut pousser un objet
                                 if(ispushable(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map,UP)){
-                                    Push(map,&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},UP);
+                                    Push(map,&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},UP,pos_x,pos_y);
                                 }
                                 else{
                                     direction = 1;offset++;offset %= 4;
@@ -151,6 +151,15 @@ int main(int argc, char* argv[]){
                             if(isIcy==1){
                                 break;
                             }
+                            if(istype(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE, player.pos->w, player.pos->h},map,PUSH)){
+                                if(ispushable(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map,DOWN)){
+                                    Push(map,&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},DOWN,pos_x,pos_y);
+                                }
+                                else{
+                                    direction = 0;offset++;offset %= 4;
+                                break;
+                                }
+                            }
                             if(istype(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE, player.pos->w, player.pos->h},map,ICE)){
                                 if(isIcy==0){
                                     isIcy=!isIcy;
@@ -175,6 +184,18 @@ int main(int argc, char* argv[]){
                             if(isIcy==1){
                                 break;
                             }
+                            if(istype(&(SDL_Rect){player.pos->x - VITESSE, player.pos->y, player.pos->w, player.pos->h},map,PUSH)){
+                                if(ispushable(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map,LEFT)){
+                                    Push(map,&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},LEFT,pos_x,pos_y);
+                                }
+                                else{
+                                    direction = 2;offset++;offset %= 4;
+                                break;
+                                }
+                            }
+
+
+
                             if (istype(&(SDL_Rect){player.pos->x - VITESSE, player.pos->y, player.pos->w, player.pos->h},map,PUSH)|| istype(&(SDL_Rect){player.pos->x - VITESSE, player.pos->y, player.pos->w, player.pos->h},map,KEY)){
                                 dark=!dark;
                             }
@@ -202,6 +223,16 @@ int main(int argc, char* argv[]){
                             if(isIcy==1){
                                 break;
                             }
+                            if(istype(&(SDL_Rect){player.pos->x + VITESSE, player.pos->y, player.pos->w, player.pos->h},map,PUSH)){
+                                if(ispushable(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map,RIGHT)){
+                                    Push(map,&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},RIGHT,pos_x,pos_y);
+                                }
+                                else{
+                                    direction = 3;offset++;offset %= 4;
+                                break;
+                                }
+                            }
+
                             if(istype(&(SDL_Rect){player.pos->x + VITESSE, player.pos->y, player.pos->w, player.pos->h},map,ICE)){
                                 if(isIcy==0){
                                     isIcy=!isIcy;

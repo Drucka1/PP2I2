@@ -54,12 +54,14 @@ typedef struct {
 ListObj* listObjAppend(ListObj* list, Object* obj);
 ListObj* listObjRemove(ListObj* list, Object* obj);
 ListObj* listObjRemoveWall(ListObj* list);
+Object* getObject(ListObj* list, int type);
 void freeListObj(ListObj* list);
-void Push(Map*map,SDL_Rect*player,int direction);
+void Push(Map*map,SDL_Rect*player,int direction,int positionx,int positiony);
 void printlist(ListObj* list);
 void printobject(Object* obj);
 void freeObject(Object *object);
 void freeCell(Cell *cell);
+void exchangeObject(Cell *case1, Cell *case2,Tuple* nouvpos, Object* obj);
 void freeMap(Map *map);
 void freeMaps(Map** maps);
 void freeEntity(Entity *entity);

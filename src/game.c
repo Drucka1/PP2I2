@@ -104,22 +104,22 @@ SDL_bool ispushable(SDL_Rect* player,Map* map,int direction){
                 if (SDL_HasIntersection(player,objs->object->pos)){
                     switch(direction){
                         case UP:
-                        if(map->grid[i-2][j].steppable){
+                        if(map->grid[i-2][j].steppable && !contain(map->grid[i-2][j].objects,PUSH)){
                             return SDL_TRUE;
                         }
                         break;
                         case DOWN:
-                        if(map->grid[i+2][j].steppable){
+                        if(map->grid[i+2][j].steppable && !contain(map->grid[i+2][j].objects,PUSH)){
                             return SDL_TRUE;
                         }
                         break;
                         case RIGHT:
-                        if(map->grid[i][j+2].steppable){
+                        if(map->grid[i][j+2].steppable && !contain(map->grid[i][j+2].objects,PUSH)){
                             return SDL_TRUE;
                         }
                         break;
                         case LEFT:
-                        if(map->grid[i][j-2].steppable){
+                        if(map->grid[i][j-2].steppable && !contain(map->grid[i][j-2].objects,PUSH)){
                             return SDL_TRUE;
                         }
                         break;
