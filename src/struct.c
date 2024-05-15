@@ -11,6 +11,40 @@ ListObj* listObjAppend(ListObj* list, Object* obj){
     list->next = listObjAppend(list->next,obj);
     return list;
 }
+Object * getpush(ListObj* list){
+    if(list == NULL) return NULL;
+    if(list->object->type_object == PUSH) return list->object;
+    return getpush(list->next);
+}
+void Push(Map*map,SDL_Rect*player,int direction){
+    for (int i = 0;i<map->rows;i++){
+        for (int j = 0;j<map->cols;j++){
+            ListObj* objs = map->grid[i][j].objects;
+            if(SDL_HasIntersection(player,objs->object->pos)){
+                switch(direction){
+                    case UP:
+                    Object * push = getpush(map->grid[i-1][j].objects);
+                    map->grid[i-2][j].objects = listObjAppend(map->grid[i-2][j].objects,push);
+                    map->grid[i-1][j].objects = listObjRemove(map->grid[i-1][j].objects,push);
+                    break;
+                    case DOWN:
+                    Object * push = getpush(map->grid[i+1][j].objects);
+                    map->grid[i+2][j].objects = listObjAppend(map->grid[i+2][j].objects,push);
+                    map->grid[i+1][j].objects = listObjRemove(map->grid[i+1][j].objects,push);
+                    break;
+                    case RIGHT:
+                    map->grid[i][j+2].objects = listObjAppend(map->grid[i][j+2].objects,);
+                    map->grid[i][j+1].objects = listObjRemove(map->grid[i][j+1].objects,push);
+                    break;
+                    case LEFT:
+                    map->grid[i][j-2].objects = listObjAppend(map->grid[i][j-2].objects,PUSH);
+                    map->grid[i][j-1].objects = listObjRemove(map->grid[i][j].objects,PUSH);
+                    break;
+                }
+            }
+        }
+    }
+}
 
 ListObj* listObjRemove(ListObj* list, Object* obj){
     if (list == NULL) return NULL;

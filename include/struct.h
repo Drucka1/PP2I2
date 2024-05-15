@@ -55,6 +55,7 @@ ListObj* listObjAppend(ListObj* list, Object* obj);
 ListObj* listObjRemove(ListObj* list, Object* obj);
 ListObj* listObjRemoveWall(ListObj* list);
 void freeListObj(ListObj* list);
+void push(Map*map,SDL_Rect*player,int direction);
 
 void freeObject(Object *object);
 void freeCell(Cell *cell);

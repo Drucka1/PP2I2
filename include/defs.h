@@ -12,7 +12,7 @@
 #define WINDOW_HEIGHT 900
 #define WINDOW_WIDTH 900
 #define NB_LEVEL 2
-#define NB_SPRITES 6
+#define NB_SPRITES 7
 #define NB_WALL_W 18
 #define NB_WALL_H 18
 #define SIZE_WALL_W (WINDOW_WIDTH/NB_WALL_W)
@@ -32,5 +32,6 @@
 #define KEY 3
 #define LEVER 4
 #define ICE 5
+#define PUSH 6
 
 #endif

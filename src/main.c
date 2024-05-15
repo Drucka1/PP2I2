@@ -23,6 +23,7 @@ int main(int argc, char* argv[]){
     textures[KEY] = load_sprite(renderer,"assets/key.png");
     textures[LEVER] = load_sprite(renderer,"assets/lever.png");
     textures[ICE] = load_sprite(renderer,"assets/ice.png");
+    textures[PUSH]=load_sprite(renderer,"assets/push.png");
 
     Map** maps = malloc(sizeof(Map*)*NB_LEVEL);
     for(int i = 1;i<NB_LEVEL;i++){
@@ -108,6 +109,13 @@ int main(int argc, char* argv[]){
 
                         case SDLK_UP:
                             if(isIcy==1){ //Si le joueur est sur de la glace on ne peut pas changer de direction
+                                break;
+                            }
+                            if(pushable(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map,UP)){
+                                push(map,&player,UP);
+                            }
+                            else{
+                                direction = 1;offset++;offset %= 4;
                                 break;
                             }
                             // Vérifier si le joueur se deplace vers de la glace
