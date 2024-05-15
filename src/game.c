@@ -138,7 +138,7 @@ void interact(Map* map, Entity* player){
                     return;
                 }
                 if (objs->object->type_object == LEVER && SDL_HasIntersection(player->pos,objs->object->pos)){
-                    map->grid[objs->object->door->x][objs->object->door->y].steppable = true;
+                    map->grid[objs->object->door->x][objs->object->door->y].steppable = !map->grid[objs->object->door->x][objs->object->door->y].steppable ;
                     map->grid[objs->object->door->x][objs->object->door->y].objects = listObjRemoveWall(map->grid[objs->object->door->x][objs->object->door->y].objects);
                     return;
                 }

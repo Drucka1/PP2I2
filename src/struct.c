@@ -24,16 +24,31 @@ ListObj* listObjRemove(ListObj* list, Object* obj){
 }
 
 ListObj* listObjRemoveWall(ListObj* list) {
-    if (list == NULL) return NULL;
+    if (list == NULL){
+    return NULL;
+    }
+    ListObj* wall = NULL;
+    ListObj* ground = NULL;
+    ListObj* temp = list;
+    while (temp != NULL) {
+        if (temp->object->type_object == WALL) {
+            wall = temp;
+        } else if (temp->object->type_object == GROUND) {
+            ground = temp;
+        }
+        
+        temp = temp->next;
+    }
+
+    if (wall != NULL && ground != NULL) {
+        Object* temp = wall->object;
+        wall->object = ground->object;
+        ground->object = temp;
+    }
     
-    if (list->object->type_object == WALL) {
-        freeListObj(list);             
-        return NULL;
-    } 
-    list->next = listObjRemoveWall(list->next);  
     return list;
-    
 }
+    
 
 void freeListObj(ListObj *list) {
     if (list == NULL) return;
