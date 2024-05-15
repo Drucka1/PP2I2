@@ -36,10 +36,12 @@ ListObj* listObjRemoveWall(ListObj* list) {
 }
 
 void freeListObj(ListObj *list) {
-    if (list == NULL) return;
-    freeObject(list->object);
-    freeListObj(list->next);
-    free(list);
+    if (list != NULL) {
+        freeObject(list->object);
+        freeListObj(list->next);
+        free(list);
+    }
+    
 }
 
 void freeObject(Object *object) {
@@ -82,4 +84,11 @@ void freeSprites(SDL_Texture** textures){
         SDL_DestroyTexture(textures[i]);
     }
     free(textures);
+}
+
+void freePlayer(Entity* player){
+    freeListObj(player->inventory);
+    free(player->pos);
+    SDL_DestroyTexture(player->texture);
+    free(player);
 }

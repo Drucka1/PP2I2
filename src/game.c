@@ -45,16 +45,16 @@ void drawPlayer(SDL_Renderer* renderer,Entity* player,SDL_Rect* spriteRect){
     }
 }
 
-void drawTransparency(SDL_Renderer* renderer,Entity player){ 
+void drawTransparency(SDL_Renderer* renderer,Entity* player){ 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 225);
-    SDL_RenderFillRect(renderer, &(SDL_Rect){player.pos->x -2*SIZE_WALL_H , player.pos->y -2*SIZE_WALL_H, SIZE_WALL_W,  SIZE_WALL_H});
-    SDL_RenderFillRect(renderer, &(SDL_Rect){player.pos->x +2*SIZE_WALL_H , player.pos->y -2*SIZE_WALL_H, SIZE_WALL_W,  SIZE_WALL_H});
-    SDL_RenderFillRect(renderer, &(SDL_Rect){player.pos->x -2*SIZE_WALL_H , player.pos->y +2*SIZE_WALL_H, SIZE_WALL_W,  SIZE_WALL_H});
-    SDL_RenderFillRect(renderer, &(SDL_Rect){player.pos->x +2*SIZE_WALL_H , player.pos->y +2*SIZE_WALL_H, SIZE_WALL_W,  SIZE_WALL_H});
-    SDL_RenderFillRect(renderer, &(SDL_Rect){0, 0, WINDOW_WIDTH,  player.pos->y - 2*SIZE_WALL_H});
-    SDL_RenderFillRect(renderer, &(SDL_Rect){0, player.pos->y + 3*SIZE_WALL_H, WINDOW_WIDTH,  WINDOW_HEIGHT});
-    SDL_RenderFillRect(renderer, &(SDL_Rect){0, player.pos->y - 2*SIZE_WALL_H, player.pos->x - 2*SIZE_WALL_W,5*SIZE_WALL_H});
-    SDL_RenderFillRect(renderer, &(SDL_Rect){player.pos->x + 3*SIZE_WALL_W, player.pos->y - 2*SIZE_WALL_H, WINDOW_WIDTH -  player.pos->x + 5*SIZE_WALL_W ,5*SIZE_WALL_H});
+    SDL_RenderFillRect(renderer, &(SDL_Rect){player->pos->x -2*SIZE_WALL_H , player->pos->y -2*SIZE_WALL_H, SIZE_WALL_W,  SIZE_WALL_H});
+    SDL_RenderFillRect(renderer, &(SDL_Rect){player->pos->x +2*SIZE_WALL_H , player->pos->y -2*SIZE_WALL_H, SIZE_WALL_W,  SIZE_WALL_H});
+    SDL_RenderFillRect(renderer, &(SDL_Rect){player->pos->x -2*SIZE_WALL_H , player->pos->y +2*SIZE_WALL_H, SIZE_WALL_W,  SIZE_WALL_H});
+    SDL_RenderFillRect(renderer, &(SDL_Rect){player->pos->x +2*SIZE_WALL_H , player->pos->y +2*SIZE_WALL_H, SIZE_WALL_W,  SIZE_WALL_H});
+    SDL_RenderFillRect(renderer, &(SDL_Rect){0, 0, WINDOW_WIDTH,  player->pos->y - 2*SIZE_WALL_H});
+    SDL_RenderFillRect(renderer, &(SDL_Rect){0, player->pos->y + 3*SIZE_WALL_H, WINDOW_WIDTH,  WINDOW_HEIGHT});
+    SDL_RenderFillRect(renderer, &(SDL_Rect){0, player->pos->y - 2*SIZE_WALL_H, player->pos->x - 2*SIZE_WALL_W,5*SIZE_WALL_H});
+    SDL_RenderFillRect(renderer, &(SDL_Rect){player->pos->x + 3*SIZE_WALL_W, player->pos->y - 2*SIZE_WALL_H, WINDOW_WIDTH -  player->pos->x + 5*SIZE_WALL_W ,5*SIZE_WALL_H});
 }
 
 SDL_bool collisions(SDL_Rect* player, Map* map){
@@ -146,4 +146,22 @@ void interact(Map* map, Entity* player){
             }
         }
     }
+}
+
+void savePlayerStatus(Entity* player,int current_level){
+    char filename[70] = "assets/level/save/playerStatus.txt";
+    FILE* file = fopen(filename, "w");
+    if (file == NULL) {
+        printf("Impossible d'ouvrir le fichier %s\n", filename);
+        return;
+    }
+    fprintf(file, "%d\n(%d,%d,%d,%d)\n",current_level,player->pos->x,player->pos->y,player->pos->h,player->pos->w);
+
+    ListObj* objs = player->inventory;
+    while (objs != NULL){
+        fprintf(file, "%d(%d,%d,%d)\n",objs->object->type_object,objs->object->door->level,objs->object->door->x,objs->object->door->y);
+        objs = objs->next;
+    }
+
+    fclose(file);
 }

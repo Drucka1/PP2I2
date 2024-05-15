@@ -62,5 +62,6 @@ void freeMap(Map *map);
 void freeMaps(Map** maps);
 void freeEntity(Entity *entity);
 void freeSprites(SDL_Texture** textures);
+void freePlayer(Entity* player);
 
 #endif

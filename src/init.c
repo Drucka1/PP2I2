@@ -1,8 +1,18 @@
 #include "../include/init.h"
 
 int numLevelFromChar(char* filename){
-    int level;
-    sscanf(filename,"assets/level%d.txt",&level);
+    int level = -1; // valeur par défaut
+    char* lastSlash = strrchr(filename, '/');
+    if (lastSlash != NULL) {
+        sscanf(lastSlash, "/level%d.txt", &level);
+    } else {
+        sscanf(filename, "level%d.txt", &level);
+    }
+
+    if (level == -1) {
+        printf("Erreur lors de la lecture du niveau à partir du nom du fichier\n");
+    }
+
     return level;
 }
 
@@ -49,7 +59,7 @@ Map* FileToMap(char *nomFichier,int pos_x, int pos_y, SDL_Texture** textures){
         else if(strcmp(buffer,"|")==0){
             j++;         
         }
-        else if (atoi(buffer) == 0 && strlen(buffer) > 10){ //detection de tp IG
+        else if (atoi(buffer) == 0 && strlen(buffer) > 7){ //detection de tp IG
             grid[i][j].map_tp = malloc(sizeof(char)*(strlen(buffer)+1));
             strcpy(grid[i][j].map_tp,buffer);
         } 
@@ -171,6 +181,40 @@ Map* FileToMap(char *nomFichier,int pos_x, int pos_y, SDL_Texture** textures){
     return map;
 }
 
+
+void MapToFile(Map* map) {
+    char filename[70] = "assets/level/save/level";
+    char lvl[10];
+    sprintf(lvl, "%d", map->level);
+    strcat(filename,lvl);
+    strcat(filename,".txt");
+
+    FILE* file = fopen(filename, "w");
+    if (file == NULL) {
+        printf("Impossible d'ouvrir le fichier %s\n", filename);
+        return;
+    }
+
+    fprintf(file, "%d %d\n", map->rows, map->cols);
+    for (int i = 0; i < map->rows; i++) {
+        for (int j = 0; j < map->cols; j++) {
+            ListObj* objs = map->grid[i][j].objects;
+            while (objs != NULL){
+                fprintf(file, "%d",objs->object->type_object);
+                if  (objs->object->door) fprintf(file, "(%d,%d)",objs->object->door->x,objs->object->door->y);
+                fprintf(file, " ");
+                objs = objs->next;
+            }
+
+            if (map->grid[i][j].map_tp) fprintf(file, "%s ", map->grid[i][j].map_tp);
+
+            if (j == map->cols-1) fprintf(file, "/\n"); 
+            else fprintf(file, "| ");
+        }
+    }
+    fclose(file);
+}
+
 void dimMap(char* nomFichier, int* rows, int* cols){
     FILE *fichier = fopen(nomFichier, "r");
     fscanf(fichier, "%d %d", rows, cols);
@@ -191,4 +235,34 @@ SDL_Texture* load_sprite(SDL_Renderer* renderer, char chemin[]){
     }
     SDL_FreeSurface(spriteSurface);
     return spriteTexture;
+}
+
+Entity* getPlayerStatus(int* current_level){
+    char filename[70] = "assets/level/save/playerStatus.txt";
+    FILE* fichier = fopen(filename, "r");
+
+    fscanf(fichier, "%d\n", current_level);
+    SDL_Rect* pos = malloc(sizeof(SDL_Rect));
+    fscanf(fichier, "(%d,%d,%d,%d)\n",&pos->x,&pos->y,&pos->h,&pos->w);
+
+    int type_obj,level,x,y;
+    ListObj* inventory = NULL;
+
+    while (fscanf(fichier, "%d(%d,%d,%d)\n", &type_obj,&level,&x,&y) != EOF){
+        Object* obj = malloc(sizeof(Object));
+        obj->type_object = type_obj;
+        obj->door = malloc(sizeof(Triple));
+        obj->door->level = level;
+        obj->door->x = x;
+        obj->door->y = y;
+        obj->pos =NULL;
+        inventory = listObjAppend(inventory,obj);
+    }
+
+    fclose(fichier);
+
+    Entity* player = malloc(sizeof(Entity));
+    player->pos = pos;
+    player->inventory = inventory;
+    return player;
 }
