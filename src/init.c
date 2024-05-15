@@ -143,6 +143,7 @@ Map* FileToMap(char *nomFichier,int pos_x, int pos_y, SDL_Texture** textures){
 
             grid[i][j].objects = listObjAppend(grid[i][j].objects,lever);
         }
+        
         else if (sscanf(buffer,"3(%d,%d)",&p,&q) == 2){
             grid[i][j].steppable &= true;
             grid[i][j].numberObjects++;
@@ -164,6 +165,28 @@ Map* FileToMap(char *nomFichier,int pos_x, int pos_y, SDL_Texture** textures){
             key->door->y = q;
 
             grid[i][j].objects = listObjAppend(grid[i][j].objects,key);
+        }
+    else if (sscanf(buffer,"6(%d,%d)",&p,&q) == 2){
+            grid[i][j].steppable &= true;
+            grid[i][j].numberObjects++;
+
+            SDL_Rect* pos = malloc(sizeof(SDL_Rect));
+            pos->x = j*SIZE_WALL_W+pos_x;
+            pos->y = i*SIZE_WALL_H+pos_y;
+            pos->w = SIZE_WALL_W;
+            pos->h = SIZE_WALL_H;
+
+            Object* tp = malloc(sizeof(Object));
+            tp->type_object = TELEPORTER;
+            tp->texture = leverSprite;
+            tp->pos = pos;
+            
+            tp->door = malloc(sizeof(Triple));
+            tp->door->level = level;
+            tp->door->x = p;
+            tp->door->y = q;
+
+            grid[i][j].objects = listObjAppend(grid[i][j].objects,tp);
         }
     }
     fclose(fichier);

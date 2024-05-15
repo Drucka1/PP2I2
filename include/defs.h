@@ -32,5 +32,6 @@
 #define KEY 3
 #define LEVER 4
 #define ICE 5
+#define TELEPORTER 6
 
 #endif

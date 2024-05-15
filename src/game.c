@@ -71,12 +71,12 @@ SDL_bool collisions(SDL_Rect* player, Map* map){
     }
     return SDL_FALSE;
 }
-SDL_bool isice(SDL_Rect* player,Map* map){
+SDL_bool istype(SDL_Rect* player,Map* map,int type){
     for (int i = 0;i<map->rows;i++){
         for (int j = 0;j<map->cols;j++){
             ListObj* objs = map->grid[i][j].objects;
             while (objs != NULL){
-                if (objs->object->type_object == ICE && SDL_HasIntersection(player,objs->object->pos)){
+                if (objs->object->type_object == type && SDL_HasIntersection(player,objs->object->pos)){
                     return SDL_TRUE;
                 }
                 objs = objs->next;
@@ -140,6 +140,11 @@ void interact(Map* map, Entity* player){
                 if (objs->object->type_object == LEVER && SDL_HasIntersection(player->pos,objs->object->pos)){
                     map->grid[objs->object->door->x][objs->object->door->y].steppable = true;
                     map->grid[objs->object->door->x][objs->object->door->y].objects = listObjRemoveWall(map->grid[objs->object->door->x][objs->object->door->y].objects);
+                    return;
+                }
+                if (objs->object->type_object == TELEPORTER && SDL_HasIntersection(player->pos,objs->object->pos)){
+                    player->pos->x = objs->object->door->x*SIZE_WALL_W;
+                    player->pos->y = objs->object->door->y*SIZE_WALL_H;
                     return;
                 }
                 objs = objs->next;
