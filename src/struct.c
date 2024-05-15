@@ -41,7 +41,6 @@ void freeListObj(ListObj *list) {
         freeListObj(list->next);
         free(list);
     }
-    
 }
 
 void freeObject(Object *object) {
@@ -63,13 +62,6 @@ void freeMap(Map *map) {
     }
     free(map->grid);
     free(map);
-}
-
-void freeMaps(Map** maps){
-    for(int i = 0;i<NB_LEVEL;i++){
-        freeMap(maps[i]);
-    }
-    free(maps);
 }
 
 void freeEntity(Entity *entity) {

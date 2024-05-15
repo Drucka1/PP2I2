@@ -21,9 +21,6 @@ typedef struct {
 
     //Utilisé seulement si l'objet est une clé
     Triple* door;
-
-    // Action éventuelle réalisée par l'objet
-    void (*action)(void);
 } Object;
 
 typedef struct _ListObj{

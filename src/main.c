@@ -35,7 +35,6 @@ int main(){
     sprintf(lvl,"%d",current_level);
     strcat(path_level,lvl);
     strcat(path_level,".txt");
-    printf("%s",path_level);
     if(access(path_level, F_OK) != 0) {
         strcpy(path_level, "assets/level/default/level");
         strcat(path_level,lvl);
@@ -105,6 +104,7 @@ int main(){
                         pos_y = MAX(0,SIZE_WALL_H*(NB_WALL_H-rows)/2);
                         player->pos->x = SIZE_WALL_W+pos_x;
                         player->pos->y = SIZE_WALL_H+pos_y; 
+                        freeMap(map);
                         map = FileToMap(path_level,pos_x,pos_y,textures);
                         breakLoop = true;
                     }
