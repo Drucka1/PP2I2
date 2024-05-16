@@ -104,6 +104,7 @@ SDL_bool ispushable(SDL_Rect* player,Map* map,int direction){
                 if (SDL_HasIntersection(player,objs->object->pos)){
                     switch(direction){
                         case UP:
+                        //Si la case est steppable et qu'il n'y a pas d'autre block poussable
                         if(map->grid[i-2][j].steppable && !contain(map->grid[i-2][j].objects,PUSH)){
                             return SDL_TRUE;
                         }

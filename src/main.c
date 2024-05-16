@@ -58,7 +58,7 @@ int main(int argc, char* argv[]){
     int dark = !true;
     int isIcy =false;
     int directionInitiale = 0;
-
+    int tempcont= 0; //variable qui sert à pousser l'objet jusqu'au bout
     ///////ZONE 51 ///////
 
 
@@ -118,9 +118,17 @@ int main(int argc, char* argv[]){
                             if(isIcy==1){ //Si le joueur est sur de la glace on ne peut pas changer de direction
                                 break;
                             }
-                            if(istype(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map,PUSH)){//Verification si le joueur peut pousser un objet
-                                if(ispushable(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map,UP)){
-                                    Push(map,&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},UP,pos_x,pos_y);
+                            //Verification si le joueur va vers un objet à pousser(istype dans game.c)
+                            if(istype(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map,PUSH)){
+                                //On verifie si l'objet est poussable dans la direction du joueur(ici UP,ispushable dans game.c)
+                                if (ispushable(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h}, map, UP)) {
+                                    //On va faire un do-while pour pousser l'objet puis verifier si il est sur de la glace pour le pousser jusqu'aux bout 
+                                    do {
+                                        //On appelle la fonction Push qui va pousser l'objet(voir struct.c je sais pas si la fonction doit etre la mais bon)
+                                        Push(map, &(SDL_Rect){player.pos->x, player.pos->y - VITESSE*tempcont, player.pos->w, player.pos->h}, UP, pos_x, pos_y);
+                                        tempcont++;
+                                    } while (ispushable(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE*tempcont, player.pos->w, player.pos->h}, map, UP) && istype(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE*(tempcont+1), player.pos->w, player.pos->h}, map, ICE));
+                                    tempcont = 0;
                                 }
                                 else{
                                     direction = 1;offset++;offset %= 4;
@@ -153,7 +161,11 @@ int main(int argc, char* argv[]){
                             }
                             if(istype(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE, player.pos->w, player.pos->h},map,PUSH)){
                                 if(ispushable(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map,DOWN)){
-                                    Push(map,&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},DOWN,pos_x,pos_y);
+                                    do {
+                                        Push(map, &(SDL_Rect){player.pos->x, player.pos->y +VITESSE*tempcont, player.pos->w, player.pos->h}, DOWN, pos_x, pos_y);
+                                        tempcont++;
+                                    } while (ispushable(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE*tempcont, player.pos->w, player.pos->h}, map, DOWN) && istype(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE*(tempcont+1), player.pos->w, player.pos->h}, map, ICE));
+                                    tempcont = 0;
                                 }
                                 else{
                                     direction = 0;offset++;offset %= 4;
@@ -186,7 +198,11 @@ int main(int argc, char* argv[]){
                             }
                             if(istype(&(SDL_Rect){player.pos->x - VITESSE, player.pos->y, player.pos->w, player.pos->h},map,PUSH)){
                                 if(ispushable(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map,LEFT)){
-                                    Push(map,&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},LEFT,pos_x,pos_y);
+                                    do {
+                                        Push(map, &(SDL_Rect){player.pos->x - VITESSE*tempcont, player.pos->y, player.pos->w, player.pos->h}, LEFT, pos_x, pos_y);
+                                        tempcont++;
+                                    } while (ispushable(&(SDL_Rect){player.pos->x - VITESSE*tempcont, player.pos->y, player.pos->w, player.pos->h}, map, LEFT) && istype(&(SDL_Rect){player.pos->x - VITESSE*(tempcont+1), player.pos->y, player.pos->w, player.pos->h}, map, ICE));
+                                    tempcont = 0;
                                 }
                                 else{
                                     direction = 2;offset++;offset %= 4;
@@ -225,7 +241,11 @@ int main(int argc, char* argv[]){
                             }
                             if(istype(&(SDL_Rect){player.pos->x + VITESSE, player.pos->y, player.pos->w, player.pos->h},map,PUSH)){
                                 if(ispushable(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map,RIGHT)){
-                                    Push(map,&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},RIGHT,pos_x,pos_y);
+                                    do {
+                                        Push(map, &(SDL_Rect){player.pos->x + VITESSE*tempcont, player.pos->y, player.pos->w, player.pos->h}, RIGHT, pos_x, pos_y);
+                                        tempcont++;
+                                    } while (ispushable(&(SDL_Rect){player.pos->x + VITESSE*tempcont, player.pos->y, player.pos->w, player.pos->h}, map, RIGHT) && istype(&(SDL_Rect){player.pos->x + VITESSE*(tempcont+1), player.pos->y, player.pos->w, player.pos->h}, map, ICE));
+                                    tempcont = 0;
                                 }
                                 else{
                                     direction = 3;offset++;offset %= 4;
@@ -260,7 +280,7 @@ int main(int argc, char* argv[]){
         if(directionInitiale!=0){ //Si le joueur est sur de la glace (mis ici car je suis sur )
             switch(directionInitiale){
                 case UP: // je commente que ce cas la car les autres sont les mêmes
-                    if (!collisions(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map)) { //check de colisions avec les murs comme dans les deplacements classiques
+                    if (!collisions(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map)&&!istype(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map,PUSH)) { //check de colisions avec les murs comme dans les deplacements classiques
                         if ( pos_y || wall0.y == 0 || (wallf.y == (NB_WALL_H-1)*SIZE_WALL_H && player.pos->y > SIZE_WALL_H*(NB_WALL_H-1)/2 ) ){
                             player.pos->y -= VITESSE;
                         }
@@ -280,7 +300,7 @@ int main(int argc, char* argv[]){
                     }
                     break;
                 case DOWN:
-                    if (!collisions(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE, player.pos->w, player.pos->h},map)) {
+                    if (!collisions(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE, player.pos->w, player.pos->h},map)&&!istype(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE, player.pos->w, player.pos->h},map,PUSH)){
                         if ( pos_y || wallf.y == (NB_WALL_H-1)*SIZE_WALL_H || (wall0.y == 0 && player.pos->y < SIZE_WALL_H*(NB_WALL_H-1)/2) ){
                             player.pos->y += VITESSE;
                         }
@@ -300,7 +320,7 @@ int main(int argc, char* argv[]){
                     }
                     break;
                 case LEFT:
-                    if (!collisions(&(SDL_Rect){player.pos->x-VITESSE , player.pos->y, player.pos->w, player.pos->h},map)) {
+                    if (!collisions(&(SDL_Rect){player.pos->x-VITESSE , player.pos->y, player.pos->w, player.pos->h},map)&&!istype(&(SDL_Rect){player.pos->x-VITESSE , player.pos->y, player.pos->w, player.pos->h},map,PUSH)){
                         if ( pos_x || wall0.x == 0 || (wallf.x == (NB_WALL_W-1)*SIZE_WALL_W && player.pos->x > SIZE_WALL_W*(NB_WALL_W-1)/2) ){
                             player.pos->x -= VITESSE;
                         }
@@ -320,7 +340,7 @@ int main(int argc, char* argv[]){
                     }
                     break;
                 case RIGHT:
-                    if (!collisions(&(SDL_Rect){player.pos->x + VITESSE, player.pos->y, player.pos->w, player.pos->h},map)) {
+                    if (!collisions(&(SDL_Rect){player.pos->x + VITESSE, player.pos->y, player.pos->w, player.pos->h},map)&&!istype(&(SDL_Rect){player.pos->x + VITESSE, player.pos->y, player.pos->w, player.pos->h},map,PUSH)){
                         if ( pos_x || wallf.x == (NB_WALL_W-1)*SIZE_WALL_W || (wall0.x == 0 && player.pos->x < SIZE_WALL_W*(NB_WALL_W-1)/2) ){
                             player.pos->x += VITESSE;
                         }
