@@ -14,7 +14,9 @@ void decalageMap(Map* map,int decalage);
 void decalageMur(Tuple* mur,int decalage);
 SDL_bool openDoor(ListObj* objs,int i, int j, int level);
 void interact(Map* map, Entity* player);
-SDL_bool isice(SDL_Rect* player,Map* map);
+SDL_bool istype(SDL_Rect* player,Map* map,int type);
+SDL_bool ispushable(SDL_Rect* player,Map* map,int direction);
+SDL_bool contain(ListObj* objs, int type);
 void savePlayerStatus(Entity* player,int current_level);
 
 #endif

@@ -11,6 +11,60 @@ ListObj* listObjAppend(ListObj* list, Object* obj){
     list->next = listObjAppend(list->next,obj);
     return list;
 }
+void printlist(ListObj* list){
+    if(list == NULL) return;
+    printf("%d\n",list->object->type_object);
+    printlist(list->next);
+
+}
+void printobject(Object* obj){
+    if(obj == NULL) return;
+    printf("%d\n",obj->type_object);
+}
+
+Object * getObject(ListObj* list,int type){
+    if(list == NULL) return NULL;
+    if(list->object->type_object == type) return list->object;
+    return getObject(list->next,type);
+}
+void Push(Map*map,SDL_Rect*player,int direction,int posx,int posy){
+    for (int i = 0;i<map->rows;i++){
+        for (int j = 0;j<map->cols;j++){
+            ListObj* objs = map->grid[i][j].objects;
+            if(SDL_HasIntersection(player,objs->object->pos)){
+                Object * àpush; //objet à pousser
+                Tuple * nouvpos= malloc(sizeof(Tuple)); //nouvelle position de l'objet
+                    switch(direction){
+                    case UP:
+                        àpush = getObject(map->grid[i-1][j].objects,PUSH);
+                        nouvpos->x = j*SIZE_WALL_W+posx;
+                        nouvpos->y = (i-2)*SIZE_WALL_H+posy;
+                        exchangeObject(&map->grid[i-1][j],&map->grid[i-2][j],nouvpos,àpush);
+                        break;
+                    case DOWN:
+                        àpush = getObject(map->grid[i+1][j].objects,PUSH);
+                        nouvpos->x = j*SIZE_WALL_W+posx;
+                        nouvpos->y = (i+2)*SIZE_WALL_H+posy;
+                        exchangeObject(&map->grid[i+1][j],&map->grid[i+2][j],nouvpos,àpush);                        
+                        break;
+                    case RIGHT:
+                        àpush = getObject(map->grid[i][j+1].objects,PUSH);
+                        nouvpos->x = (j+2)*SIZE_WALL_W+posx;
+                        nouvpos->y = i*SIZE_WALL_H+posy;
+                        exchangeObject(&map->grid[i][j+1],&map->grid[i][j+2],nouvpos,àpush);
+                        break;
+                    case LEFT:
+                        àpush = getObject(map->grid[i][j-1].objects,PUSH);
+                        nouvpos->x = (j-2)*SIZE_WALL_W+posx;
+                        nouvpos->y = i*SIZE_WALL_H+posy;
+                        exchangeObject(&map->grid[i][j-1],&map->grid[i][j-2],nouvpos,àpush);
+                        break;
+                }
+                free(nouvpos);
+            }
+        }
+    }
+}
 
 ListObj* listObjRemove(ListObj* list, Object* obj){
     if (list == NULL) return NULL;
@@ -34,6 +88,15 @@ ListObj* listObjRemoveWall(ListObj* list) {
     return list;
     
 }
+
+void exchangeObject(Cell *case1, Cell *case2,Tuple* nouvpos, Object* obj) {
+    case1->objects = listObjRemove(case1->objects,obj);
+    obj->pos->x = nouvpos->x;
+    obj->pos->y = nouvpos->y;
+    case2->numberObjects++;
+    case2->objects = listObjAppend(case2->objects,obj);
+}
+
 
 void freeListObj(ListObj *list) {
     if (list != NULL) {

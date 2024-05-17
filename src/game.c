@@ -71,13 +71,60 @@ SDL_bool collisions(SDL_Rect* player, Map* map){
     }
     return SDL_FALSE;
 }
-SDL_bool isice(SDL_Rect* player,Map* map){
+SDL_bool istype(SDL_Rect* player,Map* map,int type){
     for (int i = 0;i<map->rows;i++){
         for (int j = 0;j<map->cols;j++){
             ListObj* objs = map->grid[i][j].objects;
             while (objs != NULL){
-                if (objs->object->type_object == ICE && SDL_HasIntersection(player,objs->object->pos)){
+                if (objs->object->type_object == type && SDL_HasIntersection(player,objs->object->pos)){
                     return SDL_TRUE;
+                }
+                objs = objs->next;
+            }
+        }
+    }
+    return SDL_FALSE;
+}
+SDL_bool contain(ListObj* objs, int type){
+    while (objs != NULL){
+        if (objs->object->type_object == type){
+            return SDL_TRUE;
+        }
+        objs = objs->next;
+    }
+    return SDL_FALSE;
+}
+
+
+SDL_bool ispushable(SDL_Rect* player,Map* map,int direction){
+    for (int i = 0;i<map->rows;i++){
+        for (int j = 0;j<map->cols;j++){
+            ListObj* objs = map->grid[i][j].objects;
+            while (objs != NULL){
+                if (SDL_HasIntersection(player,objs->object->pos)){
+                    switch(direction){
+                        case UP:
+                        //Si la case est steppable et qu'il n'y a pas d'autre block poussable
+                        if(map->grid[i-2][j].steppable && !contain(map->grid[i-2][j].objects,PUSH)){
+                            return SDL_TRUE;
+                        }
+                        break;
+                        case DOWN:
+                        if(map->grid[i+2][j].steppable && !contain(map->grid[i+2][j].objects,PUSH)){
+                            return SDL_TRUE;
+                        }
+                        break;
+                        case RIGHT:
+                        if(map->grid[i][j+2].steppable && !contain(map->grid[i][j+2].objects,PUSH)){
+                            return SDL_TRUE;
+                        }
+                        break;
+                        case LEFT:
+                        if(map->grid[i][j-2].steppable && !contain(map->grid[i][j-2].objects,PUSH)){
+                            return SDL_TRUE;
+                        }
+                        break;
+                    }
                 }
                 objs = objs->next;
             }
