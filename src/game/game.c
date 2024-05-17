@@ -77,8 +77,6 @@ void renderEntity(Entity *entity, SDL_Renderer *renderer) {
   if (entity->texture == NULL) {
     return;
   }
-  printf("Rendering entity at (%d, %d)\n", entity->index.i, entity->index.j);
-  printf("Buffer : (%d, %d)\n", entity->buffer->x, entity->buffer->y);
   SDL_RenderCopy(renderer, entity->texture, NULL, entity->buffer);
 }
 
