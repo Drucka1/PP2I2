@@ -16,8 +16,15 @@ int numLevelFromChar(char* filename){
     return level;
 }
 
-Map* FileToMap(char *nomFichier,int pos_x, int pos_y, SDL_Texture** textures){
+void posInitPlayerLevel(char *nomFichier, int* offset_player_x, int* offset_player_y){
+    FILE *fichier = fopen(nomFichier, "r");
+    fscanf(fichier, "%d %d", offset_player_y, offset_player_x);
+    fclose(fichier);
+}
+
+Map* FileToMap(char *nomFichier,SDL_Rect* posPlayer, SDL_Texture** textures){
     Map* map = malloc(sizeof(Map));
+
     SDL_Texture* wallSprite = textures[WALL];
     SDL_Texture* groundSprite = textures[GROUND];
     SDL_Texture* doorSprite = textures[DOOR];
@@ -34,24 +41,53 @@ Map* FileToMap(char *nomFichier,int pos_x, int pos_y, SDL_Texture** textures){
         perror("Erreur d'ouverture du fichier");
         return NULL;
     }
+    
+    int offset_player_x,offset_player_y;
+    fscanf(fichier,"%d %d\n",&offset_player_y,&offset_player_x);
 
-    int rows,cols,p,q;
-    fscanf(fichier, "%d %d", &rows, &cols);
-    map->cols = cols;
-    map->rows = rows;
-    int i = 0; int j = 0;
+    fscanf(fichier, "%d %d", &map->rows,&map->cols);
+    map->offset_map.x = MAX(0,SIZE_WALL_W*(NB_WALL_W-map->cols)/2);
+    map->offset_map.y = MAX(0,SIZE_WALL_H*(NB_WALL_H-map->rows)/2);
+
+    if (!map->offset_map.x){
+        if (posPlayer) map->offset_map.x = MIN(0,-(offset_player_x - posPlayer->x / SIZE_WALL_W)*SIZE_WALL_W);
+        else {
+            if (offset_player_x < NB_WALL_W/2) map->offset_map.x = 0;
+            else if (offset_player_x < map->cols - NB_WALL_W/2) map->offset_map.x = -(offset_player_x - NB_WALL_W/2)*SIZE_WALL_W;
+            else  map->offset_map.x = -(map->cols - NB_WALL_W)*SIZE_WALL_W;
+        }
+
+    }
+
+    if (!map->offset_map.y){
+        if(posPlayer) map->offset_map.y = MIN(0,-(offset_player_y - posPlayer->y / SIZE_WALL_H)*SIZE_WALL_H);
+        else {
+            if (offset_player_y < NB_WALL_H/2) map->offset_map.y = 0;
+            else if (offset_player_y < map->rows -NB_WALL_H/2) map->offset_map.y = -(offset_player_y - NB_WALL_H/2)*SIZE_WALL_H;
+            else  map->offset_map.y = -(map->rows - NB_WALL_H )*SIZE_WALL_H;
+        }
+    }
+    
+    map->UpperLeftCorner.x = map->offset_map.x;
+    map->UpperLeftCorner.y = map->offset_map.y;
+    map->BottomRightCorner.x = (map->cols-1)*SIZE_WALL_W+map->offset_map.x;
+    map->BottomRightCorner.y = (map->rows-1)*SIZE_WALL_H+map->offset_map.y;
+
+    int p,q;
+    
     char buffer[100];
-    Cell** grid = malloc(sizeof(Cell*)*rows);
-    for (int i = 0;i<rows;i++){
-        grid[i] = malloc(sizeof(Cell)*cols);
-        for (int j = 0;j<cols;j++) {
+    Cell** grid = malloc(sizeof(Cell*)*map->rows);
+    for (int i = 0;i<map->rows;i++){
+        grid[i] = malloc(sizeof(Cell)*map->cols);
+        for (int j = 0;j<map->cols;j++) {
             grid[i][j].steppable = true;
             grid[i][j].numberObjects = 0;
             grid[i][j].objects = NULL;
             grid[i][j].map_tp = NULL;
         }
     }
-
+    
+    int i = 0; int j = 0;
     while (fscanf(fichier, "%s", buffer) != EOF) {
         if(strcmp(buffer,"/")==0){
             i++;
@@ -69,8 +105,8 @@ Map* FileToMap(char *nomFichier,int pos_x, int pos_y, SDL_Texture** textures){
             grid[i][j].numberObjects++;
             
             SDL_Rect* pos = malloc(sizeof(SDL_Rect));
-            pos->x = j*SIZE_WALL_W+pos_x;
-            pos->y = i*SIZE_WALL_H+pos_y;
+            pos->x = j*SIZE_WALL_W+map->offset_map.x;
+            pos->y = i*SIZE_WALL_H+map->offset_map.y;
             pos->w = SIZE_WALL_W;
             pos->h = SIZE_WALL_H;
 
@@ -86,8 +122,8 @@ Map* FileToMap(char *nomFichier,int pos_x, int pos_y, SDL_Texture** textures){
             grid[i][j].numberObjects++;
             
             SDL_Rect* pos = malloc(sizeof(SDL_Rect));
-            pos->x = j*SIZE_WALL_W+pos_x;
-            pos->y = i*SIZE_WALL_H+pos_y;
+            pos->x = j*SIZE_WALL_W+map->offset_map.x;
+            pos->y = i*SIZE_WALL_H+map->offset_map.y;
             pos->w = SIZE_WALL_W;
             pos->h = SIZE_WALL_H;
 
@@ -103,8 +139,8 @@ Map* FileToMap(char *nomFichier,int pos_x, int pos_y, SDL_Texture** textures){
             grid[i][j].numberObjects++;
             
             SDL_Rect* pos = malloc(sizeof(SDL_Rect)); 
-            pos->x = j*SIZE_WALL_W+pos_x;
-            pos->y = i*SIZE_WALL_H+pos_y;
+            pos->x = j*SIZE_WALL_W+map->offset_map.x;
+            pos->y = i*SIZE_WALL_H+map->offset_map.y;
             pos->w = SIZE_WALL_W;
             pos->h = SIZE_WALL_H;
 
@@ -120,8 +156,8 @@ Map* FileToMap(char *nomFichier,int pos_x, int pos_y, SDL_Texture** textures){
             grid[i][j].numberObjects++;
             
             SDL_Rect* pos = malloc(sizeof(SDL_Rect));
-            pos->x = j*SIZE_WALL_W+pos_x;
-            pos->y = i*SIZE_WALL_H+pos_y;
+            pos->x = j*SIZE_WALL_W+map->offset_map.x;
+            pos->y = i*SIZE_WALL_H+map->offset_map.y;
             pos->w = SIZE_WALL_W;
             pos->h = SIZE_WALL_H;
 
@@ -137,8 +173,8 @@ Map* FileToMap(char *nomFichier,int pos_x, int pos_y, SDL_Texture** textures){
             grid[i][j].numberObjects++;
 
             SDL_Rect* pos = malloc(sizeof(SDL_Rect));
-            pos->x = j*SIZE_WALL_W+pos_x;
-            pos->y = i*SIZE_WALL_H+pos_y;
+            pos->x = j*SIZE_WALL_W+map->offset_map.x;
+            pos->y = i*SIZE_WALL_H+map->offset_map.y;
             pos->w = SIZE_WALL_W;
             pos->h = SIZE_WALL_H;
 
@@ -154,8 +190,8 @@ Map* FileToMap(char *nomFichier,int pos_x, int pos_y, SDL_Texture** textures){
             grid[i][j].numberObjects++;
 
             SDL_Rect* pos = malloc(sizeof(SDL_Rect));
-            pos->x = j*SIZE_WALL_W+pos_x;
-            pos->y = i*SIZE_WALL_H+pos_y;
+            pos->x = j*SIZE_WALL_W+map->offset_map.x;
+            pos->y = i*SIZE_WALL_H+map->offset_map.y;
             pos->w = SIZE_WALL_W;
             pos->h = SIZE_WALL_H;
 
@@ -176,8 +212,8 @@ Map* FileToMap(char *nomFichier,int pos_x, int pos_y, SDL_Texture** textures){
             grid[i][j].numberObjects++;
 
             SDL_Rect* pos = malloc(sizeof(SDL_Rect));
-            pos->x = j*SIZE_WALL_W+pos_x;
-            pos->y = i*SIZE_WALL_H+pos_y;
+            pos->x = j*SIZE_WALL_W+map->offset_map.x;
+            pos->y = i*SIZE_WALL_H+map->offset_map.y;
             pos->w = SIZE_WALL_W;
             pos->h = SIZE_WALL_H;
 
@@ -200,7 +236,7 @@ Map* FileToMap(char *nomFichier,int pos_x, int pos_y, SDL_Texture** textures){
 }
 
 
-void MapToFile(Map* map) {
+void MapToFile(Map* map,int posMapX, int posMapY) {
     char filename[70] = "assets/level/save/level";
     char lvl[10];
     sprintf(lvl, "%d", map->level);
@@ -212,7 +248,7 @@ void MapToFile(Map* map) {
         printf("Impossible d'ouvrir le fichier %s\n", filename);
         return;
     }
-
+    fprintf(file, "%d %d\n",posMapY,posMapX);
     fprintf(file, "%d %d\n", map->rows, map->cols);
     for (int i = 0; i < map->rows; i++) {
         for (int j = 0; j < map->cols; j++) {
@@ -235,6 +271,7 @@ void MapToFile(Map* map) {
 
 void dimMap(char* nomFichier, int* rows, int* cols){
     FILE *fichier = fopen(nomFichier, "r");
+    fscanf(fichier, "%*[^\n]\n");
     fscanf(fichier, "%d %d", rows, cols);
     fclose(fichier);
 }
@@ -283,4 +320,25 @@ Entity* getPlayerStatus(int* current_level){
     player->pos = pos;
     player->inventory = inventory;
     return player;
+}
+
+void tp(Map* *map,int i, int j,Entity* player,SDL_Texture** textures){
+    
+    MapToFile(*map,(player->pos->x - (*map)->grid[0][0].objects->object->pos->x) / SIZE_WALL_W,(player->pos->y - (*map)->grid[0][0].objects->object->pos->y) / SIZE_WALL_W);
+
+    char* lvl = (*map)->grid[i][j].map_tp;
+    char path_level[100] = "assets/level/save/";
+    strcat(path_level,lvl);
+    if(access(path_level, F_OK) != 0) {
+        strcpy(path_level, "assets/level/default/");
+        strcat(path_level,lvl);
+    }
+
+    freeMap(*map);
+    int offset_player_x,offset_player_y;
+    posInitPlayerLevel(path_level,&offset_player_x,&offset_player_y);
+    *map = FileToMap(path_level,NULL,textures);
+
+    player->pos->x = (*map)->offset_map.x+offset_player_x*SIZE_WALL_W;
+    player->pos->y = (*map)->offset_map.y+offset_player_y*SIZE_WALL_H; 
 }

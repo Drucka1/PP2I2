@@ -174,19 +174,30 @@ SDL_bool openDoor(ListObj* inventory,int i, int j, int level){
     return SDL_FALSE;
 }
 
-void interact(Map* map, Entity* player){
-    for (int i = 0;i<map->rows;i++){
-        for (int j = 0;j<map->cols;j++){
-            ListObj* objs = map->grid[i][j].objects;
+void interact(Map* *map, Entity* player,SDL_Texture** textures){
+    for (int i = 0;i<(*map)->rows;i++){
+        for (int j = 0;j<(*map)->cols;j++){
+            
+            //tp
+            if ((*map)->grid[i][j].map_tp){
+                SDL_Rect* pos = (*map)->grid[i][j].objects->object->pos;
+                if (player->pos->x == pos->x && player->pos->y == pos->y && openDoor(player->inventory,i,j,(*map)->level)){
+                    tp(map,i,j,player,textures);                        
+                    return;
+                }
+            }
+
+            //interation avec cle et levier
+            ListObj* objs = (*map)->grid[i][j].objects;
             while (objs != NULL){
                 if (objs->object->type_object == KEY && SDL_HasIntersection(player->pos,objs->object->pos)){
                     player->inventory = listObjAppend(player->inventory,objs->object);
-                    map->grid[i][j].objects = listObjRemove(map->grid[i][j].objects,objs->object);
+                    (*map)->grid[i][j].objects = listObjRemove((*map)->grid[i][j].objects,objs->object);
                     return;
                 }
                 if (objs->object->type_object == LEVER && SDL_HasIntersection(player->pos,objs->object->pos)){
-                    map->grid[objs->object->door->x][objs->object->door->y].steppable = true;
-                    map->grid[objs->object->door->x][objs->object->door->y].objects = listObjRemoveWall(map->grid[objs->object->door->x][objs->object->door->y].objects);
+                    (*map)->grid[objs->object->door->x][objs->object->door->y].steppable = true;
+                    (*map)->grid[objs->object->door->x][objs->object->door->y].objects = listObjRemoveWall((*map)->grid[objs->object->door->x][objs->object->door->y].objects);
                     return;
                 }
                 objs = objs->next;

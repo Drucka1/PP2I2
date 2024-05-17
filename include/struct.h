@@ -40,6 +40,9 @@ typedef struct {
     Cell** grid;
     int rows;
     int cols;
+    Tuple offset_map;
+    Tuple UpperLeftCorner;
+    Tuple BottomRightCorner;
 } Map;
 
 typedef struct {
