@@ -10,17 +10,19 @@
 #include <unistd.h>
 #include "utils.h"
 
-#define WINDOW_HEIGHT 950
-#define WINDOW_WIDTH 950
+#define WINDOW_HEIGHT 900
+#define WINDOW_WIDTH 900
 #define NB_LEVEL 2
 #define NB_SPRITES 7
-#define NB_WALL_W 19
-#define NB_WALL_H 19
+#define NB_WALL_W 18
+#define NB_WALL_H 18
 #define SIZE_WALL_W (WINDOW_WIDTH/NB_WALL_W)
 #define SIZE_WALL_H (WINDOW_HEIGHT/NB_WALL_H)
 #define VITESSE SIZE_WALL_W
 #define MIN(i, j) (((i) < (j)) ? (i) : (j))
 #define MAX(i, j) (((i) > (j)) ? (i) : (j))
+
+#define ENABLE_SAVE false
 
 #define UP 1
 #define DOWN 2

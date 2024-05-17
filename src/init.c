@@ -53,17 +53,16 @@ Map* FileToMap(char *nomFichier,SDL_Rect* posPlayer, SDL_Texture** textures){
         if (posPlayer) map->offset_map.x = MIN(0,-(offset_player_x - posPlayer->x / SIZE_WALL_W)*SIZE_WALL_W);
         else {
             if (offset_player_x < NB_WALL_W/2) map->offset_map.x = 0;
-            else if (offset_player_x < map->cols - NB_WALL_W/2) map->offset_map.x = -(offset_player_x - NB_WALL_W/2)*SIZE_WALL_W;
+            else if (offset_player_x < map->cols-1 - NB_WALL_W/2) map->offset_map.x = -(offset_player_x - NB_WALL_W/2)*SIZE_WALL_W;
             else  map->offset_map.x = -(map->cols - NB_WALL_W)*SIZE_WALL_W;
         }
-
     }
 
     if (!map->offset_map.y){
         if(posPlayer) map->offset_map.y = MIN(0,-(offset_player_y - posPlayer->y / SIZE_WALL_H)*SIZE_WALL_H);
         else {
             if (offset_player_y < NB_WALL_H/2) map->offset_map.y = 0;
-            else if (offset_player_y < map->rows -NB_WALL_H/2) map->offset_map.y = -(offset_player_y - NB_WALL_H/2)*SIZE_WALL_H;
+            else if (offset_player_y < map->rows-1 -NB_WALL_H/2) map->offset_map.y = -(offset_player_y - NB_WALL_H/2)*SIZE_WALL_H;
             else  map->offset_map.y = -(map->rows - NB_WALL_H )*SIZE_WALL_H;
         }
     }
@@ -320,25 +319,4 @@ Entity* getPlayerStatus(int* current_level){
     player->pos = pos;
     player->inventory = inventory;
     return player;
-}
-
-void tp(Map* *map,int i, int j,Entity* player,SDL_Texture** textures){
-    
-    MapToFile(*map,(player->pos->x - (*map)->grid[0][0].objects->object->pos->x) / SIZE_WALL_W,(player->pos->y - (*map)->grid[0][0].objects->object->pos->y) / SIZE_WALL_W);
-
-    char* lvl = (*map)->grid[i][j].map_tp;
-    char path_level[100] = "assets/level/save/";
-    strcat(path_level,lvl);
-    if(access(path_level, F_OK) != 0) {
-        strcpy(path_level, "assets/level/default/");
-        strcat(path_level,lvl);
-    }
-
-    freeMap(*map);
-    int offset_player_x,offset_player_y;
-    posInitPlayerLevel(path_level,&offset_player_x,&offset_player_y);
-    *map = FileToMap(path_level,NULL,textures);
-
-    player->pos->x = (*map)->offset_map.x+offset_player_x*SIZE_WALL_W;
-    player->pos->y = (*map)->offset_map.y+offset_player_y*SIZE_WALL_H; 
 }

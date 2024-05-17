@@ -223,3 +223,26 @@ void savePlayerStatus(Entity* player,int current_level){
 
     fclose(file);
 }
+
+void tp(Map* *map,int i, int j,Entity* player,SDL_Texture** textures){
+    
+    if (ENABLE_SAVE){
+        MapToFile(*map,(player->pos->x - (*map)->grid[0][0].objects->object->pos->x) / SIZE_WALL_W,(player->pos->y - (*map)->grid[0][0].objects->object->pos->y) / SIZE_WALL_W);
+    }
+    
+    char* lvl = (*map)->grid[i][j].map_tp;
+    char path_level[100] = "assets/level/save/";
+    strcat(path_level,lvl);
+    if(access(path_level, F_OK) != 0) {
+        strcpy(path_level, "assets/level/default/");
+        strcat(path_level,lvl);
+    }
+
+    freeMap(*map);
+    int offset_player_x,offset_player_y;
+    posInitPlayerLevel(path_level,&offset_player_x,&offset_player_y);
+    *map = FileToMap(path_level,NULL,textures);
+
+    player->pos->x = (*map)->offset_map.x+offset_player_x*SIZE_WALL_W;
+    player->pos->y = (*map)->offset_map.y+offset_player_y*SIZE_WALL_H; 
+}

@@ -69,8 +69,8 @@ int main(){
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
     int running=1;int offset = 0;int direction = 0;
-    int dark = !true;
-    int isIcy =false;
+    bool dark = !true;
+    bool isIcy =false;
     int directionInitiale = 0;
     int tempcont= 0; //variable qui sert à pousser l'objet jusqu'au bout
     ///////ZONE 51 ///////
@@ -93,18 +93,17 @@ int main(){
                     switch (event.key.keysym.sym){
                         case SDLK_ESCAPE:
                             running = 0;
-                            MapToFile(map,(player->pos->x - map->grid[0][0].objects->object->pos->x) / SIZE_WALL_W,(player->pos->y - map->grid[0][0].objects->object->pos->y) / SIZE_WALL_W);
-                            savePlayerStatus(player,map->level);
+                            if(ENABLE_SAVE){
+                                MapToFile(map,(player->pos->x - map->grid[0][0].objects->object->pos->x) / SIZE_WALL_W,(player->pos->y - map->grid[0][0].objects->object->pos->y) / SIZE_WALL_W);
+                                savePlayerStatus(player,map->level);
+                            }
                             break;
                         case SDLK_a:
                             dark = !dark;
                             break;
                         case SDLK_i:
                             isIcy = !isIcy;
-                            break;
-                        case SDLK_p:
-                            system("rm -rf ./assets/level/save/*");
-                            break;                   
+                            break;         
                         case SDLK_e://Prend la clé dans l'inventaire
                             interact(&map,player,textures);
                             break;
@@ -139,7 +138,7 @@ int main(){
                             }
                             // Vérifier la collision avec le mur avant de mettre à jour la position du player
                             if (!collisions(&(SDL_Rect){player->pos->x, player->pos->y - VITESSE, player->pos->w, player->pos->h},map)) {
-                                if ( map->offset_map.y >= 0 || map->UpperLeftCorner.y == 0 || (map->BottomRightCorner.y == (NB_WALL_H-1)*SIZE_WALL_H && player->pos->y > SIZE_WALL_H*(NB_WALL_H-1)/2 ) ){
+                                if ( map->offset_map.y > 0 || map->UpperLeftCorner.y == 0 || (map->BottomRightCorner.y == (NB_WALL_H-1)*SIZE_WALL_H && player->pos->y > SIZE_WALL_H*(NB_WALL_H-1)/2 ) ){
                                     player->pos->y -= VITESSE;
                                 }
                                 else {
@@ -176,7 +175,7 @@ int main(){
                             
                             // Vérifier la collision avec le mur avant de mettre à jour la position du player
                             if (!collisions(&(SDL_Rect){player->pos->x, player->pos->y + VITESSE, player->pos->w, player->pos->h},map)) {
-                                if ( map->offset_map.y >= 0 || map->BottomRightCorner.y == (NB_WALL_H-1)*SIZE_WALL_H || (map->UpperLeftCorner.y == 0 && player->pos->y < SIZE_WALL_H*(NB_WALL_H-1)/2) ){
+                                if ( map->offset_map.y > 0 || map->BottomRightCorner.y == (NB_WALL_H-1)*SIZE_WALL_H || (map->UpperLeftCorner.y == 0 && player->pos->y < SIZE_WALL_H*(NB_WALL_H-1)/2) ){
                                     player->pos->y += VITESSE;
                                 }
                                 else {
@@ -214,7 +213,7 @@ int main(){
                             
                             // Vérifier la collision avec le mur avant de mettre à jour la position du player
                             if (!collisions(&(SDL_Rect){player->pos->x - VITESSE, player->pos->y, player->pos->w, player->pos->h},map)) {
-                                if ( map->offset_map.x >= 0 || map->UpperLeftCorner.x == 0 || (map->BottomRightCorner.x == (NB_WALL_W-1)*SIZE_WALL_W && player->pos->x > SIZE_WALL_W*(NB_WALL_W-1)/2) ){
+                                if ( map->offset_map.x > 0 || map->UpperLeftCorner.x == 0 || (map->BottomRightCorner.x == (NB_WALL_W-1)*SIZE_WALL_W && player->pos->x > SIZE_WALL_W*(NB_WALL_W-1)/2) ){
                                     player->pos->x -= VITESSE;
                                 }
                                 else {
@@ -252,7 +251,7 @@ int main(){
                             
                             // Vérifier la collision avec le mur avant de mettre à jour la position du player
                             if (!collisions(&(SDL_Rect){player->pos->x + VITESSE, player->pos->y, player->pos->w, player->pos->h},map)) {
-                                if ( map->offset_map.x >= 0 || map->BottomRightCorner.x == (NB_WALL_W-1)*SIZE_WALL_W || (map->UpperLeftCorner.x == 0 && player->pos->x < SIZE_WALL_W*(NB_WALL_W-1)/2)){
+                                if ( map->offset_map.x > 0 || map->BottomRightCorner.x == (NB_WALL_W-1)*SIZE_WALL_W || (map->UpperLeftCorner.x == 0 && player->pos->x < SIZE_WALL_W*(NB_WALL_W-1)/2)){
                                     player->pos->x += VITESSE;
                                 }
                                 else {
@@ -271,7 +270,7 @@ int main(){
             switch(directionInitiale){
                 case UP: // je commente que ce cas la car les autres sont les mêmes
                     if (!collisions(&(SDL_Rect){player->pos->x, player->pos->y - VITESSE, player->pos->w, player->pos->h},map)&&!istype(&(SDL_Rect){player->pos->x, player->pos->y - VITESSE, player->pos->w, player->pos->h},map,PUSH)) { //check de colisions avec les murs comme dans les deplacements classiques
-                        if ( map->offset_map.y >= 0 || map->UpperLeftCorner.y == 0 || (map->BottomRightCorner.y == (NB_WALL_H-1)*SIZE_WALL_H && player->pos->y > SIZE_WALL_H*(NB_WALL_H-1)/2 ) ){
+                        if ( map->offset_map.y > 0 || map->UpperLeftCorner.y == 0 || (map->BottomRightCorner.y == (NB_WALL_H-1)*SIZE_WALL_H && player->pos->y > SIZE_WALL_H*(NB_WALL_H-1)/2 ) ){
                             player->pos->y -= VITESSE;
                         }
                         else {
@@ -291,7 +290,7 @@ int main(){
                     break;
                 case DOWN:
                     if (!collisions(&(SDL_Rect){player->pos->x, player->pos->y + VITESSE, player->pos->w, player->pos->h},map)&&!istype(&(SDL_Rect){player->pos->x, player->pos->y + VITESSE, player->pos->w, player->pos->h},map,PUSH)){
-                        if ( map->offset_map.y >= 0 || map->BottomRightCorner.y == (NB_WALL_H-1)*SIZE_WALL_H || (map->UpperLeftCorner.y == 0 && player->pos->y < SIZE_WALL_H*(NB_WALL_H-1)/2) ){
+                        if ( map->offset_map.y > 0 || map->BottomRightCorner.y == (NB_WALL_H-1)*SIZE_WALL_H || (map->UpperLeftCorner.y == 0 && player->pos->y < SIZE_WALL_H*(NB_WALL_H-1)/2) ){
                             player->pos->y += VITESSE;
                         }
                         else {
@@ -311,7 +310,7 @@ int main(){
                     break;
                 case LEFT:
                     if (!collisions(&(SDL_Rect){player->pos->x-VITESSE , player->pos->y, player->pos->w, player->pos->h},map)&&!istype(&(SDL_Rect){player->pos->x-VITESSE , player->pos->y, player->pos->w, player->pos->h},map,PUSH)){
-                        if ( map->offset_map.x >= 0 || map->UpperLeftCorner.x == 0 || (map->BottomRightCorner.x == (NB_WALL_W-1)*SIZE_WALL_W && player->pos->x > SIZE_WALL_W*(NB_WALL_W-1)/2) ){
+                        if ( map->offset_map.x > 0 || map->UpperLeftCorner.x == 0 || (map->BottomRightCorner.x == (NB_WALL_W-1)*SIZE_WALL_W && player->pos->x > SIZE_WALL_W*(NB_WALL_W-1)/2) ){
                             player->pos->x -= VITESSE;
                         }
                         else {
@@ -331,7 +330,7 @@ int main(){
                     break;
                 case RIGHT:
                     if (!collisions(&(SDL_Rect){player->pos->x + VITESSE, player->pos->y, player->pos->w, player->pos->h},map)&&!istype(&(SDL_Rect){player->pos->x + VITESSE, player->pos->y, player->pos->w, player->pos->h},map,PUSH)){
-                        if ( map->offset_map.x >= 0 || map->BottomRightCorner.x == (NB_WALL_W-1)*SIZE_WALL_W || (map->UpperLeftCorner.x == 0 && player->pos->x < SIZE_WALL_W*(NB_WALL_W-1)/2) ){
+                        if ( map->offset_map.x > 0 || map->BottomRightCorner.x == (NB_WALL_W-1)*SIZE_WALL_W || (map->UpperLeftCorner.x == 0 && player->pos->x < SIZE_WALL_W*(NB_WALL_W-1)/2) ){
                             player->pos->x += VITESSE;
                         }
                         else {
