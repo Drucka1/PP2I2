@@ -73,10 +73,8 @@ void listObjAdd(ListObj **list, ListObj *listToAdd) {
 
 void listObjPrint(ListObj *list) {
   if (list == NULL || list->object == NULL) {
-    printf("\n");
     return;
   }
-  printf("%d, ", list->object->objectType);
   listObjPrint(list->next);
 }
 
