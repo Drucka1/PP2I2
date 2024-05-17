@@ -1,34 +1,17 @@
-#include "../include/utils.h"
+#include "utils.h"
 
-void initSDL(SDL_Window **window, SDL_Renderer **renderer)
-{
-  if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize SDL: %s", SDL_GetError());
+SDL_Texture **loadTextures(SDL_Renderer *renderer) {
+  SDL_Texture **textures = malloc(sizeof(SDL_Texture *) * TEXTURE_COUNT);
+
+  char *textureTags[TEXTURE_COUNT] = TEXTURE_TAGS;
+  if (!textures) {
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't allocate memory");
     exit(-1);
   }
 
-  (*window) = SDL_CreateWindow("Grid Drawing", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
-  if (!(*window)) {
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize window: %s", SDL_GetError());
-    exit(-1);
+  for (int i = 0; i < TEXTURE_COUNT; i++) {
+    textures[i] = getTexture(textureTags[i], renderer);
   }
 
-  (*renderer) = SDL_CreateRenderer((*window), -1, SDL_RENDERER_ACCELERATED);
-  if (!(*renderer)) {
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize renderer: %s", SDL_GetError());
-    exit(-1);
-  }
-
-  int imgFlags = IMG_INIT_PNG;
-  if (!(IMG_Init(imgFlags) & imgFlags)) {
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_image could not initialize! SDL_image Error: %s", IMG_GetError());
-    exit(-1);
-  }
-}
-
-void quitSDL(SDL_Window *window, SDL_Renderer *renderer)
-{
-  SDL_DestroyRenderer(renderer);
-  SDL_DestroyWindow(window);
-  SDL_Quit();
+  return textures;
 }
