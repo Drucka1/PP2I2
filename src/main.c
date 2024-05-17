@@ -55,7 +55,7 @@ int main(){
     textures[KEY] = load_sprite(renderer,"assets/sprite/key.png");
     textures[LEVER] = load_sprite(renderer,"assets/sprite/lever.png");
     textures[ICE] = load_sprite(renderer,"assets/sprite/ice.png");
-    textures[PUSH]=load_sprite(renderer,"assets/push.png");
+    textures[PUSH]=load_sprite(renderer,"assets/sprite/push.png");
 
     Map* map = FileToMap(path_level,pos_x,pos_y,textures);
     Tuple walli = {0,0};
@@ -152,15 +152,15 @@ int main(){
                                 break;
                             }
                             //Verification si le joueur va vers un objet à pousser(istype dans game.c)
-                            if(istype(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map,PUSH)){
+                            if(istype(&(SDL_Rect){player->pos->x, player->pos->y - VITESSE, player->pos->w, player->pos->h},map,PUSH)){
                                 //On verifie si l'objet est poussable dans la direction du joueur(ici UP,ispushable dans game.c)
-                                if (ispushable(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h}, map, UP)) {
+                                if (ispushable(&(SDL_Rect){player->pos->x, player->pos->y, player->pos->w, player->pos->h}, map, UP)) {
                                     //On va faire un do-while pour pousser l'objet puis verifier si il est sur de la glace pour le pousser jusqu'aux bout 
                                     do {
                                         //On appelle la fonction Push qui va pousser l'objet(voir struct.c je sais pas si la fonction doit etre la mais bon)
-                                        Push(map, &(SDL_Rect){player.pos->x, player.pos->y - VITESSE*tempcont, player.pos->w, player.pos->h}, UP, pos_x, pos_y);
+                                        Push(map, &(SDL_Rect){player->pos->x, player->pos->y - VITESSE*tempcont, player->pos->w, player->pos->h}, UP, pos_x, pos_y);
                                         tempcont++;
-                                    } while (ispushable(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE*tempcont, player.pos->w, player.pos->h}, map, UP) && istype(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE*(tempcont+1), player.pos->w, player.pos->h}, map, ICE));
+                                    } while (ispushable(&(SDL_Rect){player->pos->x, player->pos->y - VITESSE*tempcont, player->pos->w, player->pos->h}, map, UP) && istype(&(SDL_Rect){player->pos->x, player->pos->y - VITESSE*(tempcont+1), player->pos->w, player->pos->h}, map, ICE));
                                     tempcont = 0;
                                 }
                                 else{
@@ -169,7 +169,7 @@ int main(){
                                 }
                             }
                             // Vérifier si le joueur se deplace vers de la glace
-                            if(istype(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map,ICE)){
+                            if(istype(&(SDL_Rect){player->pos->x, player->pos->y - VITESSE, player->pos->w, player->pos->h},map,ICE)){
                                 if(isIcy==0){ //Si le joueur ne glissait pas avant on le fait glisser
                                     isIcy=!isIcy;
                                     directionInitiale= UP; //directionInitiale sert a savoir dans quelle direction le joueur glisse
@@ -192,12 +192,12 @@ int main(){
                             if(isIcy==1){
                                 break;
                             }
-                            if(istype(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE, player.pos->w, player.pos->h},map,PUSH)){
-                                if(ispushable(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map,DOWN)){
+                            if(istype(&(SDL_Rect){player->pos->x, player->pos->y + VITESSE, player->pos->w, player->pos->h},map,PUSH)){
+                                if(ispushable(&(SDL_Rect){player->pos->x, player->pos->y, player->pos->w, player->pos->h},map,DOWN)){
                                     do {
-                                        Push(map, &(SDL_Rect){player.pos->x, player.pos->y +VITESSE*tempcont, player.pos->w, player.pos->h}, DOWN, pos_x, pos_y);
+                                        Push(map, &(SDL_Rect){player->pos->x, player->pos->y +VITESSE*tempcont, player->pos->w, player->pos->h}, DOWN, pos_x, pos_y);
                                         tempcont++;
-                                    } while (ispushable(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE*tempcont, player.pos->w, player.pos->h}, map, DOWN) && istype(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE*(tempcont+1), player.pos->w, player.pos->h}, map, ICE));
+                                    } while (ispushable(&(SDL_Rect){player->pos->x, player->pos->y + VITESSE*tempcont, player->pos->w, player->pos->h}, map, DOWN) && istype(&(SDL_Rect){player->pos->x, player->pos->y + VITESSE*(tempcont+1), player->pos->w, player->pos->h}, map, ICE));
                                     tempcont = 0;
                                 }
                                 else{
@@ -205,7 +205,7 @@ int main(){
                                 break;
                                 }
                             }
-                            if(istype(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE, player.pos->w, player.pos->h},map,ICE)){
+                            if(istype(&(SDL_Rect){player->pos->x, player->pos->y + VITESSE, player->pos->w, player->pos->h},map,ICE)){
                                 if(isIcy==0){
                                     isIcy=!isIcy;
                                     directionInitiale = DOWN;
@@ -229,12 +229,12 @@ int main(){
                             if(isIcy==1){
                                 break;
                             }
-                            if(istype(&(SDL_Rect){player.pos->x - VITESSE, player.pos->y, player.pos->w, player.pos->h},map,PUSH)){
-                                if(ispushable(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map,LEFT)){
+                            if(istype(&(SDL_Rect){player->pos->x - VITESSE, player->pos->y, player->pos->w, player->pos->h},map,PUSH)){
+                                if(ispushable(&(SDL_Rect){player->pos->x, player->pos->y, player->pos->w, player->pos->h},map,LEFT)){
                                     do {
-                                        Push(map, &(SDL_Rect){player.pos->x - VITESSE*tempcont, player.pos->y, player.pos->w, player.pos->h}, LEFT, pos_x, pos_y);
+                                        Push(map, &(SDL_Rect){player->pos->x - VITESSE*tempcont, player->pos->y, player->pos->w, player->pos->h}, LEFT, pos_x, pos_y);
                                         tempcont++;
-                                    } while (ispushable(&(SDL_Rect){player.pos->x - VITESSE*tempcont, player.pos->y, player.pos->w, player.pos->h}, map, LEFT) && istype(&(SDL_Rect){player.pos->x - VITESSE*(tempcont+1), player.pos->y, player.pos->w, player.pos->h}, map, ICE));
+                                    } while (ispushable(&(SDL_Rect){player->pos->x - VITESSE*tempcont, player->pos->y, player->pos->w, player->pos->h}, map, LEFT) && istype(&(SDL_Rect){player->pos->x - VITESSE*(tempcont+1), player->pos->y, player->pos->w, player->pos->h}, map, ICE));
                                     tempcont = 0;
                                 }
                                 else{
@@ -245,10 +245,8 @@ int main(){
 
 
 
-                            if (istype(&(SDL_Rect){player.pos->x - VITESSE, player.pos->y, player.pos->w, player.pos->h},map,PUSH)|| istype(&(SDL_Rect){player.pos->x - VITESSE, player.pos->y, player.pos->w, player.pos->h},map,KEY)){
-                                dark=!dark;
-                            }
-                            if(istype(&(SDL_Rect){player.pos->x - VITESSE, player.pos->y, player.pos->w, player.pos->h},map,ICE)){
+                            
+                            if(istype(&(SDL_Rect){player->pos->x - VITESSE, player->pos->y, player->pos->w, player->pos->h},map,ICE)){
                                 if(isIcy==0){
                                     isIcy=!isIcy;
                                     directionInitiale = LEFT;
@@ -272,12 +270,12 @@ int main(){
                             if(isIcy==1){
                                 break;
                             }
-                            if(istype(&(SDL_Rect){player.pos->x + VITESSE, player.pos->y, player.pos->w, player.pos->h},map,PUSH)){
-                                if(ispushable(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map,RIGHT)){
+                            if(istype(&(SDL_Rect){player->pos->x + VITESSE, player->pos->y, player->pos->w, player->pos->h},map,PUSH)){
+                                if(ispushable(&(SDL_Rect){player->pos->x, player->pos->y, player->pos->w, player->pos->h},map,RIGHT)){
                                     do {
-                                        Push(map, &(SDL_Rect){player.pos->x + VITESSE*tempcont, player.pos->y, player.pos->w, player.pos->h}, RIGHT, pos_x, pos_y);
+                                        Push(map, &(SDL_Rect){player->pos->x + VITESSE*tempcont, player->pos->y, player->pos->w, player->pos->h}, RIGHT, pos_x, pos_y);
                                         tempcont++;
-                                    } while (ispushable(&(SDL_Rect){player.pos->x + VITESSE*tempcont, player.pos->y, player.pos->w, player.pos->h}, map, RIGHT) && istype(&(SDL_Rect){player.pos->x + VITESSE*(tempcont+1), player.pos->y, player.pos->w, player.pos->h}, map, ICE));
+                                    } while (ispushable(&(SDL_Rect){player->pos->x + VITESSE*tempcont, player->pos->y, player->pos->w, player->pos->h}, map, RIGHT) && istype(&(SDL_Rect){player->pos->x + VITESSE*(tempcont+1), player->pos->y, player->pos->w, player->pos->h}, map, ICE));
                                     tempcont = 0;
                                 }
                                 else{
@@ -286,7 +284,7 @@ int main(){
                                 }
                             }
 
-                            if(istype(&(SDL_Rect){player.pos->x + VITESSE, player.pos->y, player.pos->w, player.pos->h},map,ICE)){
+                            if(istype(&(SDL_Rect){player->pos->x + VITESSE, player->pos->y, player->pos->w, player->pos->h},map,ICE)){
                                 if(isIcy==0){
                                     isIcy=!isIcy;
                                     directionInitiale = RIGHT;
@@ -313,9 +311,9 @@ int main(){
         if(directionInitiale!=0){ //Si le joueur est sur de la glace (mis ici car je suis sur )
             switch(directionInitiale){
                 case UP: // je commente que ce cas la car les autres sont les mêmes
-                    if (!collisions(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map)&&!istype(&(SDL_Rect){player.pos->x, player.pos->y - VITESSE, player.pos->w, player.pos->h},map,PUSH)) { //check de colisions avec les murs comme dans les deplacements classiques
-                        if ( pos_y || wall0.y == 0 || (wallf.y == (NB_WALL_H-1)*SIZE_WALL_H && player.pos->y > SIZE_WALL_H*(NB_WALL_H-1)/2 ) ){
-                            player.pos->y -= VITESSE;
+                    if (!collisions(&(SDL_Rect){player->pos->x, player->pos->y - VITESSE, player->pos->w, player->pos->h},map)&&!istype(&(SDL_Rect){player->pos->x, player->pos->y - VITESSE, player->pos->w, player->pos->h},map,PUSH)) { //check de colisions avec les murs comme dans les deplacements classiques
+                        if ( pos_y || walli.y == 0 || (wallf.y == (NB_WALL_H-1)*SIZE_WALL_H && player->pos->y > SIZE_WALL_H*(NB_WALL_H-1)/2 ) ){
+                            player->pos->y -= VITESSE;
                         }
                         else {
                             decalageMap(map,DOWN);
@@ -327,15 +325,15 @@ int main(){
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
-                    if(!istype(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map,ICE)){ //si le joueur n'est plus sur de la glace on arrete de glisser + directionInitiale=0
+                    if(!istype(&(SDL_Rect){player->pos->x, player->pos->y, player->pos->w, player->pos->h},map,ICE)){ //si le joueur n'est plus sur de la glace on arrete de glisser + directionInitiale=0
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
                     break;
                 case DOWN:
-                    if (!collisions(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE, player.pos->w, player.pos->h},map)&&!istype(&(SDL_Rect){player.pos->x, player.pos->y + VITESSE, player.pos->w, player.pos->h},map,PUSH)){
-                        if ( pos_y || wallf.y == (NB_WALL_H-1)*SIZE_WALL_H || (wall0.y == 0 && player.pos->y < SIZE_WALL_H*(NB_WALL_H-1)/2) ){
-                            player.pos->y += VITESSE;
+                    if (!collisions(&(SDL_Rect){player->pos->x, player->pos->y + VITESSE, player->pos->w, player->pos->h},map)&&!istype(&(SDL_Rect){player->pos->x, player->pos->y + VITESSE, player->pos->w, player->pos->h},map,PUSH)){
+                        if ( pos_y || wallf.y == (NB_WALL_H-1)*SIZE_WALL_H || (walli.y == 0 && player->pos->y < SIZE_WALL_H*(NB_WALL_H-1)/2) ){
+                            player->pos->y += VITESSE;
                         }
                         else {
                             decalageMap(map,UP);
@@ -347,15 +345,15 @@ int main(){
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
-                    if(!istype(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map,ICE)){
+                    if(!istype(&(SDL_Rect){player->pos->x, player->pos->y, player->pos->w, player->pos->h},map,ICE)){
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
                     break;
                 case LEFT:
-                    if (!collisions(&(SDL_Rect){player.pos->x-VITESSE , player.pos->y, player.pos->w, player.pos->h},map)&&!istype(&(SDL_Rect){player.pos->x-VITESSE , player.pos->y, player.pos->w, player.pos->h},map,PUSH)){
-                        if ( pos_x || wall0.x == 0 || (wallf.x == (NB_WALL_W-1)*SIZE_WALL_W && player.pos->x > SIZE_WALL_W*(NB_WALL_W-1)/2) ){
-                            player.pos->x -= VITESSE;
+                    if (!collisions(&(SDL_Rect){player->pos->x-VITESSE , player->pos->y, player->pos->w, player->pos->h},map)&&!istype(&(SDL_Rect){player->pos->x-VITESSE , player->pos->y, player->pos->w, player->pos->h},map,PUSH)){
+                        if ( pos_x || walli.x == 0 || (wallf.x == (NB_WALL_W-1)*SIZE_WALL_W && player->pos->x > SIZE_WALL_W*(NB_WALL_W-1)/2) ){
+                            player->pos->x -= VITESSE;
                         }
                         else {
                             decalageMap(map,RIGHT);
@@ -367,15 +365,15 @@ int main(){
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
-                    if(!istype(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map,ICE)){
+                    if(!istype(&(SDL_Rect){player->pos->x, player->pos->y, player->pos->w, player->pos->h},map,ICE)){
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
                     break;
                 case RIGHT:
-                    if (!collisions(&(SDL_Rect){player.pos->x + VITESSE, player.pos->y, player.pos->w, player.pos->h},map)&&!istype(&(SDL_Rect){player.pos->x + VITESSE, player.pos->y, player.pos->w, player.pos->h},map,PUSH)){
-                        if ( pos_x || wallf.x == (NB_WALL_W-1)*SIZE_WALL_W || (wall0.x == 0 && player.pos->x < SIZE_WALL_W*(NB_WALL_W-1)/2) ){
-                            player.pos->x += VITESSE;
+                    if (!collisions(&(SDL_Rect){player->pos->x + VITESSE, player->pos->y, player->pos->w, player->pos->h},map)&&!istype(&(SDL_Rect){player->pos->x + VITESSE, player->pos->y, player->pos->w, player->pos->h},map,PUSH)){
+                        if ( pos_x || wallf.x == (NB_WALL_W-1)*SIZE_WALL_W || (walli.x == 0 && player->pos->x < SIZE_WALL_W*(NB_WALL_W-1)/2) ){
+                            player->pos->x += VITESSE;
                         }
                         else {
                             decalageMap(map,LEFT);
@@ -387,7 +385,7 @@ int main(){
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
-                    if(!istype(&(SDL_Rect){player.pos->x, player.pos->y, player.pos->w, player.pos->h},map,ICE)){
+                    if(!istype(&(SDL_Rect){player->pos->x, player->pos->y, player->pos->w, player->pos->h},map,ICE)){
                         isIcy=!isIcy;
                         directionInitiale=0;
                     }
