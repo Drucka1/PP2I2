@@ -77,6 +77,18 @@ ListObj* listObjRemove(ListObj* list, Object* obj){
     return list;
 }
 
+ListObj* removeKeyInventory(ListObj* inventory, int lvl){
+    if (inventory == NULL) return NULL;
+    if (inventory->object->door->level == lvl){
+        ListObj* next = inventory->next;
+        free(inventory);
+        return next;
+    }
+    inventory->next = removeKeyInventory(inventory->next,lvl);
+    return inventory;
+
+}
+
 ListObj* listObjRemoveWall(ListObj* list) {
     if (list == NULL) return NULL;
     

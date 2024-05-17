@@ -53,6 +53,7 @@ typedef struct {
 
 ListObj* listObjAppend(ListObj* list, Object* obj);
 ListObj* listObjRemove(ListObj* list, Object* obj);
+ListObj* removeKeyInventory(ListObj* inventory, int lvl);
 ListObj* listObjRemoveWall(ListObj* list);
 Object* getObject(ListObj* list, int type);
 void freeListObj(ListObj* list);

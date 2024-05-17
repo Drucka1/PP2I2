@@ -103,7 +103,34 @@ int main(){
                             break;
                         case SDLK_i:
                             isIcy = !isIcy;
-                            break;         
+                            break;    
+                        case SDLK_r:
+                            {   
+                                char lvl[3];
+                                sprintf(lvl,"%d",map->level);
+                                char path[50] = "assets/level/save/level";
+                                strcat(path,lvl);
+                                strcat(path,".txt");
+
+
+                                char commande[150] = "cp -f ";
+                                strcat(commande," assets/level/default/level");
+                                strcat(commande,lvl);
+                                strcat(commande,".txt ");
+                                strcat(commande,path);
+                                printf("%s \n %s \n",commande,path);
+                                system(commande);
+                                player->inventory = removeKeyInventory(player->inventory,map->level);
+                                free(map);
+                                map = FileToMap(path,NULL,textures);
+
+                                int offset_player_x,offset_player_y;
+                                posInitPlayerLevel(path,&offset_player_x,&offset_player_y);
+                                player->pos->x = map->offset_map.x+offset_player_x*SIZE_WALL_W;
+                                player->pos->y = map->offset_map.y+offset_player_y*SIZE_WALL_H;
+
+                                break; 
+                            } 
                         case SDLK_e://Prend la clé dans l'inventaire
                             interact(&map,player,textures);
                             break;
