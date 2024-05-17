@@ -5,6 +5,7 @@ Dans cette branch, j'ai repris ce que Clément avait fait.
 Quelques modifications :
 
 - globalement, j'ai décomposé l'ancien main et init pour qu'on s'y retrouve plus facilement.
+- j'ai viré le dossier include c'est plus chiant qu'autre chose
 - j'ai préféré que les cellules aussi soient malloc, il y a une fonction freeCell.
 
 - les fonctions de gestions de liste d'object sont désormais void, ça change rien en soit juste plus besoin d'écrire
