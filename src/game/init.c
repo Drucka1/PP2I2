@@ -51,11 +51,13 @@ void render(SDL_Renderer *renderer, Map *map, Entity *player)
   char* str = "Bienvenue dans notre escape game nous allons vous présenter les règles du jeu !";
   
   char* res = cut_string(str);
+
   text_display(renderer, font, res, 130, high_text);
   char* reste = difference_str(str,res);
-  str = copy_string(reste);
+  char* temp_str = copy_string(reste);
   free(res);
   free(reste);
+  str = temp_str;
 
    while (str) {
         res = cut_string(str);
@@ -65,18 +67,18 @@ void render(SDL_Renderer *renderer, Map *map, Entity *player)
         reste = difference_str(str, res);
       
         if (reste == NULL) {
+            free(res);
             break;
         }
 
-        char *temp = copy_string(reste);
+        temp_str = copy_string(reste);
         free(str);
-        str = temp;
-      
         free(res);
         free(reste);
+        str = temp_str;
     }
 
-    free(str);
+    free(str);  
 
   
   /*
