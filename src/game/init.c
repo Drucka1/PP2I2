@@ -61,8 +61,9 @@ void render(SDL_Renderer *renderer, Map *map, Entity *player)
 
    while (str) {
         res = cut_string(str);
-        text_display(renderer, font, res, 130, high_text+50);
         high_text+=50;
+        text_display(renderer, font, res, 130, high_text);
+        
 
         reste = difference_str(str, res);
       
