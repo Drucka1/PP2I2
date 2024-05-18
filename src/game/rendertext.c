@@ -3,6 +3,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <stdio.h>
 #include <stdbool.h>
+#define COUPAGE 16
 
 //Générer du texte instantanément 
 
@@ -10,7 +11,7 @@ void text_display(SDL_Renderer* renderer, TTF_Font* font, const char* text, int 
     
     SDL_Surface* surface_text;
     SDL_Texture* texture_text;
-    SDL_Color color_text = {255,255,255}; //blanc
+    SDL_Color color_text = {0,0,0}; 
 
     surface_text = TTF_RenderText_Blended(font, text, color_text);
     if(!surface_text){
@@ -30,6 +31,7 @@ void text_display(SDL_Renderer* renderer, TTF_Font* font, const char* text, int 
     SDL_DestroyTexture(texture_text);
 
 }
+
 /*
 
 //Générer du texte lettre par lettre 
@@ -56,6 +58,80 @@ void display_text_letter_by_letter(SDL_Renderer* renderer, TTF_Font* font, const
     }
 }
 
-
 */
-//Générer du texte lettre par lettre 
+
+//Couper une chaîne selon un nombre de caractères
+
+char* cut_string(char* str_1){
+    int len_str = strlen(str_1);
+    char str[10000];
+    for (int i = 0; i<len_str; i++){
+        str[i] = *(str_1+i);
+    }
+    str[len_str] = '\0';
+
+    char text[10000] = "";
+    int coupage = COUPAGE;
+    int len = 0;
+    const char* separator = " "; 
+
+    //Pour le premier mot 
+    char* strToken = strtok(str, separator);
+    len = strlen(strToken);
+    if (len<=coupage){
+        strcat(text, strToken);
+    }
+
+    //Pour les autres mots 
+    while (strToken != NULL){
+        strToken = strtok(NULL, separator);
+        if (strToken == NULL){
+            break;
+        }
+        len += strlen(strToken)+1;
+        if (len<=coupage){
+            strcat(text, " ");
+            strcat(text, strToken);
+        }
+    }
+    char* res = strdup(text);
+    return res;
+}
+
+
+//Après avoir coupé la chaine au bon endroit, pouvoir récupérer le reste de la chaine 
+char* difference_str(char* big_str, char* small_str){
+    int len_big_str = strlen(big_str);
+    int len_small_str = strlen(small_str);
+    int len_res = len_big_str - len_small_str - 1; 
+
+    if(len_res <= 0){
+        return NULL;
+    }
+
+    char res[len_res+1];
+    for (int i = len_small_str + 1; i<len_big_str; i++){
+        res[i-len_small_str-1] = big_str[i];
+    }
+    res[len_res]='\0';
+    char* res2 = strdup(res);
+    return res2;
+
+}
+
+//Copier une chaine de caractère
+
+char* copy_string(char* str){
+    char* res = malloc(strlen(str)+1);
+    char *p = res;
+    while(*str!='\0'){
+        *p = *str;
+        p++;
+        str++;
+    }
+    *p = '\0';
+    return res;
+}
+
+
+

@@ -2,6 +2,7 @@
 #define UTILS_H
 
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include "structs.h"
 #include "game/init.h"
 

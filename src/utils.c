@@ -24,6 +24,13 @@ void initSDL(SDL_Window **window, SDL_Renderer **renderer)
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_image could not initialize! SDL_image Error: %s", IMG_GetError());
     exit(-1);
   }
+
+   if (TTF_Init() != 0) {
+        fprintf(stderr, "Erreur d'initialisation de SDL_ttf : %s\n", TTF_GetError());
+        SDL_DestroyRenderer(renderer);
+        SDL_Quit();
+        return 1;
+    }
 }
 
 void quitSDL(SDL_Window *window, SDL_Renderer *renderer)
