@@ -11,4 +11,8 @@
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 720
 
+#define RECT_HEIGHT 200
+#define RECT_X_OFFSET 50
+#define RECT_Y_OFFSET 50
+
 #endif // DEBUG

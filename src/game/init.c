@@ -1,6 +1,7 @@
 #include "../../include/game/init.h"
 #include <SDL2/SDL_ttf.h>
 #include "../../include/game/rendertext.h"
+#include "../../include/defs.h"
 
 void launchGame(SDL_Renderer *renderer)
 {
@@ -36,6 +37,11 @@ void render(SDL_Renderer *renderer, Map *map, Entity *player)
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderClear(renderer);
 
+  //Petit rectangle 
+  SDL_Rect little_rect = {RECT_X_OFFSET, RECT_Y_OFFSET, WINDOW_WIDTH - 2* RECT_X_OFFSET, RECT_HEIGHT};
+  SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Couleur petit rectangle 
+  SDL_RenderFillRect(renderer, &little_rect);
+  
   // Affichage de la carte et du joueur
   renderMap(map, player, renderer);
   renderPlayer(player, renderer);
@@ -44,15 +50,15 @@ void render(SDL_Renderer *renderer, Map *map, Entity *player)
   TTF_Font *font = TTF_OpenFont("assets/VeraMono.ttf",24); //taille police : 24
   if (!font){
     fprintf(stderr, "Erreur los du chargement de la police :%s\n", TTF_GetError());
-   
+    return ; //en plus 
   }
 
-  int high_text = 50;
-  char* str = "Bienvenue dans notre escape game nous allons vous présenter les règles du jeu !";
+  int high_text = RECT_Y_OFFSET+10;;
+  char* str = "Bienvenue dans notre escape game nous allons vous presenter les regles du jeu hdzzlejakdzejdf fzejhfze dhzejkldz azdhjzd zdjzbedez !";
   
   char* res = cut_string(str);
 
-  text_display(renderer, font, res, 130, high_text);
+  text_display(renderer, font, res, RECT_X_OFFSET+10, high_text);
   char* reste = difference_str(str,res);
   char* temp_str = copy_string(reste);
   free(res);
@@ -62,7 +68,7 @@ void render(SDL_Renderer *renderer, Map *map, Entity *player)
    while (str) {
         res = cut_string(str);
         high_text+=50;
-        text_display(renderer, font, res, 130, high_text);
+        text_display(renderer, font, res, RECT_X_OFFSET+10, high_text);
         
 
         reste = difference_str(str, res);
@@ -82,16 +88,13 @@ void render(SDL_Renderer *renderer, Map *map, Entity *player)
     free(str);  
 
   
-  /*
-  int high_text = 50;
-  text_display(renderer, font, "Bienvenue dans notre escape game ! AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", 130, high_text); //65 caractères
-  text_display(renderer, font, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", 130, high_text+50); //65 caractères
-  */
+  
   TTF_CloseFont(font);
 
   // Affichage dans le moteur de rendu
   SDL_RenderPresent(renderer);
   SDL_Delay(10);
+  
 }
 
 void freeGame(Entity *player, Map *map)

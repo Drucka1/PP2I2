@@ -3,7 +3,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <stdbool.h>
 #include <stdio.h>
-#define COUPAGE 16
+#define COUPAGE 50
 
 // Générer du texte instantanément
 
@@ -12,26 +12,22 @@ void text_display(SDL_Renderer *renderer, TTF_Font *font, const char *text,
 
   SDL_Surface *surface_text;
   SDL_Texture *texture_text;
-  SDL_Color color_text = {0, 0, 0};
+  SDL_Color color_text = {0, 255, 0};
 
   surface_text = TTF_RenderText_Blended(font, text, color_text);
   if (!surface_text) {
-    fprintf(stderr, "Erreur lors de la création de surface de texte : %s\n",
-            TTF_GetError());
+    fprintf(stderr, "Erreur lors de la création de surface de texte : %s\n", TTF_GetError());
     return;
   }
 
   texture_text = SDL_CreateTextureFromSurface(renderer, surface_text);
   if (!texture_text) {
-    fprintf(stderr, "Erreur lors de la création de texture de texte : %s\n",
-            SDL_GetError());
+    fprintf(stderr, "Erreur lors de la création de texture de texte : %s\n", SDL_GetError());
+    SDL_FreeSurface(surface_text); //en plus
     return;
   }
 
-  SDL_Rect rectangle = {
-      x, y, surface_text->w,
-      surface_text->h}; // w : largeur ; h : hauteur ; x et y coordonnées du
-                        // coin supérieur gauche du rectangle
+  SDL_Rect rectangle = {x, y, surface_text->w, surface_text->h}; // w : largeur ; h : hauteur ; x et y coordonnées du coin supérieur gauche du rectangle
   SDL_RenderCopy(renderer, texture_text, NULL, &rectangle);
   SDL_FreeSurface(surface_text);
   SDL_DestroyTexture(texture_text);
