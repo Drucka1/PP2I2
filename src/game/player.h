@@ -27,5 +27,6 @@ void moveRight(Entity *player, Map *map);
 void moveUp(Entity *player, Map *map);
 void moveLeft(Entity *player, Map *map);
 void moveDown(Entity *player, Map *map);
-
+void teleport(int room, Index spawnIndex, Entity *player, Map **map,
+              Map **rooms);
 #endif // __PLAYER__

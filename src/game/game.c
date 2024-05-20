@@ -63,12 +63,12 @@ void update(Entity *player, Map **map, Map **rooms) {
   Index currentIndex = player->index;
   ListObj *current = (*map)->data[currentIndex.i][currentIndex.j]->objects;
   if (listObjContains(current, DOOR)) {
-    Object *door = listObjGet(current, DOOR);
-    if (door->open) {
-      rooms[(*map)->room]->spawnIndex = player->prevIndex;
-      *map = rooms[door->room];
-      movePlayer(player, *map, (*map)->spawnIndex);
+    Path door = listObjGet(current, DOOR)->path;
+
+    if (door.open) {
+      teleport(door.room, door.spawnIndex, player, map, rooms);
     }
+
   }
   moveMapBuffer(*map, player);
 }

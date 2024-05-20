@@ -22,8 +22,21 @@ typedef struct {
 } Index;
 
 typedef struct {
-  // Nom de l'objet (pour le chemin vers l'image)
-  int objectType;
+  Index index;
+
+} ListIndex;
+
+typedef struct {
+  // Vers quelle salle mène la porte
+  int room;
+  // État de la porte
+  bool open;
+  // Indices de la sortie
+  Index spawnIndex;
+
+} Path; // une porte, un escalier ou un téléporteur
+
+typedef struct {
   // Indices de l'objet dans la carte
   Index index;
 
@@ -38,11 +51,9 @@ typedef struct {
   // Action éventuelle réalisée par l'objet
   void (*active)(void);
 
-  // Si l'object est une porte ou un escalier
-  // Vers quelle salle il mène
-  int room;
-  // état de la porte
-  bool open;
+  // Nom de l'objet (pour le chemin vers l'image)
+  int objectType;
+  Path path;
 
 } Object;
 

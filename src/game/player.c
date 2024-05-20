@@ -128,3 +128,11 @@ void moveDown(Entity *player, Map *map) {
   movePlayer(player, map, dest);
   player->facing = FACING_DOWN;
 }
+
+void teleport(int room, Index spawnIndex, Entity *player, Map **map,
+              Map **rooms) {
+  player->prevIndex = player->index;
+  player->index = spawnIndex;
+  *map = rooms[room];
+  movePlayer(player, *map, spawnIndex);
+}

@@ -1,18 +1,5 @@
 #include "interact.h"
 
-void activeCell(Cell *cell) {
-  if (cell == NULL) {
-    return;
-  }
-  ListObj *current = cell->objects;
-  while (current->object != NULL) {
-    if (current->object->active != NULL) {
-      current->object->active();
-    }
-    current = current->next;
-  }
-}
-
 void interact(Entity *player, Map *map) {
   if (listObjContains(objects(player->index.i, player->index.j), KEY)) {
     printf("Found a key !\n");
@@ -40,3 +27,4 @@ void interact(Entity *player, Map *map) {
 }
 
 void nothing(void) { printf("There is nothing to do\n"); }
+

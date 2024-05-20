@@ -63,7 +63,7 @@ Map *loadMap(int room, SDL_Texture **textures) {
   char token[128];
   int i = 0;
   int j = 0;
-  int p, q;
+  int p, q, r;
   map->data = malloc(sizeof(Cell **) * map->dimensions.i);
   map->data[i] = malloc(sizeof(Cell *) * map->dimensions.j);
   cell(i, j) = initCell((Index){i, j});
@@ -98,14 +98,16 @@ Map *loadMap(int room, SDL_Texture **textures) {
         object->texture = textures[WALL];
         object->objectType = WALL;
         listObjAppend(&objects, object);
-      } else if (sscanf(token, "2(%d)", &p) == 1) {
+      } else if (sscanf(token, "2[%d(%d,%d)]", &p, &q, &r) == 3) {
         Object *object = initObject((Index){i, j}, FACING_RIGHT);
+        printf("here\n");
         object->texture = textures[DOOR];
         object->objectType = DOOR;
-        object->room = p;
+        object->path.room = p;
+        object->path.spawnIndex = (Index){q, r};
 
         cell(i, j)->steppable = true;
-        object->open = true;
+        object->path.open = true;
 
         listObjAppend(&objects, object);
       } else if (atoi(token) == KEY) {
