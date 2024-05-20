@@ -10,7 +10,7 @@
        ? (0)                                                                   \
        : (1))
 
-Object *initObject(Index index, int facing);
+Object *initObject(Index index);
 Cell *initCell(Index index);
 Map *loadMap(int room, SDL_Texture **textures);
 Map **loadRooms(SDL_Renderer *renderer, SDL_Texture **textures);

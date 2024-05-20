@@ -1,4 +1,5 @@
 #include "game.h"
+#include <SDL2/SDL_timer.h>
 #include <stdio.h>
 
 void launchGame(SDL_Renderer *renderer) {
@@ -16,46 +17,50 @@ void launchGame(SDL_Renderer *renderer) {
 
   while (!quit) {
     while (SDL_PollEvent(&event)) {
-      if (event.type == SDL_QUIT) {
+      switch (event.type) {
+      case SDL_QUIT:
         quit = 1;
+        break;
+      case SDL_KEYDOWN:
+        play(event, player, map, rooms);
+        break;
+      default:
+        break;
       }
-      play(event, player, map);
-      update(player, &map, rooms);
-      render(renderer, map, player);
     }
+    update(player, &map, rooms);
+    render(renderer, map, player);
   }
 
   freeGame(player, textures, rooms);
 }
 
-void play(SDL_Event event, Entity *player, Map *map) {
-  if (event.type == SDL_KEYDOWN) {
-    switch (event.key.keysym.sym) {
-    // Déplacement du joueur
-    case SDLK_UP:
-    case SDLK_z:
-      moveUp(player, map);
-      break;
-    case SDLK_DOWN:
-    case SDLK_s:
-      moveDown(player, map);
-      break;
-    case SDLK_LEFT:
-    case SDLK_q:
-      moveLeft(player, map);
-      break;
-    case SDLK_RIGHT:
-    case SDLK_d:
-      moveRight(player, map);
-      break;
+void play(SDL_Event event, Entity *player, Map *map, Map **rooms) {
+  switch (event.key.keysym.sym) {
+  // Déplacement du joueur
+  case SDLK_UP:
+  case SDLK_z:
+    move(player, map, UP);
+    break;
+  case SDLK_DOWN:
+  case SDLK_s:
+    move(player, map, DOWN);
+    break;
+  case SDLK_LEFT:
+  case SDLK_q:
+    move(player, map, LEFT);
+    break;
+  case SDLK_RIGHT:
+  case SDLK_d:
+    move(player, map, RIGHT);
+    break;
 
-    // Intéraction
-    case SDLK_SPACE:
-      interact(player, map);
-      break;
-    default:
-      break;
-    }
+  // Intéraction
+  case SDLK_SPACE:
+    interact(player, map, rooms);
+    break;
+  default:
+    break;
   }
 }
 
@@ -63,12 +68,26 @@ void update(Entity *player, Map **map, Map **rooms) {
   Index currentIndex = player->index;
   ListObj *current = (*map)->data[currentIndex.i][currentIndex.j]->objects;
   if (listObjContains(current, DOOR)) {
-    Path door = listObjGet(current, DOOR)->path;
-
-    if (door.open) {
-      teleport(door.room, door.spawnIndex, player, map, rooms);
+    Object *srcDoor = listObjGet(current, DOOR);
+    Path door = srcDoor->path;
+    Object *destDoor = listObjGet(
+        rooms[door.room]->data[door.pairedIndex.i][door.pairedIndex.j]->objects,
+        DOOR);
+    Index spawnIndex = srcDoor->path.pairedIndex;
+    if (destDoor->facing == RIGHT) {
+      spawnIndex.j++;
+    } else if (destDoor->facing == UP) {
+      spawnIndex.i--;
+    } else if (destDoor->facing == LEFT) {
+      spawnIndex.j--;
+    } else if (destDoor->facing == DOWN) {
+      spawnIndex.i++;
     }
-
+    else {
+    }
+    if (door.open) {
+      teleport(door.room, spawnIndex, player, map, rooms);
+    }
   }
   moveMapBuffer(*map, player);
 }

@@ -23,10 +23,8 @@ void moveCellBuffer(Map *map, Cell *cell, Entity *player);
 void moveMapBuffer(Map *map, Entity *player);
 
 void movePlayer(Entity *player, Map *map, Index dest);
-void moveRight(Entity *player, Map *map);
-void moveUp(Entity *player, Map *map);
-void moveLeft(Entity *player, Map *map);
-void moveDown(Entity *player, Map *map);
+void move(Entity *player, Map *map, int direction);
 void teleport(int room, Index spawnIndex, Entity *player, Map **map,
               Map **rooms);
+
 #endif // __PLAYER__

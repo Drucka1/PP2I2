@@ -7,7 +7,7 @@ Entity *loadPlayer(Index index, SDL_Renderer *renderer) {
   player->index = index;
   player->prevIndex = index;
 
-  player->facing = FACING_RIGHT;
+  player->facing = RIGHT;
 
   player->buffer = malloc(sizeof(SDL_Rect));
   player->buffer->x = indexToPixel(index.j);
@@ -71,10 +71,8 @@ int renderJ(Object *object, Map *map, Entity *player) {
 }
 
 void moveObjectBuffer(Map *map, Object *object, Entity *player) {
-  object->buffer->x =
-      indexToPixel(renderJ(object, map, player));
-  object->buffer->y =
-      indexToPixel(renderI(object, map, player));
+  object->buffer->x = indexToPixel(renderJ(object, map, player));
+  object->buffer->y = indexToPixel(renderI(object, map, player));
 }
 
 void moveCellBuffer(Map *map, Cell *cell, Entity *player) {
@@ -101,38 +99,42 @@ void movePlayer(Entity *player, Map *map, Index dest) {
     player->prevIndex = player->index;
     player->index = dest;
 
-    Index playerIndex = {player->index.i - renderMinI(player, map) + map->offset.i, player->index.j - renderMinJ(player, map) + map->offset.j};
+    Index playerIndex = {
+        player->index.i - renderMinI(player, map) + map->offset.i,
+        player->index.j - renderMinJ(player, map) + map->offset.j};
 
     player->buffer->x = indexToPixel(playerIndex.j);
     player->buffer->y = indexToPixel(playerIndex.i);
   }
 }
 
-void moveRight(Entity *player, Map *map) {
-  Index dest = {player->index.i, player->index.j + 1};
+void move(Entity *player, Map *map, int direction) {
+  Index dest = player->index;
+  switch (direction) {
+  case RIGHT:
+    dest.j++;
+    player->facing = RIGHT;
+    break;
+  case UP:
+    dest.i--;
+    player->facing = UP;
+    break;
+  case LEFT:
+    dest.j--;
+    player->facing = LEFT;
+    break;
+  case DOWN:
+    dest.i++;
+    player->facing = DOWN;
+    break;
+  }
   movePlayer(player, map, dest);
-  player->facing = FACING_RIGHT;
-}
-void moveUp(Entity *player, Map *map) {
-  Index dest = {player->index.i - 1, player->index.j};
-  movePlayer(player, map, dest);
-  player->facing = FACING_UP;
-}
-void moveLeft(Entity *player, Map *map) {
-  Index dest = {player->index.i, player->index.j - 1};
-  movePlayer(player, map, dest);
-  player->facing = FACING_LEFT;
-}
-void moveDown(Entity *player, Map *map) {
-  Index dest = {player->index.i + 1, player->index.j};
-  movePlayer(player, map, dest);
-  player->facing = FACING_DOWN;
 }
 
-void teleport(int room, Index spawnIndex, Entity *player, Map **map,
+void teleport(int room, Index destIndex, Entity *player, Map **map,
               Map **rooms) {
   player->prevIndex = player->index;
-  player->index = spawnIndex;
+  player->index = destIndex;
   *map = rooms[room];
-  movePlayer(player, *map, spawnIndex);
+  movePlayer(player, *map, destIndex);
 }

@@ -1,11 +1,11 @@
 #include "map.h"
 #include <stdio.h>
 
-Object *initObject(Index index, int facing) {
+Object *initObject(Index index) {
   Object *object = malloc(sizeof(Object));
 
   object->index = index;
-  object->facing = facing;
+  object->facing = RIGHT;
 
   object->buffer = malloc(sizeof(SDL_Rect));
   object->buffer->x = indexToPixel(index.j);
@@ -22,7 +22,7 @@ Object *initObject(Index index, int facing) {
 Cell *initCell(Index index) {
   Cell *cell = malloc(sizeof(Cell));
   cell->objects = malloc(sizeof(ListObj));
-  cell->objects->object = initObject(index, FACING_RIGHT);
+  cell->objects->object = initObject(index);
   cell->objects->next = NULL;
   cell->steppable = true;
   return cell;
@@ -63,7 +63,8 @@ Map *loadMap(int room, SDL_Texture **textures) {
   char token[128];
   int i = 0;
   int j = 0;
-  int p, q, r;
+  char s[128];
+  int o, p, q, r;
   map->data = malloc(sizeof(Cell **) * map->dimensions.i);
   map->data[i] = malloc(sizeof(Cell *) * map->dimensions.j);
   cell(i, j) = initCell((Index){i, j});
@@ -88,42 +89,73 @@ Map *loadMap(int room, SDL_Texture **textures) {
       cell(i, j) = initCell((Index){i, j});
     } else {
       if (atoi(token) == GROUND) {
-        Object *object = initObject((Index){i, j}, FACING_RIGHT);
+        Object *object = initObject((Index){i, j});
         object->objectType = GROUND;
         object->texture = textures[GROUND];
         listObjAppend(&objects, object);
-      } else if (atoi(token) == WALL) {
+      }
+
+      else if (atoi(token) == WALL) {
         cell(i, j)->steppable = false;
-        Object *object = initObject((Index){i, j}, FACING_RIGHT);
+        Object *object = initObject((Index){i, j});
         object->texture = textures[WALL];
         object->objectType = WALL;
         listObjAppend(&objects, object);
-      } else if (sscanf(token, "2[%d(%d,%d)]", &p, &q, &r) == 3) {
-        Object *object = initObject((Index){i, j}, FACING_RIGHT);
-        printf("here\n");
+      }
+
+      else if (sscanf(token, "2[%d(%d,%d)%d]", &p, &q, &r, &o) == 4) {
+        Object *object = initObject((Index){i, j});
         object->texture = textures[DOOR];
         object->objectType = DOOR;
-        object->path.room = p;
-        object->path.spawnIndex = (Index){q, r};
+        printf("facing %d\n", o);
+        object->facing = o;
 
-        cell(i, j)->steppable = true;
-        object->path.open = true;
+        object->path.room = p;
+        object->path.pairedIndex = (Index){q, r};
+
+        cell(i, j)->steppable = false;
+        object->path.open = false;
 
         listObjAppend(&objects, object);
-      } else if (atoi(token) == KEY) {
-        Object *object = initObject((Index){i, j}, FACING_RIGHT);
+      }
+
+      else if (sscanf(token, "3[%s]", s) == 1) {
+        Object *object = initObject((Index){i, j});
         object->texture = textures[KEY];
         object->objectType = KEY;
+
+        char *t = strtok(s, ";");
+
+        while (t) {
+          if (sscanf(t, "%d(%d,%d)", &p, &q, &r) == 3) {
+            object->switchObj.affected = NULL;
+            listIndexAppend(&(object->switchObj.affected), (Index){q, r}, p);
+          }
+          t = strtok(NULL, ";");
+        }
         listObjAppend(&objects, object);
-      } else if (atoi(token) == LEVER) {
-        Object *object = initObject((Index){i, j}, FACING_RIGHT);
+      }
+
+      else if (sscanf(token, "4[%s]", s) == 1) {
+        Object *object = initObject((Index){i, j});
         object->texture = textures[LEVER];
         object->objectType = LEVER;
+
+        char *t = strtok(s, ";");
+
+        while (t) {
+          if (sscanf(t, "%d(%d,%d)", &p, &q, &r) == 3) {
+            object->switchObj.state = false;
+            object->switchObj.affected = NULL;
+            listIndexAppend(&object->switchObj.affected, (Index){q, r}, p);
+          }
+          t = strtok(NULL, ";");
+        }
+
         listObjAppend(&objects, object);
       }
     }
   }
-
   fclose(file);
   return map;
 }
@@ -138,6 +170,20 @@ Map **loadRooms(SDL_Renderer *renderer, SDL_Texture **textures) {
 
   for (int i = 0; i < ROOM_COUNT; i++) {
     rooms[i] = loadMap(i, textures);
+  }
+
+
+  for (int i = 0; i < ROOM_COUNT; i++) {
+    Map *map = rooms[i];
+    for (int i = 0; i < map->dimensions.i; i++) {
+      for (int j = 0; j < map->dimensions.j; j++) {
+      Object *object = cell(i, j)->objects->object;
+      if (object->objectType == DOOR) {
+          Path door = object->path;
+          door.pairedPath = &listObjGet(rooms[door.room]->data[door.pairedIndex.i][door.pairedIndex.j]->objects, DOOR)->path;
+        }
+      }
+    }
   }
 
   return rooms;

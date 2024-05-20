@@ -1,7 +1,18 @@
 #include "structs.h"
 #include <stdio.h>
 
+void freeListIndex(ListIndex *list) {
+  if (list == NULL) {
+    return;
+  }
+  freeListIndex(list->next);
+  free(list);
+}
+
 void freeObject(Object *object) {
+  if (object->objectType == 3 || object->objectType == 4) {
+    freeListIndex(object->switchObj.affected);
+  }
   free(object->buffer);
   free(object);
 }
@@ -28,6 +39,29 @@ void freeMap(Map *map) {
   }
   free(map->data);
   free(map);
+}
+
+bool isIndexEqual(Index a, Index b) { return a.i == b.i && a.j == b.j; }
+
+void listIndexAppend(ListIndex **list, Index index, int room) {
+  if (*list == NULL) {
+    ListIndex *new = malloc(sizeof(ListIndex));
+    new->index = index;
+    new->room = room;
+    new->next = NULL;
+    *list = new;
+    return;
+  }
+  listIndexAppend(&((*list)->next), index, room);
+}
+
+void listIndexPrint(ListIndex *list) {
+  if (list == NULL) {
+    printf("\n");
+    return;
+  }
+  printf("%d(%d, %d); ", list->room, list->index.i, list->index.j);
+  listIndexPrint(list->next);
 }
 
 void listObjAppend(ListObj **list, Object *obj) {
@@ -73,8 +107,10 @@ void listObjAdd(ListObj **list, ListObj *listToAdd) {
 
 void listObjPrint(ListObj *list) {
   if (list == NULL || list->object == NULL) {
+    printf("\n");
     return;
   }
+  printf("%d; ", list->object->objectType);
   listObjPrint(list->next);
 }
 
@@ -86,6 +122,19 @@ Object *listObjGet(ListObj *list, int objectType) {
     return list->object;
   }
   return listObjGet(list->next, objectType);
+}
+
+ListObj *listObjGetAll(ListObj *list, int objectType) {
+  if (list == NULL || list->object == NULL) {
+    return NULL;
+  }
+  if (list->object->objectType == objectType) {
+    ListObj *new = malloc(sizeof(ListObj));
+    new->object = list->object;
+    new->next = listObjGetAll(list->next, objectType);
+    return new;
+  }
+  return listObjGetAll(list->next, objectType);
 }
 
 Object *listObjPop(ListObj **list, int objectType) {

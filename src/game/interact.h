@@ -4,7 +4,7 @@
 #include "player.h"
 
 void activeCell(Cell *cell);
-void interact(Entity *player, Map *map);
+void interact(Entity *player, Map *map, Map **rooms);
 
 void nothing();
 

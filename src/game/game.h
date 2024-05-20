@@ -7,7 +7,7 @@
 void launchGame(SDL_Renderer *renderer);
 
 void update(Entity *player, Map **map, Map **rooms);
-void play(SDL_Event event, Entity *player, Map *map);
+void play(SDL_Event event, Entity *player, Map *map, Map **rooms);
 
 void renderEntity(Entity *entity, SDL_Renderer *renderer);
 void renderObject(Object *object, SDL_Renderer *renderer);

@@ -7,10 +7,10 @@
 #define cell(i, j) (map->data[i][j])
 #define objects(i, j) (map->data[i][j]->objects)
 
-#define FACING_RIGHT 0
-#define FACING_UP 1
-#define FACING_LEFT 2
-#define FACING_DOWN 3
+#define RIGHT 0
+#define UP 1
+#define LEFT 2
+#define DOWN 3
 
 // Conversion indice / pixel
 #define indexToPixel(index) (index * TILE_SIZE)
@@ -21,20 +21,34 @@ typedef struct {
   int j;
 } Index;
 
-typedef struct {
+typedef struct _ListIndex {
   Index index;
-
+  int room;
+  struct _ListIndex *next;
 } ListIndex;
 
-typedef struct {
-  // Vers quelle salle mène la porte
+typedef struct _Path {
+  // Vers quelle salle mène le passage
   int room;
-  // État de la porte
+  // État du passage
   bool open;
-  // Indices de la sortie
-  Index spawnIndex;
+  // Indices de la cellule de destination
+  Index pairedIndex;
+
+  // Appareiller à
+  struct _Path *pairedPath;
 
 } Path; // une porte, un escalier ou un téléporteur
+
+typedef struct {
+  // État dU commutateur
+  bool state;
+  // Objets à activer
+  ListIndex *affected;
+  // Durée de l'activation
+  int duration;
+
+} Switch;
 
 typedef struct {
   // Indices de l'objet dans la carte
@@ -54,6 +68,7 @@ typedef struct {
   // Nom de l'objet (pour le chemin vers l'image)
   int objectType;
   Path path;
+  Switch switchObj;
 
 } Object;
 
@@ -104,6 +119,10 @@ void freeListObj(ListObj *list);
 void freeCell(Cell *cell);
 void freeMap(Map *map);
 
+bool isIndexEqual(Index index1, Index index2);
+void listIndexAppend(ListIndex **list, Index index, int room);
+void listIndexPrint(ListIndex *list);
+
 void listObjAppend(ListObj **list, Object *obj);
 void listObjRemove(ListObj **list, int objectType);
 bool listObjContains(ListObj *list, int objectType);
@@ -114,6 +133,7 @@ ListObj *listObjCopy(ListObj *list);
 void listObjPrint(ListObj *list);
 
 Object *listObjGet(ListObj *list, int objectType);
+ListObj *listObjGetAll(ListObj *list, int objectType);
 Object *listObjPop(ListObj **list, int objectType);
 
 #endif // __STRUCTS_H__
