@@ -16,19 +16,22 @@ void launchGame(SDL_Renderer *renderer) {
   int quit = 0;
 
   while (!quit) {
+    update(player, &map, rooms);
     while (SDL_PollEvent(&event)) {
       switch (event.type) {
       case SDL_QUIT:
         quit = 1;
         break;
       case SDL_KEYDOWN:
+        if (player->status.icy) {
+          break;
+        }
         play(event, player, map, rooms);
         break;
       default:
         break;
       }
     }
-    update(player, &map, rooms);
     render(renderer, map, player);
   }
 
@@ -87,6 +90,18 @@ void update(Entity *player, Map **map, Map **rooms) {
     if (door.open) {
       teleport(door.room, spawnIndex, player, map, rooms);
     }
+  }
+  if (listObjContains(current, ICE)) {
+    player->status.icy = true;
+    Index next = nextIndex(player->index, player->facing);
+    if ((*map)->data[next.i][next.j]->steppable) {
+      movePlayer(player, *map, next);
+      SDL_Delay(50);
+    } else {
+      player->status.icy = false;
+    }
+  } else {
+    player->status.icy = false;
   }
   moveMapBuffer(*map, player);
 }

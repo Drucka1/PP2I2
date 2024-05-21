@@ -19,6 +19,8 @@ Entity *loadPlayer(Index index, SDL_Renderer *renderer) {
 
   player->inventory = NULL;
 
+  player->status = (Status){false};
+
   return player;
 }
 
@@ -105,6 +107,8 @@ void movePlayer(Entity *player, Map *map, Index dest) {
 
     player->buffer->x = indexToPixel(playerIndex.j);
     player->buffer->y = indexToPixel(playerIndex.i);
+
+    moveMapBuffer(map, player);
   }
 }
 

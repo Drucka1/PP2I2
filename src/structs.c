@@ -43,6 +43,27 @@ void freeMap(Map *map) {
 
 bool isIndexEqual(Index a, Index b) { return a.i == b.i && a.j == b.j; }
 
+Index nextIndex(Index index, int direction) {
+  Index next = index;
+  switch (direction) {
+  case RIGHT:
+    next.j++;
+    break;
+  case LEFT:
+    next.j--;
+    break;
+  case UP:
+    next.i--;
+    break;
+  case DOWN:
+    next.i++;
+    break;
+  default:
+    break;
+  }
+  return next;
+}
+
 void listIndexAppend(ListIndex **list, Index index, int room) {
   if (*list == NULL) {
     ListIndex *new = malloc(sizeof(ListIndex));

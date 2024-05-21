@@ -88,6 +88,11 @@ typedef struct _ListObj {
 } ListObj;
 
 typedef struct {
+  bool icy;
+  bool blind;
+} Status;
+
+typedef struct {
   int facing;
   // Indices de l'objet dans la carte
   Index index;
@@ -99,7 +104,10 @@ typedef struct {
   // Image
   SDL_Texture *texture;
 
+  // Inventaire
   ListObj *inventory;
+  // État du joueur
+  Status status;
 } Entity;
 
 typedef struct {
@@ -128,8 +136,10 @@ void freeCell(Cell *cell);
 void freeMap(Map *map);
 
 bool isIndexEqual(Index index1, Index index2);
+Index nextIndex(Index index, int direction);
 void listIndexAppend(ListIndex **list, Index index, int room);
 void listIndexPrint(ListIndex *list);
+
 
 void listObjAppend(ListObj **list, Object *obj);
 void listObjRemove(ListObj **list, int objectType);

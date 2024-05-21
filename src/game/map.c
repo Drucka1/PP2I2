@@ -104,6 +104,13 @@ Map *loadMap(int room, SDL_Texture **textures) {
         listObjAppend(&objects, object);
       }
 
+      else if (atoi(token) == ICE) {
+        Object *object = initObject((Index){i, j});
+        object->texture = textures[ICE];
+        object->objectType = ICE;
+        listObjAppend(&objects, object);
+      }
+
       else if (sscanf(token, "2[%d(%d,%d)%d]", &p, &q, &r, &o) == 4) {
         Object *object = initObject((Index){i, j});
         object->texture = textures[DOOR];
@@ -172,15 +179,19 @@ Map **loadRooms(SDL_Texture **textures) {
     rooms[i] = loadMap(i, textures);
   }
 
-
   for (int i = 0; i < ROOM_COUNT; i++) {
     Map *map = rooms[i];
     for (int i = 0; i < map->dimensions.i; i++) {
       for (int j = 0; j < map->dimensions.j; j++) {
-      Object *object = cell(i, j)->objects->object;
-      if (object->objectType == DOOR) {
+        Object *object = cell(i, j)->objects->object;
+        if (object->objectType == DOOR) {
           Path door = object->path;
-          door.pairedPath = &listObjGet(rooms[door.room]->data[door.pairedIndex.i][door.pairedIndex.j]->objects, DOOR)->path;
+          door.pairedPath =
+              &listObjGet(rooms[door.room]
+                              ->data[door.pairedIndex.i][door.pairedIndex.j]
+                              ->objects,
+                          DOOR)
+                   ->path;
         }
       }
     }
