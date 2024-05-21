@@ -64,7 +64,6 @@ void freeObject(Object *object);
 void freeCell(Cell *cell);
 void exchangeObject(Cell *case1, Cell *case2,Tuple* nouvpos, Object* obj);
 void freeMap(Map *map);
-void freeMaps(Map** maps);
 void freeEntity(Entity *entity);
 void freeSprites(SDL_Texture** textures);
 void freePlayer(Entity* player);

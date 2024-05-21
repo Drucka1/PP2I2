@@ -112,16 +112,15 @@ int main(){
                                 strcat(path,lvl);
                                 strcat(path,".txt");
 
-
                                 char commande[150] = "cp -f ";
                                 strcat(commande," assets/level/default/level");
                                 strcat(commande,lvl);
                                 strcat(commande,".txt ");
                                 strcat(commande,path);
-                                printf("%s \n %s \n",commande,path);
                                 system(commande);
+
                                 player->inventory = removeKeyInventory(player->inventory,map->level);
-                                free(map);
+                                freeMap(map);
                                 map = FileToMap(path,NULL,textures);
 
                                 int offset_player_x,offset_player_y;

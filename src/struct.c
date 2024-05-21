@@ -78,15 +78,15 @@ ListObj* listObjRemove(ListObj* list, Object* obj){
 }
 
 ListObj* removeKeyInventory(ListObj* inventory, int lvl){
-    if (inventory == NULL) return NULL;
+    if (!inventory) return NULL;
     if (inventory->object->door->level == lvl){
         ListObj* next = inventory->next;
+        freeObject(inventory->object);
         free(inventory);
         return next;
     }
     inventory->next = removeKeyInventory(inventory->next,lvl);
     return inventory;
-
 }
 
 ListObj* listObjRemoveWall(ListObj* list) {
@@ -119,9 +119,9 @@ void freeListObj(ListObj *list) {
 }
 
 void freeObject(Object *object) {
-    if (object == NULL) return;
-    if (object->pos != NULL) free(object->pos);
-    if (object->door != NULL) free(object->door);
+    if (!object) return;
+    if (object->pos) free(object->pos);
+    if (object->door) free(object->door);
     free(object);
 }
 
@@ -130,7 +130,7 @@ void freeMap(Map *map) {
     for (int i = 0; i < map->rows; i++) {
         for (int j = 0; j < map->cols; j++) {
             freeListObj(map->grid[i][j].objects);
-            if (map->grid[i][j].map_tp) free(map->grid[i][j].map_tp);
+            free(map->grid[i][j].map_tp);
         }
         
         free(map->grid[i]);
