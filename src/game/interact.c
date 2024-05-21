@@ -1,10 +1,18 @@
 #include "interact.h"
+#include "objects.h"
 #include <stdio.h>
+#include <strings.h>
 
 void interact(Entity *player, Map *map, Map **rooms) {
+  Index index = player->index;
   if (listObjContains(objects(player->index.i, player->index.j), KEY)) {
     printf("Found a key !\n");
     pickItem(player, map, KEY);
+    return;
+  } else if (listObjContains(objects(player->index.i, player->index.j),
+                             LEVER)) {
+    printf("Switching lever\n");
+    switchLever(index, map, rooms);
     return;
   }
 
@@ -12,29 +20,27 @@ void interact(Entity *player, Map *map, Map **rooms) {
     switchLever(player, map);
     return;
   } */
-
-  Index index;
   switch (player->facing) {
-  case RIGHT:
-    index.i = player->index.i;
-    index.j = player->index.j + 1;
-    break;
   case UP:
-    index.i = player->index.i - 1;
-    index.j = player->index.j;
-    break;
-  case LEFT:
-    index.i = player->index.i;
-    index.j = player->index.j - 1;
+    index.i--;
     break;
   case DOWN:
-    index.i = player->index.i + 1;
-    index.j = player->index.j;
+    index.i++;
+    break;
+  case LEFT:
+    index.j--;
+    break;
+  case RIGHT:
+    index.j++;
     break;
   }
+
   if (VALID_INDEX(index)) {
     if (listObjContains(objects(index.i, index.j), DOOR)) {
       openDoor(index, player, map, rooms);
+      return;
+    } else if (listObjContains(objects(index.i, index.j), LEVER)) {
+      switchLever(index, map, rooms);
       return;
     }
   }

@@ -102,6 +102,9 @@ void renderObject(Object *object, SDL_Renderer *renderer) {
   if (object->texture == NULL) {
     return;
   }
+  if (object->visible == false) {
+    return;
+  }
   SDL_RenderCopy(renderer, object->texture, NULL, object->buffer);
 }
 

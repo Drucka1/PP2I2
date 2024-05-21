@@ -14,6 +14,7 @@ Object *initObject(Index index) {
   object->buffer->h = TILE_SIZE;
 
   object->texture = NULL;
+  object->visible = true;
   object->active = NULL;
 
   return object;

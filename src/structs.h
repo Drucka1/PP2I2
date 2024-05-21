@@ -7,6 +7,9 @@
 #define cell(i, j) (map->data[i][j])
 #define objects(i, j) (map->data[i][j]->objects)
 
+#define roomCell(room, i, j) (rooms[room]->data[i][j])
+#define roomObjects(room, i, j) (rooms[room]->data[i][j]->objects)
+
 #define RIGHT 0
 #define UP 1
 #define LEFT 2
@@ -41,12 +44,15 @@ typedef struct _Path {
 } Path; // une porte, un escalier ou un téléporteur
 
 typedef struct {
-  // État dU commutateur
+  // État du commutateur
   bool state;
   // Objets à activer
   ListIndex *affected;
+
   // Durée de l'activation
   int duration;
+  // Temps restant
+  int timeLeft;
 
 } Switch;
 
@@ -61,6 +67,8 @@ typedef struct {
   SDL_Rect *buffer;
   // Image
   SDL_Texture *texture;
+  // Montrer ou pas
+  bool visible;
 
   // Action éventuelle réalisée par l'objet
   void (*active)(void);
