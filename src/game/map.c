@@ -107,7 +107,6 @@ Map *loadMap(int room, SDL_Texture **textures) {
         Object *object = initObject((Index){i, j});
         object->texture = textures[DOOR];
         object->objectType = DOOR;
-        printf("facing %d\n", o);
         object->facing = o;
 
         object->path.room = p;
@@ -160,7 +159,7 @@ Map *loadMap(int room, SDL_Texture **textures) {
   return map;
 }
 
-Map **loadRooms(SDL_Renderer *renderer, SDL_Texture **textures) {
+Map **loadRooms(SDL_Texture **textures) {
   Map **rooms = malloc(sizeof(Map) * ROOM_COUNT);
 
   if (!rooms) {

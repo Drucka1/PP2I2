@@ -13,6 +13,6 @@
 Object *initObject(Index index);
 Cell *initCell(Index index);
 Map *loadMap(int room, SDL_Texture **textures);
-Map **loadRooms(SDL_Renderer *renderer, SDL_Texture **textures);
+Map **loadRooms(SDL_Texture **textures);
 
 #endif // __MAP_H__

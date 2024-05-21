@@ -5,7 +5,7 @@
 void launchGame(SDL_Renderer *renderer) {
   printf("Launching game...\n");
   SDL_Texture **textures = loadTextures(renderer);
-  Map **rooms = loadRooms(renderer, textures);
+  Map **rooms = loadRooms(textures);
 
   Map *map = rooms[0];
   printf("Map loaded\n");
@@ -82,8 +82,7 @@ void update(Entity *player, Map **map, Map **rooms) {
       spawnIndex.j--;
     } else if (destDoor->facing == DOWN) {
       spawnIndex.i++;
-    }
-    else {
+    } else {
     }
     if (door.open) {
       teleport(door.room, spawnIndex, player, map, rooms);
