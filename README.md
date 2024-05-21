@@ -8,7 +8,7 @@ Quelques modifications :
 - j'ai viré le dossier include c'est plus chiant qu'autre chose
 - j'ai préféré que les cellules aussi soient malloc, il y a une fonction freeCell.
 
-- les fonctions de gestions de liste d'object sont désormais void, ça change rien en soit juste plus besoin d'écrire
+- les fonctions de gestions de liste d'objets sont désormais void, ça change rien en soit juste plus besoin d'écrire
 
 ```
   list = listObjAppend(list, object)
