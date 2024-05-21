@@ -22,7 +22,7 @@
 #define MIN(i, j) (((i) < (j)) ? (i) : (j))
 #define MAX(i, j) (((i) > (j)) ? (i) : (j))
 
-#define ENABLE_SAVE false
+#define ENABLE_SAVE true
 
 #define UP 1
 #define DOWN 2

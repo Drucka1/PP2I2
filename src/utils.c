@@ -32,3 +32,10 @@ void quitSDL(SDL_Window *window, SDL_Renderer *renderer)
   SDL_DestroyWindow(window);
   SDL_Quit();
 }
+
+char* getPath(bool defaultPath, int lvl) {
+  char* buffer = malloc(sizeof(char)*50);
+  if (defaultPath) sprintf(buffer, "assets/level/default/level%d.txt", lvl);
+  else sprintf(buffer, "assets/level/save/level%d.txt", lvl);
+  return buffer;
+}

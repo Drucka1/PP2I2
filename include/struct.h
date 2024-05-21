@@ -57,7 +57,7 @@ ListObj* removeKeyInventory(ListObj* inventory, int lvl);
 ListObj* listObjRemoveWall(ListObj* list);
 Object* getObject(ListObj* list, int type);
 void freeListObj(ListObj* list);
-void Push(Map*map,SDL_Rect*player,int direction,int positionx,int positiony);
+void Push(Map*map,SDL_Rect*player,int direction);
 void printlist(ListObj* list);
 void printobject(Object* obj);
 void freeObject(Object *object);

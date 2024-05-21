@@ -21,7 +21,7 @@ int main(){
     if(access("assets/level/save/playerStatus.txt", F_OK) != 0){
         //Aucune sauvergade -> On commennce au niveau 1
 
-        char path_level[80] = "assets/level/default/level1.txt";
+        char* path_level = getPath(true,1);
     
         int offset_player_x,offset_player_y;
         posInitPlayerLevel(path_level,&offset_player_x,&offset_player_y);
@@ -34,25 +34,20 @@ int main(){
         player->pos->y = map->offset_map.y+offset_player_y*SIZE_WALL_H;
         player->pos->h = SIZE_WALL_W;
         player->pos->w = SIZE_WALL_W;
-    
+        free(path_level);    
     }
     else {
         int current_level = 1;
         player = getPlayerStatus(&current_level);
 
         //Determine le chemin du level a afficher
-        char path_level[80] = "assets/level/save/level";
-        char lvl[10];
-        sprintf(lvl,"%d",current_level);
-        strcat(path_level,lvl);
-        strcat(path_level,".txt");
+        char* path_level = getPath(false,current_level);
         if(access(path_level, F_OK) != 0) {
-            strcpy(path_level, "assets/level/default/level");
-            strcat(path_level,lvl);
-            strcat(path_level,".txt");
+            path_level = getPath(true,current_level);
         }
-    
+   
         map = FileToMap(path_level,player->pos,textures);
+        free(path_level);
     }    
 
     player->texture = load_sprite(renderer, "assets/sprite/player.png");
@@ -106,16 +101,11 @@ int main(){
                             break;    
                         case SDLK_r:
                             {   
-                                char lvl[3];
-                                sprintf(lvl,"%d",map->level);
-                                char path[50] = "assets/level/save/level";
-                                strcat(path,lvl);
-                                strcat(path,".txt");
-
+                                char* path = getPath(false,map->level);
                                 char commande[150] = "cp -f ";
-                                strcat(commande," assets/level/default/level");
-                                strcat(commande,lvl);
-                                strcat(commande,".txt ");
+                                char* defaultPath = getPath(true,map->level);
+                                strcat(commande,defaultPath);
+                                strcat(commande," ");
                                 strcat(commande,path);
                                 system(commande);
 
@@ -127,7 +117,8 @@ int main(){
                                 posInitPlayerLevel(path,&offset_player_x,&offset_player_y);
                                 player->pos->x = map->offset_map.x+offset_player_x*SIZE_WALL_W;
                                 player->pos->y = map->offset_map.y+offset_player_y*SIZE_WALL_H;
-
+                                free(path);
+                                free(defaultPath);
                                 break; 
                             } 
                         case SDLK_e://Prend la clé dans l'inventaire
@@ -145,7 +136,7 @@ int main(){
                                     //On va faire un do-while pour pousser l'objet puis verifier si il est sur de la glace pour le pousser jusqu'aux bout 
                                     do {
                                         //On appelle la fonction Push qui va pousser l'objet(voir struct.c je sais pas si la fonction doit etre la mais bon)
-                                        Push(map, &(SDL_Rect){player->pos->x, player->pos->y - VITESSE*tempcont, player->pos->w, player->pos->h}, UP, map->offset_map.x, map->offset_map.y);
+                                        Push(map, &(SDL_Rect){player->pos->x, player->pos->y - VITESSE*tempcont, player->pos->w, player->pos->h}, UP);
                                         tempcont++;
                                     } while (ispushable(&(SDL_Rect){player->pos->x, player->pos->y - VITESSE*tempcont, player->pos->w, player->pos->h}, map, UP) && istype(&(SDL_Rect){player->pos->x, player->pos->y - VITESSE*(tempcont+1), player->pos->w, player->pos->h}, map, ICE));
                                     tempcont = 0;
@@ -182,7 +173,7 @@ int main(){
                             if(istype(&(SDL_Rect){player->pos->x, player->pos->y + VITESSE, player->pos->w, player->pos->h},map,PUSH)){
                                 if(ispushable(&(SDL_Rect){player->pos->x, player->pos->y, player->pos->w, player->pos->h},map,DOWN)){
                                     do {
-                                        Push(map, &(SDL_Rect){player->pos->x, player->pos->y +VITESSE*tempcont, player->pos->w, player->pos->h}, DOWN, map->offset_map.x, map->offset_map.y);
+                                        Push(map, &(SDL_Rect){player->pos->x, player->pos->y +VITESSE*tempcont, player->pos->w, player->pos->h}, DOWN);
                                         tempcont++;
                                     } while (ispushable(&(SDL_Rect){player->pos->x, player->pos->y + VITESSE*tempcont, player->pos->w, player->pos->h}, map, DOWN) && istype(&(SDL_Rect){player->pos->x, player->pos->y + VITESSE*(tempcont+1), player->pos->w, player->pos->h}, map, ICE));
                                     tempcont = 0;
@@ -219,7 +210,7 @@ int main(){
                             if(istype(&(SDL_Rect){player->pos->x - VITESSE, player->pos->y, player->pos->w, player->pos->h},map,PUSH)){
                                 if(ispushable(&(SDL_Rect){player->pos->x, player->pos->y, player->pos->w, player->pos->h},map,LEFT)){
                                     do {
-                                        Push(map, &(SDL_Rect){player->pos->x - VITESSE*tempcont, player->pos->y, player->pos->w, player->pos->h}, LEFT, map->offset_map.x, map->offset_map.y);
+                                        Push(map, &(SDL_Rect){player->pos->x - VITESSE*tempcont, player->pos->y, player->pos->w, player->pos->h}, LEFT);
                                         tempcont++;
                                     } while (ispushable(&(SDL_Rect){player->pos->x - VITESSE*tempcont, player->pos->y, player->pos->w, player->pos->h}, map, LEFT) && istype(&(SDL_Rect){player->pos->x - VITESSE*(tempcont+1), player->pos->y, player->pos->w, player->pos->h}, map, ICE));
                                     tempcont = 0;
@@ -257,7 +248,7 @@ int main(){
                             if(istype(&(SDL_Rect){player->pos->x + VITESSE, player->pos->y, player->pos->w, player->pos->h},map,PUSH)){
                                 if(ispushable(&(SDL_Rect){player->pos->x, player->pos->y, player->pos->w, player->pos->h},map,RIGHT)){
                                     do {
-                                        Push(map, &(SDL_Rect){player->pos->x + VITESSE*tempcont, player->pos->y, player->pos->w, player->pos->h}, RIGHT, map->offset_map.x, map->offset_map.y);
+                                        Push(map, &(SDL_Rect){player->pos->x + VITESSE*tempcont, player->pos->y, player->pos->w, player->pos->h}, RIGHT);
                                         tempcont++;
                                     } while (ispushable(&(SDL_Rect){player->pos->x + VITESSE*tempcont, player->pos->y, player->pos->w, player->pos->h}, map, RIGHT) && istype(&(SDL_Rect){player->pos->x + VITESSE*(tempcont+1), player->pos->y, player->pos->w, player->pos->h}, map, ICE));
                                     tempcont = 0;

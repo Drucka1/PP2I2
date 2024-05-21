@@ -27,7 +27,7 @@ Object * getObject(ListObj* list,int type){
     if(list->object->type_object == type) return list->object;
     return getObject(list->next,type);
 }
-void Push(Map*map,SDL_Rect*player,int direction,int posx,int posy){
+void Push(Map*map,SDL_Rect*player,int direction){
     for (int i = 0;i<map->rows;i++){
         for (int j = 0;j<map->cols;j++){
             ListObj* objs = map->grid[i][j].objects;
@@ -37,26 +37,26 @@ void Push(Map*map,SDL_Rect*player,int direction,int posx,int posy){
                     switch(direction){
                     case UP:
                         apush = getObject(map->grid[i-1][j].objects,PUSH);
-                        nouvpos->x = j*SIZE_WALL_W+posx;
-                        nouvpos->y = (i-2)*SIZE_WALL_H+posy;
+                        nouvpos->x = j*SIZE_WALL_W+map->offset_map.x;
+                        nouvpos->y = (i-2)*SIZE_WALL_H+map->offset_map.y;
                         exchangeObject(&map->grid[i-1][j],&map->grid[i-2][j],nouvpos,apush);
                         break;
                     case DOWN:
                         apush = getObject(map->grid[i+1][j].objects,PUSH);
-                        nouvpos->x = j*SIZE_WALL_W+posx;
-                        nouvpos->y = (i+2)*SIZE_WALL_H+posy;
+                        nouvpos->x = j*SIZE_WALL_W+map->offset_map.x;
+                        nouvpos->y = (i+2)*SIZE_WALL_H+map->offset_map.y;
                         exchangeObject(&map->grid[i+1][j],&map->grid[i+2][j],nouvpos,apush);                        
                         break;
                     case RIGHT:
                         apush = getObject(map->grid[i][j+1].objects,PUSH);
-                        nouvpos->x = (j+2)*SIZE_WALL_W+posx;
-                        nouvpos->y = i*SIZE_WALL_H+posy;
+                        nouvpos->x = (j+2)*SIZE_WALL_W+map->offset_map.x;
+                        nouvpos->y = i*SIZE_WALL_H+map->offset_map.y;
                         exchangeObject(&map->grid[i][j+1],&map->grid[i][j+2],nouvpos,apush);
                         break;
                     case LEFT:
                         apush = getObject(map->grid[i][j-1].objects,PUSH);
-                        nouvpos->x = (j-2)*SIZE_WALL_W+posx;
-                        nouvpos->y = i*SIZE_WALL_H+posy;
+                        nouvpos->x = (j-2)*SIZE_WALL_W+map->offset_map.x;
+                        nouvpos->y = i*SIZE_WALL_H+map->offset_map.y;
                         exchangeObject(&map->grid[i][j-1],&map->grid[i][j-2],nouvpos,apush);
                         break;
                 }
