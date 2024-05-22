@@ -7,5 +7,6 @@
 void pickItem(Entity *player, Map *map, int objectType);
 void openDoor(Index doorIndex, Entity *player, Map *map, Map **rooms);
 void switchLever(Index leverIndex, Map *map, Map **rooms);
+void pushBlock(Index blockIndex, Entity *player, Map *map);
 
 #endif // __OBJECTS_H__

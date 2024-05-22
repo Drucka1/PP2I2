@@ -13,6 +13,7 @@ void freeObject(Object *object) {
   if (object->objectType == 3 || object->objectType == 4) {
     freeListIndex(object->switchObj.affected);
   }
+  free(object->textureBuffer);
   free(object->buffer);
   free(object);
 }

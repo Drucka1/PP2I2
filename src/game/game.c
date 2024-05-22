@@ -1,6 +1,4 @@
 #include "game.h"
-#include <SDL2/SDL_timer.h>
-#include <stdio.h>
 
 void launchGame(SDL_Renderer *renderer) {
   printf("Launching game...\n");
@@ -21,6 +19,9 @@ void launchGame(SDL_Renderer *renderer) {
       switch (event.type) {
       case SDL_QUIT:
         quit = 1;
+        break;
+      case SDL_KEYUP:
+        // player->moving = 0;
         break;
       case SDL_KEYDOWN:
         if (player->status.icy) {
@@ -99,9 +100,11 @@ void update(Entity *player, Map **map, Map **rooms) {
       SDL_Delay(50);
     } else {
       player->status.icy = false;
+      player->moving = 0;
     }
   } else {
     player->status.icy = false;
+      player->moving = 0;
   }
   moveMapBuffer(*map, player);
 }
@@ -110,7 +113,48 @@ void renderEntity(Entity *entity, SDL_Renderer *renderer) {
   if (entity->texture == NULL) {
     return;
   }
-  SDL_RenderCopy(renderer, entity->texture, NULL, entity->buffer);
+
+  SDL_RenderCopy(renderer, entity->texture, entity->textureBuffer,
+                 entity->buffer);
+}
+
+void renderPlayer(Entity *player, SDL_Renderer *renderer) {
+  if (player->texture == NULL) {
+    return;
+  }
+  int h, w;
+  SDL_QueryTexture(player->texture, NULL, NULL, &w, &h);
+  switch (player->facing) {
+  case RIGHT:
+    player->textureBuffer->y = 3 * h / 4;
+    break;
+  case UP:
+    player->textureBuffer->y = 1 * h / 4;
+    break;
+  case LEFT:
+    player->textureBuffer->y = 2 * h / 4;
+    break;
+  case DOWN:
+    player->textureBuffer->y = 0 * h / 4;
+    break;
+  }
+  switch (player->moving) {
+    case 0:
+      player->textureBuffer->x = 0;
+      break;
+    case 1:
+      player->textureBuffer->x = w / 4;
+      break;
+    case 2:
+      player->textureBuffer->x = 2 * w / 4;
+      break;
+    case 3:
+      player->textureBuffer->x = 3 * w / 4;
+      break;
+  }
+
+  SDL_RenderCopy(renderer, player->texture, player->textureBuffer,
+                 player->buffer);
 }
 
 void renderObject(Object *object, SDL_Renderer *renderer) {
@@ -120,7 +164,23 @@ void renderObject(Object *object, SDL_Renderer *renderer) {
   if (object->visible == false) {
     return;
   }
-  SDL_RenderCopy(renderer, object->texture, NULL, object->buffer);
+  switch (object->objectType) {
+  case DOOR:
+    object->textureBuffer->x =
+        (object->path.open) ? 3 * object->textureBuffer->w : 0;
+    break;
+  case LEVER:
+    if (object->switchObj.state) {
+      SDL_RenderCopyEx(renderer, object->texture, object->textureBuffer,
+                       object->buffer, 0, NULL, SDL_FLIP_HORIZONTAL);
+      return;
+    }
+  default:
+    break;
+  }
+
+  SDL_RenderCopy(renderer, object->texture, object->textureBuffer,
+                 object->buffer);
 }
 
 void renderCell(Cell *cell, SDL_Renderer *renderer) {
@@ -146,8 +206,9 @@ void render(SDL_Renderer *renderer, Map *map, Entity *player) {
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderClear(renderer);
   renderMap(map, player, renderer);
-  renderEntity(player, renderer);
+  renderPlayer(player, renderer);
   SDL_RenderPresent(renderer);
+  SDL_Delay(10);
 }
 
 void freeGame(Entity *player, SDL_Texture **textures, Map **rooms) {

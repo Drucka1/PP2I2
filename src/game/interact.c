@@ -37,10 +37,17 @@ void interact(Entity *player, Map *map, Map **rooms) {
 
   if (VALID_INDEX(index)) {
     if (listObjContains(objects(index.i, index.j), DOOR)) {
+      printf("opening door\n");
       openDoor(index, player, map, rooms);
       return;
     } else if (listObjContains(objects(index.i, index.j), LEVER)) {
       switchLever(index, map, rooms);
+      return;
+    } else if (listObjContains(objects(index.i, index.j), KEY)) {
+      pickItem(player, map, KEY);
+      return;
+    } else if (listObjContains(objects(index.i, index.j), PUSH)) {
+      // pushBlock(index, player, map);
       return;
     }
   }

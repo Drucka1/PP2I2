@@ -1,4 +1,5 @@
 #include "player.h"
+#include <SDL2/SDL_render.h>
 #include <stdio.h>
 
 Entity *loadPlayer(Index index, SDL_Renderer *renderer) {
@@ -8,6 +9,7 @@ Entity *loadPlayer(Index index, SDL_Renderer *renderer) {
   player->prevIndex = index;
 
   player->facing = RIGHT;
+  player->moving = 0;
 
   player->buffer = malloc(sizeof(SDL_Rect));
   player->buffer->x = indexToPixel(index.j);
@@ -16,6 +18,15 @@ Entity *loadPlayer(Index index, SDL_Renderer *renderer) {
   player->buffer->h = TILE_SIZE;
 
   player->texture = getTexture("player", renderer);
+  player->textureBuffer = malloc(sizeof(SDL_Rect));
+
+  SDL_QueryTexture(player->texture, NULL, NULL, &player->textureBuffer->w,
+                   &player->textureBuffer->h);
+
+  player->textureBuffer->x = 0;
+  player->textureBuffer->y = 0;
+  player->textureBuffer->w /= 4;
+  player->textureBuffer->h /= 4;
 
   player->inventory = NULL;
 
@@ -26,6 +37,7 @@ Entity *loadPlayer(Index index, SDL_Renderer *renderer) {
 
 void freePlayer(Entity *player) {
   free(player->buffer);
+  free(player->textureBuffer);
   SDL_DestroyTexture(player->texture);
   freeListObj(player->inventory);
   free(player);
@@ -107,6 +119,10 @@ void movePlayer(Entity *player, Map *map, Index dest) {
 
     player->buffer->x = indexToPixel(playerIndex.j);
     player->buffer->y = indexToPixel(playerIndex.i);
+
+    player->moving += 1;
+    player->moving %= 4;
+
 
     moveMapBuffer(map, player);
   }

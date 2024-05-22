@@ -10,6 +10,7 @@ void update(Entity *player, Map **map, Map **rooms);
 void play(SDL_Event event, Entity *player, Map *map, Map **rooms);
 
 void renderEntity(Entity *entity, SDL_Renderer *renderer);
+void renderPlayer(Entity *player, SDL_Renderer *renderer);
 void renderObject(Object *object, SDL_Renderer *renderer);
 void renderCell(Cell *cell, SDL_Renderer *renderer);
 void renderMap(Map *map, Entity *player, SDL_Renderer *renderer);

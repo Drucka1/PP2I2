@@ -19,6 +19,13 @@
 #define indexToPixel(index) (index * TILE_SIZE)
 #define pixelToIndex(pixel) (pixel / TILE_SIZE)
 
+// Vérification des indices
+#define VALID_INDEX(index)                                                     \
+  ((((index.i) < 0) || ((index.j) < 0) || ((index.i) >= map->dimensions.i) ||  \
+    ((index.j) >= map->dimensions.j))                                          \
+       ? (0)                                                                   \
+       : (1))
+
 typedef struct {
   int i;
   int j;
@@ -67,6 +74,8 @@ typedef struct {
   SDL_Rect *buffer;
   // Image
   SDL_Texture *texture;
+  // Image de l'objet
+  SDL_Rect *textureBuffer;
   // Montrer ou pas
   bool visible;
 
@@ -94,6 +103,7 @@ typedef struct {
 
 typedef struct {
   int facing;
+  int moving;
   // Indices de l'objet dans la carte
   Index index;
   // Indices précédents
@@ -103,6 +113,8 @@ typedef struct {
   SDL_Rect *buffer;
   // Image
   SDL_Texture *texture;
+  // Image de l'objet
+  SDL_Rect *textureBuffer;
 
   // Inventaire
   ListObj *inventory;
@@ -139,7 +151,6 @@ bool isIndexEqual(Index index1, Index index2);
 Index nextIndex(Index index, int direction);
 void listIndexAppend(ListIndex **list, Index index, int room);
 void listIndexPrint(ListIndex *list);
-
 
 void listObjAppend(ListObj **list, Object *obj);
 void listObjRemove(ListObj **list, int objectType);

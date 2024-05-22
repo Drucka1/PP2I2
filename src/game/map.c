@@ -1,4 +1,5 @@
 #include "map.h"
+#include <SDL2/SDL_render.h>
 #include <stdio.h>
 
 Object *initObject(Index index) {
@@ -13,6 +14,7 @@ Object *initObject(Index index) {
   object->buffer->w = TILE_SIZE;
   object->buffer->h = TILE_SIZE;
 
+  object->textureBuffer = NULL;
   object->texture = NULL;
   object->visible = true;
   object->active = NULL;
@@ -66,6 +68,7 @@ Map *loadMap(int room, SDL_Texture **textures) {
   int j = 0;
   char s[128];
   int o, p, q, r;
+  int h, w;
   map->data = malloc(sizeof(Cell **) * map->dimensions.i);
   map->data[i] = malloc(sizeof(Cell *) * map->dimensions.j);
   cell(i, j) = initCell((Index){i, j});
@@ -96,14 +99,6 @@ Map *loadMap(int room, SDL_Texture **textures) {
         listObjAppend(&objects, object);
       }
 
-      else if (atoi(token) == WALL) {
-        cell(i, j)->steppable = false;
-        Object *object = initObject((Index){i, j});
-        object->texture = textures[WALL];
-        object->objectType = WALL;
-        listObjAppend(&objects, object);
-      }
-
       else if (atoi(token) == ICE) {
         Object *object = initObject((Index){i, j});
         object->texture = textures[ICE];
@@ -111,9 +106,40 @@ Map *loadMap(int room, SDL_Texture **textures) {
         listObjAppend(&objects, object);
       }
 
+      else if (atoi(token) == WALL) {
+        cell(i, j)->steppable = false;
+        Object *object = initObject((Index){i, j});
+        object->objectType = WALL;
+        object->texture = textures[WALL];
+
+        SDL_QueryTexture(object->texture, NULL, NULL, &w, &h);
+
+        object->textureBuffer = malloc(sizeof(SDL_Rect));
+        object->textureBuffer->x = w / 3;
+        object->textureBuffer->y = 0;
+        object->textureBuffer->w = h;
+        object->textureBuffer->h = h;
+        listObjAppend(&objects, object);
+      }
+
+      else if (atoi(token) == PUSH) {
+        cell(i, j)->steppable = false;
+        Object *object = initObject((Index){i, j});
+        object->texture = textures[PUSH];
+        object->objectType = PUSH;
+        listObjAppend(&objects, object);
+      }
+
       else if (sscanf(token, "2[%d(%d,%d)%d]", &p, &q, &r, &o) == 4) {
         Object *object = initObject((Index){i, j});
         object->texture = textures[DOOR];
+
+        SDL_QueryTexture(object->texture, NULL, NULL, &w, &h);
+        object->textureBuffer = malloc(sizeof(SDL_Rect));
+        object->textureBuffer->x = 0;
+        object->textureBuffer->y = 0;
+        object->textureBuffer->w = w / 4;
+        object->textureBuffer->h = h;
         object->objectType = DOOR;
         object->facing = o;
 
@@ -145,8 +171,8 @@ Map *loadMap(int room, SDL_Texture **textures) {
 
       else if (sscanf(token, "4[%s]", s) == 1) {
         Object *object = initObject((Index){i, j});
-        object->texture = textures[LEVER];
         object->objectType = LEVER;
+        object->texture = textures[LEVER];
 
         char *t = strtok(s, ";");
 

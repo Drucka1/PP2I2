@@ -17,15 +17,18 @@ void switchLever(Index leverIndex, Map *map, Map **rooms) {
   lever->switchObj.state = !lever->switchObj.state;
   ListIndex *current = lever->switchObj.affected;
   while (current != NULL) {
-    ListObj *objects = roomObjects(current->room, current->index.i, current->index.j);
+    ListObj *objects =
+        roomObjects(current->room, current->index.i, current->index.j);
     while (objects != NULL) {
       if (objects->object->objectType == DOOR) {
         objects->object->path.open = !objects->object->path.open;
         roomCell(current->room, current->index.i, current->index.j)->steppable =
-            !roomCell(current->room, current->index.i, current->index.j)->steppable;
+            !roomCell(current->room, current->index.i, current->index.j)
+                 ->steppable;
       } else if (objects->object->objectType == WALL) {
         roomCell(current->room, current->index.i, current->index.j)->steppable =
-            !roomCell(current->room, current->index.i, current->index.j)->steppable;
+            !roomCell(current->room, current->index.i, current->index.j)
+                 ->steppable;
         objects->object->visible = !objects->object->visible;
       }
       objects = objects->next;
@@ -67,3 +70,15 @@ void openDoor(Index doorIndex, Entity *player, Map *map, Map **rooms) {
   }
   printf("You need a key to open this door\n");
 }
+
+/* void pushBlock(Index blockIndex, Entity *player, Map *map) {
+  Index next = nextIndex(blockIndex, player->facing);
+  ListObj *nextObjects = objects(next.i, next.j);
+  if ((listObjContains(nextObjects, GROUND) || listObjContains(nextObjects,
+ICE)) && !listObjContains(nextObjects, WALL) { Object *block =
+listObjPop(&objects(blockIndex.i, blockIndex.j), PUSH);
+    listObjAppend(&objects(next.i, next.j), block);
+
+    player->index = blockIndex;
+  }
+} */
