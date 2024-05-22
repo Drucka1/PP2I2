@@ -21,8 +21,8 @@ void launchGame(SDL_Renderer *renderer)
       // Intéraction entre joueur et jeu
       play(event, player, map);
     }
+    
     // Affichage du jeu
-
     render(renderer, map, player);
     
     
@@ -37,14 +37,18 @@ void render(SDL_Renderer *renderer, Map *map, Entity *player)
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderClear(renderer);
 
-  //Petit rectangle 
-  SDL_Rect little_rect = {RECT_X_OFFSET, RECT_Y_OFFSET, WINDOW_WIDTH - 2* RECT_X_OFFSET, RECT_HEIGHT};
-  SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Couleur petit rectangle 
-  SDL_RenderFillRect(renderer, &little_rect);
+  
+  
   
   // Affichage de la carte et du joueur
   renderMap(map, player, renderer);
   renderPlayer(player, renderer);
+
+  //Petit rectangle 
+  SDL_Rect little_rect = {RECT_X_OFFSET, RECT_Y_OFFSET, WINDOW_WIDTH - 2* RECT_X_OFFSET, RECT_HEIGHT};
+  SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Couleur petit rectangle 
+  SDL_RenderFillRect(renderer, &little_rect);
+  SDL_RenderCopy(renderer, NULL, NULL, &little_rect);
 
   //Affichage texte 
   TTF_Font *font = TTF_OpenFont("assets/VeraMono.ttf",24); //taille police : 24

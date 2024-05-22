@@ -3,7 +3,8 @@
 #include <SDL2/SDL_ttf.h>
 #include <stdbool.h>
 #include <stdio.h>
-#define COUPAGE 50
+#include "../../include/defs.h"
+#define COUPAGE 90
 
 // Générer du texte instantanément
 
@@ -27,8 +28,10 @@ void text_display(SDL_Renderer *renderer, TTF_Font *font, const char *text,
     return;
   }
 
+ 
   SDL_Rect rectangle = {x, y, surface_text->w, surface_text->h}; // w : largeur ; h : hauteur ; x et y coordonnées du coin supérieur gauche du rectangle
   SDL_RenderCopy(renderer, texture_text, NULL, &rectangle);
+  
   SDL_FreeSurface(surface_text);
   SDL_DestroyTexture(texture_text);
 }
