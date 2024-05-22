@@ -57,7 +57,7 @@ void render(SDL_Renderer *renderer, Map *map, Entity *player)
     return ; //en plus 
   }
 
-  int high_text = RECT_Y_OFFSET+10;;
+  int high_text = RECT_Y_OFFSET+10;
   char* str = "Bienvenue dans notre escape game nous allons vous presenter les regles du jeu hdzzlejakdzejdf fzejhfze dhzejkldz azdhjzd zdjzbedez !";
   
   char* res = cut_string(str);
