@@ -16,10 +16,6 @@ void interact(Entity *player, Map *map, Map **rooms) {
     return;
   }
 
-  /* if (listObjContains(objects(player->index.i, player->index.j), LEVER)) {
-    switchLever(player, map);
-    return;
-  } */
   switch (player->facing) {
   case UP:
     index.i--;

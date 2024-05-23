@@ -100,7 +100,6 @@ void moveObject(int objectType, Index src, Map *map, Index dest) {
     block->buffer->y = indexToPixel(block->index.i);
 
     listObjAppend(&objects(dest.i, dest.j), block);
-    SDL_Delay(50);
   }
 }
 

@@ -123,7 +123,6 @@ void movePlayer(Entity *player, Map *map, Index dest) {
     player->moving += 1;
     player->moving %= 4;
 
-
     moveMapBuffer(map, player);
   }
 }

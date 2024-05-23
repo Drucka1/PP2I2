@@ -10,6 +10,7 @@ void launchGame(SDL_Renderer *renderer) {
   printf("Map loaded\n");
   Entity *player = loadPlayer(map->spawnIndex, renderer);
   movePlayer(player, map, map->spawnIndex);
+  player->moving = 0;
 
   SDL_Event event;
   int quit = 0;
@@ -22,7 +23,7 @@ void launchGame(SDL_Renderer *renderer) {
         quit = 1;
         break;
       case SDL_KEYUP:
-        // player->moving = 0;
+        player->moving = 0;
         break;
       case SDL_KEYDOWN:
         if (player->status.icy) {
@@ -33,6 +34,7 @@ void launchGame(SDL_Renderer *renderer) {
       default:
         break;
       }
+    update(player, &map, rooms);
       render(renderer, map, player);
     }
   }
@@ -64,9 +66,11 @@ void play(SDL_Event event, Entity *player, Map *map, Map **rooms) {
   case SDLK_SPACE:
     interact(player, map, rooms);
     break;
+
   default:
     break;
   }
+  // moveMapBuffer(map, player);
 }
 
 void update(Entity *player, Map **map, Map **rooms) {
