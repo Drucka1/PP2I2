@@ -7,7 +7,7 @@ OBJS = $(patsubst src/%.c,outputs/%.o,$(SRCS))
 DEPS = $(SRCS:.c=.h)
 TARGETS = main
 
-LIBS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
+LIBS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lm
 
 all: $(TARGETS)
 

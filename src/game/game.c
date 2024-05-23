@@ -34,7 +34,7 @@ void launchGame(SDL_Renderer *renderer) {
       default:
         break;
       }
-    update(player, &map, rooms);
+      update(player, &map, rooms);
       render(renderer, map, player);
     }
   }
@@ -65,6 +65,9 @@ void play(SDL_Event event, Entity *player, Map *map, Map **rooms) {
   // Intéraction
   case SDLK_SPACE:
     interact(player, map, rooms);
+    break;
+  case SDLK_b:
+    player->status.blind = !player->status.blind;
     break;
 
   default:
@@ -200,8 +203,12 @@ void renderCell(Cell *cell, SDL_Renderer *renderer) {
 }
 
 void renderMap(Map *map, Entity *player, SDL_Renderer *renderer) {
+  double radius = (player->status.blind) ? 2.5: 0.0;
   for (int i = renderMinI(player, map); i < renderMaxI(player, map); i++) {
     for (int j = renderMinJ(player, map); j < renderMaxJ(player, map); j++) {
+      if (radius != 0 && (distance(player->index, (Index){i, j})) > radius) {
+        continue;
+      }
       renderCell(cell(i, j), renderer);
     }
   }

@@ -65,6 +65,10 @@ Index nextIndex(Index index, int direction) {
   return next;
 }
 
+double distance(Index a, Index b) {
+  return sqrt(pow(a.i - b.i, 2) + pow(a.j - b.j, 2));
+}
+
 void listIndexAppend(ListIndex **list, Index index, int room) {
   if (*list == NULL) {
     ListIndex *new = malloc(sizeof(ListIndex));

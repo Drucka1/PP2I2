@@ -2,6 +2,7 @@
 #define __STRUCTS_H__
 
 #include "sdl.h"
+#include <math.h>
 #include <stdbool.h>
 
 #define cell(i, j) (map->data[i][j])
@@ -151,6 +152,7 @@ bool isIndexEqual(Index index1, Index index2);
 Index nextIndex(Index index, int direction);
 void listIndexAppend(ListIndex **list, Index index, int room);
 void listIndexPrint(ListIndex *list);
+double distance(Index index1, Index index2);
 
 void listObjAppend(ListObj **list, Object *obj);
 void listObjRemove(ListObj **list, int objectType);

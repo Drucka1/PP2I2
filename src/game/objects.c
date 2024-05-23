@@ -89,13 +89,10 @@ void moveObject(int objectType, Index src, Map *map, Index dest) {
   if (VALID_INDEX(dest)) {
     ListObj *blockObjects = map->data[src.i][src.j]->objects;
     Object *block = listObjPop(&objects(src.i, src.j), objectType);
-    printf("dest.i: %d, dest.j: %d\n", dest.i, dest.j);
 
     block->index.i = dest.i;
     block->index.j = dest.j;
 
-    printf("indexToPixel(dest.i, dest.j): %d, %d\n", indexToPixel(dest.i),
-           indexToPixel(dest.j));
     block->buffer->x = indexToPixel(block->index.j);
     block->buffer->y = indexToPixel(block->index.i);
 
