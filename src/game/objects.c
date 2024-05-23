@@ -71,14 +71,48 @@ void openDoor(Index doorIndex, Entity *player, Map *map, Map **rooms) {
   printf("You need a key to open this door\n");
 }
 
-/* void pushBlock(Index blockIndex, Entity *player, Map *map) {
+bool stackable(ListObj *objects) {
+  if (objects == NULL) {
+    return true;
+  }
+  if (objects->object->objectType == WALL ||
+      objects->object->objectType == DOOR ||
+      objects->object->objectType == LEVER ||
+      objects->object->objectType == KEY ||
+      objects->object->objectType == PUSH) {
+    return false;
+  }
+  return stackable(objects->next);
+}
+
+void moveObject(int objectType, Index src, Map *map, Index dest) {
+  if (VALID_INDEX(dest)) {
+    ListObj *blockObjects = map->data[src.i][src.j]->objects;
+    Object *block = listObjPop(&objects(src.i, src.j), objectType);
+    printf("dest.i: %d, dest.j: %d\n", dest.i, dest.j);
+
+    block->index.i = dest.i;
+    block->index.j = dest.j;
+
+    printf("indexToPixel(dest.i, dest.j): %d, %d\n", indexToPixel(dest.i),
+           indexToPixel(dest.j));
+    block->buffer->x = indexToPixel(block->index.j);
+    block->buffer->y = indexToPixel(block->index.i);
+
+    listObjAppend(&objects(dest.i, dest.j), block);
+    SDL_Delay(50);
+  }
+}
+
+void pushBlock(Index blockIndex, Entity *player, Map *map) {
   Index next = nextIndex(blockIndex, player->facing);
   ListObj *nextObjects = objects(next.i, next.j);
-  if ((listObjContains(nextObjects, GROUND) || listObjContains(nextObjects,
-ICE)) && !listObjContains(nextObjects, WALL) { Object *block =
-listObjPop(&objects(blockIndex.i, blockIndex.j), PUSH);
-    listObjAppend(&objects(next.i, next.j), block);
-
-    player->index = blockIndex;
+  if (stackable(nextObjects)) {
+    cell(blockIndex.i, blockIndex.j)->steppable = true;
+    cell(next.i, next.j)->steppable = false;
+    moveObject(PUSH, blockIndex, map, next);
+    if (listObjContains(objects(next.i, next.j), ICE)) {
+      pushBlock(next, player, map);
+    }
   }
-} */
+}

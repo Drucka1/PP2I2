@@ -1,4 +1,5 @@
 #include "game.h"
+#include "player.h"
 
 void launchGame(SDL_Renderer *renderer) {
   printf("Launching game...\n");
@@ -32,8 +33,8 @@ void launchGame(SDL_Renderer *renderer) {
       default:
         break;
       }
+      render(renderer, map, player);
     }
-    render(renderer, map, player);
   }
 
   freeGame(player, textures, rooms);
@@ -104,7 +105,7 @@ void update(Entity *player, Map **map, Map **rooms) {
     }
   } else {
     player->status.icy = false;
-      player->moving = 0;
+    player->moving = 0;
   }
   moveMapBuffer(*map, player);
 }
@@ -139,18 +140,18 @@ void renderPlayer(Entity *player, SDL_Renderer *renderer) {
     break;
   }
   switch (player->moving) {
-    case 0:
-      player->textureBuffer->x = 0;
-      break;
-    case 1:
-      player->textureBuffer->x = w / 4;
-      break;
-    case 2:
-      player->textureBuffer->x = 2 * w / 4;
-      break;
-    case 3:
-      player->textureBuffer->x = 3 * w / 4;
-      break;
+  case 0:
+    player->textureBuffer->x = 0;
+    break;
+  case 1:
+    player->textureBuffer->x = w / 4;
+    break;
+  case 2:
+    player->textureBuffer->x = 2 * w / 4;
+    break;
+  case 3:
+    player->textureBuffer->x = 3 * w / 4;
+    break;
   }
 
   SDL_RenderCopy(renderer, player->texture, player->textureBuffer,
@@ -203,6 +204,7 @@ void renderMap(Map *map, Entity *player, SDL_Renderer *renderer) {
 }
 
 void render(SDL_Renderer *renderer, Map *map, Entity *player) {
+  moveMapBuffer(map, player);
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderClear(renderer);
   renderMap(map, player, renderer);
