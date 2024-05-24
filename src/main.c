@@ -13,7 +13,8 @@ int main(){
     textures[KEY] = load_sprite(renderer,"assets/sprite/key.png");
     textures[LEVER] = load_sprite(renderer,"assets/sprite/lever.png");
     textures[ICE] = load_sprite(renderer,"assets/sprite/ice.png");
-    textures[PUSH]=load_sprite(renderer,"assets/sprite/push.png");
+    textures[PUSH] = load_sprite(renderer,"assets/sprite/push.png");
+    textures[NUMBER] = load_sprite(renderer,"assets/sprite/numbers.png");
 
     Entity* player;
     Map* map;

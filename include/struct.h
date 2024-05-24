@@ -20,7 +20,7 @@ typedef struct {
     SDL_Rect *pos;
 
     //Utilisé seulement si l'objet est une clé
-    Triple* door;
+    Triple* action;
 } Object;
 
 typedef struct _ListObj{
@@ -68,4 +68,4 @@ void freeEntity(Entity *entity);
 void freeSprites(SDL_Texture** textures);
 void freePlayer(Entity* player);
 
-#endif
+#endif 

@@ -22,16 +22,66 @@ void posInitPlayerLevel(char *nomFichier, int* offset_player_x, int* offset_play
     fclose(fichier);
 }
 
+SDL_Texture* createSubTexture(SDL_Texture* original, SDL_Rect* section) {
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+    initSDL(&window, &renderer);
+    SDL_Texture* newTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, section->w, section->h);
+    SDL_SetRenderTarget(renderer, newTexture);
+    SDL_RenderCopy(renderer, original, section, NULL);
+    SDL_SetRenderTarget(renderer, NULL);
+    quitSDL(window, renderer);
+    return newTexture;
+}
+
+/*
+SDL_Texture* createSubTexture(SDL_Renderer* renderer, SDL_Texture* original, SDL_Rect* section) {
+    Uint32 format;
+    int access, w, h;
+    SDL_QueryTexture(original, &format, &access, &w, &h);
+    SDL_Texture* newTexture = SDL_CreateTexture(renderer, format, SDL_TEXTUREACCESS_TARGET, section->w, section->h);
+    if (newTexture == NULL) {
+        // handle error
+        return NULL;
+    }
+
+    // Set the new texture as the render target
+    SDL_SetRenderTarget(renderer, newTexture);
+
+    // Copy the section of the original texture to the new texture
+    SDL_RenderCopy(renderer, original, section, NULL);
+
+    // Reset the render target
+    SDL_SetRenderTarget(renderer, NULL);
+    return newTexture;
+}
+
+void setBlackPixels(SDL_Texture* texture, Uint8 r, Uint8 g, Uint8 b) {
+    int pitch, width, height;
+    void* pixels;
+
+    // Récupérer la largeur et la hauteur de la texture
+    SDL_QueryTexture(texture, NULL, NULL, &width, &height);
+    SDL_LockTexture(texture, NULL, &pixels, &pitch);
+
+    Uint32* uPixels = (Uint32*)pixels;
+
+    SDL_PixelFormat* format = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888);
+    Uint32 black = SDL_MapRGB(format, 0, 0, 0);
+    Uint32 newColor = SDL_MapRGB(format, r, g, b);
+
+    for (int i = 0; i < width * height; i++) {
+        if (uPixels[i] == black) {
+            uPixels[i] = newColor;
+        }
+    }
+
+    SDL_UnlockTexture(texture);
+    SDL_FreeFormat(format);
+}*/
+
 Map* FileToMap(char *nomFichier,SDL_Rect* posPlayer, SDL_Texture** textures){
     Map* map = malloc(sizeof(Map));
-
-    SDL_Texture* wallSprite = textures[WALL];
-    SDL_Texture* groundSprite = textures[GROUND];
-    SDL_Texture* doorSprite = textures[DOOR];
-    SDL_Texture* keySprite = textures[KEY];
-    SDL_Texture* leverSprite = textures[LEVER];
-    SDL_Texture* iceSprite = textures[ICE];
-    SDL_Texture* pushSprite = textures[PUSH];
 
     int level = numLevelFromChar(nomFichier);
     map->level = level;
@@ -72,7 +122,8 @@ Map* FileToMap(char *nomFichier,SDL_Rect* posPlayer, SDL_Texture** textures){
     map->BottomRightCorner.x = (map->cols-1)*SIZE_WALL_W+map->offset_map.x;
     map->BottomRightCorner.y = (map->rows-1)*SIZE_WALL_H+map->offset_map.y;
 
-    int p,q;
+    int p,q,num;
+    char color;
     
     char buffer[100];
     Cell** grid = malloc(sizeof(Cell*)*map->rows);
@@ -95,6 +146,69 @@ Map* FileToMap(char *nomFichier,SDL_Rect* posPlayer, SDL_Texture** textures){
         else if(strcmp(buffer,"|")==0){
             j++;         
         }
+
+        else if (sscanf(buffer,"n%d%c",&num,&color) == 2){
+            grid[i][j].steppable &= true;
+            grid[i][j].numberObjects++;
+
+            SDL_Rect* pos = malloc(sizeof(SDL_Rect));
+            pos->x = j*SIZE_WALL_W+map->offset_map.x;
+            pos->y = i*SIZE_WALL_H+map->offset_map.y;
+            pos->w = SIZE_WALL_W;
+            pos->h = SIZE_WALL_H;
+
+            Object* number = malloc(sizeof(Object));
+            number->type_object = NUMBER;
+            number->texture = textures[NUMBER];
+            number->pos = pos;
+            number->action = NULL;
+
+            grid[i][j].objects = listObjAppend(grid[i][j].objects,number);
+        }
+        else if (sscanf(buffer,"4(%d,%d)",&p,&q) == 2){
+            grid[i][j].steppable &= true;
+            grid[i][j].numberObjects++;
+
+            SDL_Rect* pos = malloc(sizeof(SDL_Rect));
+            pos->x = j*SIZE_WALL_W+map->offset_map.x;
+            pos->y = i*SIZE_WALL_H+map->offset_map.y;
+            pos->w = SIZE_WALL_W;
+            pos->h = SIZE_WALL_H;
+
+            Object* lever = malloc(sizeof(Object));
+            lever->type_object = LEVER;
+            lever->texture = textures[LEVER];
+            lever->pos = pos;
+            
+            lever->action = malloc(sizeof(Triple));
+            lever->action->level = level;
+            lever->action->x = p;
+            lever->action->y = q;
+
+            grid[i][j].objects = listObjAppend(grid[i][j].objects,lever);
+        }
+        else if (sscanf(buffer,"3(%d,%d)",&p,&q) == 2){
+            grid[i][j].steppable &= true;
+            grid[i][j].numberObjects++;
+
+            SDL_Rect* pos = malloc(sizeof(SDL_Rect));
+            pos->x = j*SIZE_WALL_W+map->offset_map.x;
+            pos->y = i*SIZE_WALL_H+map->offset_map.y;
+            pos->w = SIZE_WALL_W;
+            pos->h = SIZE_WALL_H;
+
+            Object* key = malloc(sizeof(Object));
+            key->type_object = KEY;
+            key->texture = textures[KEY];
+            key->pos = pos;
+
+            key->action = malloc(sizeof(Triple));
+            key->action->level = level;
+            key->action->x = p;
+            key->action->y = q;
+
+            grid[i][j].objects = listObjAppend(grid[i][j].objects,key);
+        }
         else if (atoi(buffer) == 0 && strlen(buffer) > 7){ //detection de tp IG
             grid[i][j].map_tp = malloc(sizeof(char)*(strlen(buffer)+1));
             strcpy(grid[i][j].map_tp,buffer);
@@ -111,9 +225,9 @@ Map* FileToMap(char *nomFichier,SDL_Rect* posPlayer, SDL_Texture** textures){
 
             Object* wall = malloc(sizeof(Object));
             wall->type_object = WALL;
-            wall->texture = wallSprite;
+            wall->texture =textures[WALL];
             wall->pos = pos;
-            wall->door = NULL;
+            wall->action = NULL;
             grid[i][j].objects = listObjAppend(grid[i][j].objects,wall);
         } 
         else if (atoi(buffer) == GROUND){
@@ -128,9 +242,9 @@ Map* FileToMap(char *nomFichier,SDL_Rect* posPlayer, SDL_Texture** textures){
 
             Object* ground = malloc(sizeof(Object));
             ground->type_object = GROUND;
-            ground->texture = groundSprite;
+            ground->texture = textures[GROUND];
             ground->pos = pos;
-            ground->door = NULL;
+            ground->action = NULL;
             grid[i][j].objects = listObjAppend(grid[i][j].objects,ground);
         }
         else if (atoi(buffer) == PUSH){
@@ -145,9 +259,9 @@ Map* FileToMap(char *nomFichier,SDL_Rect* posPlayer, SDL_Texture** textures){
 
             Object* push = malloc(sizeof(Object));
             push->type_object = PUSH;
-            push->texture = pushSprite;
+            push->texture = textures[PUSH];
             push->pos = pos;
-            push->door = NULL;
+            push->action = NULL;
             grid[i][j].objects = listObjAppend(grid[i][j].objects,push);
         }
         else if(atoi(buffer)==ICE){ //ICI
@@ -162,9 +276,9 @@ Map* FileToMap(char *nomFichier,SDL_Rect* posPlayer, SDL_Texture** textures){
 
             Object* ice = malloc(sizeof(Object));
             ice->type_object = ICE;
-            ice->texture = iceSprite;
+            ice->texture = textures[ICE];;
             ice->pos = pos;
-            ice->door = NULL;
+            ice->action = NULL;
             grid[i][j].objects = listObjAppend(grid[i][j].objects,ice);
         }
         else if (atoi(buffer) == DOOR){
@@ -179,54 +293,10 @@ Map* FileToMap(char *nomFichier,SDL_Rect* posPlayer, SDL_Texture** textures){
 
             Object* door = malloc(sizeof(Object));
             door->type_object = DOOR;
-            door->texture = doorSprite;
+            door->texture = textures[DOOR];
             door->pos = pos;
-            door->door = NULL;
+            door->action = NULL;
             grid[i][j].objects = listObjAppend(grid[i][j].objects,door);
-        }
-        else if (sscanf(buffer,"4(%d,%d)",&p,&q) == 2){
-            grid[i][j].steppable &= true;
-            grid[i][j].numberObjects++;
-
-            SDL_Rect* pos = malloc(sizeof(SDL_Rect));
-            pos->x = j*SIZE_WALL_W+map->offset_map.x;
-            pos->y = i*SIZE_WALL_H+map->offset_map.y;
-            pos->w = SIZE_WALL_W;
-            pos->h = SIZE_WALL_H;
-
-            Object* lever = malloc(sizeof(Object));
-            lever->type_object = LEVER;
-            lever->texture = leverSprite;
-            lever->pos = pos;
-            
-            lever->door = malloc(sizeof(Triple));
-            lever->door->level = level;
-            lever->door->x = p;
-            lever->door->y = q;
-
-            grid[i][j].objects = listObjAppend(grid[i][j].objects,lever);
-        }
-        else if (sscanf(buffer,"3(%d,%d)",&p,&q) == 2){
-            grid[i][j].steppable &= true;
-            grid[i][j].numberObjects++;
-
-            SDL_Rect* pos = malloc(sizeof(SDL_Rect));
-            pos->x = j*SIZE_WALL_W+map->offset_map.x;
-            pos->y = i*SIZE_WALL_H+map->offset_map.y;
-            pos->w = SIZE_WALL_W;
-            pos->h = SIZE_WALL_H;
-
-            Object* key = malloc(sizeof(Object));
-            key->type_object = KEY;
-            key->texture = keySprite;
-            key->pos = pos;
-
-            key->door = malloc(sizeof(Triple));
-            key->door->level = level;
-            key->door->x = p;
-            key->door->y = q;
-
-            grid[i][j].objects = listObjAppend(grid[i][j].objects,key);
         }
     }
     fclose(fichier);
@@ -254,7 +324,7 @@ void MapToFile(Map* map,int posMapX, int posMapY) {
             ListObj* objs = map->grid[i][j].objects;
             while (objs != NULL){
                 fprintf(file, "%d",objs->object->type_object);
-                if  (objs->object->door) fprintf(file, "(%d,%d)",objs->object->door->x,objs->object->door->y);
+                if  (objs->object->action) fprintf(file, "(%d,%d)",objs->object->action->x,objs->object->action->y);
                 fprintf(file, " ");
                 objs = objs->next;
             }
@@ -305,10 +375,10 @@ Entity* getPlayerStatus(int* current_level){
     while (fscanf(fichier, "%d(%d,%d,%d)\n", &type_obj,&level,&x,&y) != EOF){
         Object* obj = malloc(sizeof(Object));
         obj->type_object = type_obj;
-        obj->door = malloc(sizeof(Triple));
-        obj->door->level = level;
-        obj->door->x = x;
-        obj->door->y = y;
+        obj->action = malloc(sizeof(Triple));
+        obj->action->level = level;
+        obj->action->x = x;
+        obj->action->y = y;
         obj->pos =NULL;
         inventory = listObjAppend(inventory,obj);
     }
