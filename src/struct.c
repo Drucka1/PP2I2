@@ -90,14 +90,34 @@ ListObj* removeKeyInventory(ListObj* inventory, int lvl){
 }
 
 ListObj* listObjRemoveWall(ListObj* list) {
-    if (list == NULL) return NULL;
-    if (list->object->type_object == WALL) {
-        freeListObj(list);             
-        return NULL;
-    } 
-    list->next = listObjRemoveWall(list->next);  
+    if (list == NULL){
+    return NULL;
+    }
+    ListObj* wall = NULL;
+    ListObj* ground = NULL;
+    ListObj* temp = list;
+    while (temp != NULL) {
+        if (temp->object->type_object == WALL) {
+            wall = temp;
+        } else if (temp->object->type_object == GROUND) {
+            ground = temp;
+        }
+        
+        temp = temp->next;
+    }
+
+    if (wall != NULL && ground != NULL) {
+        Object* temp = wall->object;
+        wall->object = ground->object;
+        ground->object = temp;
+    }
+    
     return list;
 }
+
+
+
+
 
 void exchangeObject(Cell *case1, Cell *case2,Tuple* nouvpos, Object* obj) {
     case1->objects = listObjRemove(case1->objects,obj);

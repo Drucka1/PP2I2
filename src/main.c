@@ -108,6 +108,7 @@ int main(){
                             {   
                                 char* path = getPath(true,map->level);
                                 if(ENABLE_SAVE){
+                                    free(path);
                                     path = getPath(false,map->level);
                                     char commande[150] = "cp -f ";
                                     char* defaultPath = getPath(true,map->level);
