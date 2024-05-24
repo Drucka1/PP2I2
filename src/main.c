@@ -99,6 +99,9 @@ int main(){
                         case SDLK_i:
                             isIcy = !isIcy;
                             break;    
+                        case SDLK_s:
+                            save_screenshot(renderer);
+                            break;    
                         case SDLK_r:
                             {   
                                 char* path = getPath(false,map->level);
@@ -120,7 +123,7 @@ int main(){
                                 free(path);
                                 free(defaultPath);
                                 break; 
-                            } 
+                            }  
                         case SDLK_e://Prend la clé dans l'inventaire
                             interact(&map,player,textures);
                             break;

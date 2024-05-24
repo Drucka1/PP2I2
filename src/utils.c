@@ -33,9 +33,58 @@ void quitSDL(SDL_Window *window, SDL_Renderer *renderer)
   SDL_Quit();
 }
 
-char* getPath(bool defaultPath, int lvl) {
+char* getPath(bool defaultPath, int lvl){
   char* buffer = malloc(sizeof(char)*50);
   if (defaultPath) sprintf(buffer, "assets/level/default/level%d.txt", lvl);
   else sprintf(buffer, "assets/level/save/level%d.txt", lvl);
   return buffer;
+}
+
+int getMaxScreenshotNum(){
+    char dirpath[20] = "assets/screenshot/";
+    DIR *dir = opendir(dirpath);
+    if (!dir) {
+        printf("Failed to open directory: %s\n", dirpath);
+        return -1;
+    }
+
+    struct dirent *entry;
+    int max_num = -1;
+    while ((entry = readdir(dir)) != NULL) {
+        int num;
+        if (sscanf(entry->d_name, "screenshot_%d.jpg", &num) == 1) {
+            if (num > max_num) {
+                max_num = num;
+            }
+        }
+    }
+
+    closedir(dir);
+    return max_num;
+}
+
+void save_screenshot(SDL_Renderer *renderer){
+  int numScreenshot = getMaxScreenshotNum()+1;
+  char filename[50];
+  sprintf(filename, "assets/screenshot/screenshot_%d.jpg",numScreenshot);
+
+  SDL_Surface *surface = SDL_CreateRGBSurfaceWithFormat(0, WINDOW_WIDTH, WINDOW_HEIGHT, 24, SDL_PIXELFORMAT_RGB24);
+  if (!surface) {
+      printf("Failed to create surface: %s\n", SDL_GetError());
+      return;
+  }
+
+  if (SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_RGB24, surface->pixels, surface->pitch) != 0) {
+      printf("Failed to read pixels: %s\n", SDL_GetError());
+      SDL_FreeSurface(surface);
+      return;
+  }
+
+  if (IMG_SavePNG(surface, filename) != 0) {
+      printf("Failed to save png: %s\n", IMG_GetError());
+      SDL_FreeSurface(surface);
+      return;
+  }
+
+  SDL_FreeSurface(surface);
 }

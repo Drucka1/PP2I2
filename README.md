@@ -12,6 +12,7 @@ LES TOUCHES :
     echap : quit de jeu
     i : active/desactive l'état de glace (mouvement impossible)
     r : reset du level
+    s : prend un screenshot
     esc : ferme le jeu + sauvegarde
 
 J'adore la glace surtout sur Trackmania donc elle est dispo maintenant(numero 5 ou ICE)
