@@ -19,8 +19,8 @@ typedef struct {
     SDL_Texture *texture;
     SDL_Rect *pos;
 
-    //Utilisé seulement si l'objet est une clé
-    Triple* door;
+    //Utilisé seulement si l'objet est une clé / levier
+    Triple* action;
 } Object;
 
 typedef struct _ListObj{

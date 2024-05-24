@@ -113,7 +113,7 @@ Map* FileToMap(char *nomFichier,SDL_Rect* posPlayer, SDL_Texture** textures){
             wall->type_object = WALL;
             wall->texture = wallSprite;
             wall->pos = pos;
-            wall->door = NULL;
+            wall->action = NULL;
             grid[i][j].objects = listObjAppend(grid[i][j].objects,wall);
         } 
         else if (atoi(buffer) == GROUND){
@@ -130,7 +130,7 @@ Map* FileToMap(char *nomFichier,SDL_Rect* posPlayer, SDL_Texture** textures){
             ground->type_object = GROUND;
             ground->texture = groundSprite;
             ground->pos = pos;
-            ground->door = NULL;
+            ground->action = NULL;
             grid[i][j].objects = listObjAppend(grid[i][j].objects,ground);
         }
         else if (atoi(buffer) == PUSH){
@@ -147,7 +147,7 @@ Map* FileToMap(char *nomFichier,SDL_Rect* posPlayer, SDL_Texture** textures){
             push->type_object = PUSH;
             push->texture = pushSprite;
             push->pos = pos;
-            push->door = NULL;
+            push->action = NULL;
             grid[i][j].objects = listObjAppend(grid[i][j].objects,push);
         }
         else if(atoi(buffer)==ICE){ //ICI
@@ -164,7 +164,7 @@ Map* FileToMap(char *nomFichier,SDL_Rect* posPlayer, SDL_Texture** textures){
             ice->type_object = ICE;
             ice->texture = iceSprite;
             ice->pos = pos;
-            ice->door = NULL;
+            ice->action = NULL;
             grid[i][j].objects = listObjAppend(grid[i][j].objects,ice);
         }
         else if (atoi(buffer) == DOOR){
@@ -181,7 +181,7 @@ Map* FileToMap(char *nomFichier,SDL_Rect* posPlayer, SDL_Texture** textures){
             door->type_object = DOOR;
             door->texture = doorSprite;
             door->pos = pos;
-            door->door = NULL;
+            door->action = NULL;
             grid[i][j].objects = listObjAppend(grid[i][j].objects,door);
         }
         else if (sscanf(buffer,"4(%d,%d)",&p,&q) == 2){
@@ -199,10 +199,10 @@ Map* FileToMap(char *nomFichier,SDL_Rect* posPlayer, SDL_Texture** textures){
             lever->texture = leverSprite;
             lever->pos = pos;
             
-            lever->door = malloc(sizeof(Triple));
-            lever->door->level = level;
-            lever->door->x = p;
-            lever->door->y = q;
+            lever->action = malloc(sizeof(Triple));
+            lever->action->level = level;
+            lever->action->x = p;
+            lever->action->y = q;
 
             grid[i][j].objects = listObjAppend(grid[i][j].objects,lever);
         }
@@ -221,10 +221,10 @@ Map* FileToMap(char *nomFichier,SDL_Rect* posPlayer, SDL_Texture** textures){
             key->texture = keySprite;
             key->pos = pos;
 
-            key->door = malloc(sizeof(Triple));
-            key->door->level = level;
-            key->door->x = p;
-            key->door->y = q;
+            key->action = malloc(sizeof(Triple));
+            key->action->level = level;
+            key->action->x = p;
+            key->action->y = q;
 
             grid[i][j].objects = listObjAppend(grid[i][j].objects,key);
         }
@@ -254,7 +254,7 @@ void MapToFile(Map* map,int posMapX, int posMapY) {
             ListObj* objs = map->grid[i][j].objects;
             while (objs != NULL){
                 fprintf(file, "%d",objs->object->type_object);
-                if  (objs->object->door) fprintf(file, "(%d,%d)",objs->object->door->x,objs->object->door->y);
+                if  (objs->object->action) fprintf(file, "(%d,%d)",objs->object->action->x,objs->object->action->y);
                 fprintf(file, " ");
                 objs = objs->next;
             }
@@ -305,10 +305,10 @@ Entity* getPlayerStatus(int* current_level){
     while (fscanf(fichier, "%d(%d,%d,%d)\n", &type_obj,&level,&x,&y) != EOF){
         Object* obj = malloc(sizeof(Object));
         obj->type_object = type_obj;
-        obj->door = malloc(sizeof(Triple));
-        obj->door->level = level;
-        obj->door->x = x;
-        obj->door->y = y;
+        obj->action = malloc(sizeof(Triple));
+        obj->action->level = level;
+        obj->action->x = x;
+        obj->action->y = y;
         obj->pos =NULL;
         inventory = listObjAppend(inventory,obj);
     }

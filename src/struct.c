@@ -79,7 +79,7 @@ ListObj* listObjRemove(ListObj* list, Object* obj){
 
 ListObj* removeKeyInventory(ListObj* inventory, int lvl){
     if (!inventory) return NULL;
-    if (inventory->object->door->level == lvl){
+    if (inventory->object->action->level == lvl){
         ListObj* next = inventory->next;
         freeObject(inventory->object);
         free(inventory);
@@ -121,7 +121,7 @@ void freeListObj(ListObj *list) {
 void freeObject(Object *object) {
     if (!object) return;
     if (object->pos) free(object->pos);
-    if (object->door) free(object->door);
+    if (object->action) free(object->action);
     free(object);
 }
 

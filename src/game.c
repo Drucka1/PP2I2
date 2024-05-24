@@ -166,7 +166,7 @@ void decalageMur(Tuple* mur,int decalage){
 
 SDL_bool openDoor(ListObj* inventory,int i, int j, int level){ 
     while (inventory != NULL){
-        if (inventory->object->door->x == i && inventory->object->door->y == j && level == inventory->object->door->level){
+        if (inventory->object->action->x == i && inventory->object->action->y == j && level == inventory->object->action->level){
             return SDL_TRUE;
         }
         inventory = inventory->next;
@@ -196,8 +196,8 @@ void interact(Map* *map, Entity* player,SDL_Texture** textures){
                     return;
                 }
                 if (objs->object->type_object == LEVER && SDL_HasIntersection(player->pos,objs->object->pos)){
-                    (*map)->grid[objs->object->door->x][objs->object->door->y].steppable = true;
-                    (*map)->grid[objs->object->door->x][objs->object->door->y].objects = listObjRemoveWall((*map)->grid[objs->object->door->x][objs->object->door->y].objects);
+                    (*map)->grid[objs->object->action->x][objs->object->action->y].steppable = true;
+                    (*map)->grid[objs->object->action->x][objs->object->action->y].objects = listObjRemoveWall((*map)->grid[objs->object->action->x][objs->object->action->y].objects);
                     return;
                 }
                 objs = objs->next;
@@ -217,7 +217,7 @@ void savePlayerStatus(Entity* player,int current_level){
 
     ListObj* objs = player->inventory;
     while (objs != NULL){
-        fprintf(file, "%d(%d,%d,%d)\n",objs->object->type_object,objs->object->door->level,objs->object->door->x,objs->object->door->y);
+        fprintf(file, "%d(%d,%d,%d)\n",objs->object->type_object,objs->object->action->level,objs->object->action->x,objs->object->action->y);
         objs = objs->next;
     }
 
