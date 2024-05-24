@@ -20,10 +20,11 @@
 #define SIZE_WALL_W (WINDOW_WIDTH/NB_WALL_W)
 #define SIZE_WALL_H (WINDOW_HEIGHT/NB_WALL_H)
 #define VITESSE SIZE_WALL_W
+
 #define MIN(i, j) (((i) < (j)) ? (i) : (j))
 #define MAX(i, j) (((i) > (j)) ? (i) : (j))
 
-#define ENABLE_SAVE false
+#define ENABLE_SAVE true
 
 #define UP 1
 #define DOWN 2

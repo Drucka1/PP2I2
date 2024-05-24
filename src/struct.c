@@ -91,14 +91,12 @@ ListObj* removeKeyInventory(ListObj* inventory, int lvl){
 
 ListObj* listObjRemoveWall(ListObj* list) {
     if (list == NULL) return NULL;
-    
     if (list->object->type_object == WALL) {
         freeListObj(list);             
         return NULL;
     } 
     list->next = listObjRemoveWall(list->next);  
     return list;
-    
 }
 
 void exchangeObject(Cell *case1, Cell *case2,Tuple* nouvpos, Object* obj) {
@@ -108,7 +106,6 @@ void exchangeObject(Cell *case1, Cell *case2,Tuple* nouvpos, Object* obj) {
     case2->numberObjects++;
     case2->objects = listObjAppend(case2->objects,obj);
 }
-
 
 void freeListObj(ListObj *list) {
     if (list != NULL) {
@@ -122,7 +119,7 @@ void freeObject(Object *object) {
     if (!object) return;
     if (object->pos) free(object->pos);
     if (object->action) free(object->action);
-    //if (object->type_object == NUMBER) free(object->texture);
+    if (object->number) free(object->number);
     free(object);
 }
 
@@ -133,7 +130,6 @@ void freeMap(Map *map) {
             freeListObj(map->grid[i][j].objects);
             free(map->grid[i][j].map_tp);
         }
-        
         free(map->grid[i]);
     }
     free(map->grid);
