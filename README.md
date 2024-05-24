@@ -7,7 +7,7 @@ git pull origin master
 git push --set-upstream origin blabla
 
 LES TOUCHES :
-    a : active/desactive en place un assombrissement
+    d : active/desactive en place un assombrissement
     e : interaction avec object (pour l'instant seulement les clés)
     echap : quit de jeu
     i : active/desactive l'état de glace (mouvement impossible)

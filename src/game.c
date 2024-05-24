@@ -15,6 +15,14 @@ void drawMap(SDL_Renderer* renderer,Map* map){
                         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in render copy: %s", SDL_GetError());
                     }
                 }
+                else  if (objs->object->type_object == NUMBER) {
+                    SDL_SetRenderDrawColor(renderer,objs->object->number->r, objs->object->number->g, objs->object->number->b, 100);
+                    SDL_RenderFillRect(renderer, objs->object->pos);
+                    int num = objs->object->number->num;
+                    if (SDL_RenderCopy(renderer, objs->object->texture,&(SDL_Rect){.x=2+80*(num%5),.y=2+120*(num/5),.w=76,.h=116},objs->object->pos)){
+                        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in render copy: %s %d", SDL_GetError(),NUMBER);
+                    }
+                }
                 else  if (objs->object->type_object == DOOR) {
                     if (SDL_RenderCopy(renderer, objs->object->texture,&(SDL_Rect){.x=0,.y=0,.w=89,.h=94},objs->object->pos)){
                         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Error in render copy: %s", SDL_GetError());
@@ -45,17 +53,22 @@ void drawPlayer(SDL_Renderer* renderer,Entity* player,SDL_Rect* spriteRect){
     }
 }
 
-void drawTransparency(SDL_Renderer* renderer,Entity* player){ 
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 225);
-    SDL_RenderFillRect(renderer, &(SDL_Rect){player->pos->x -2*SIZE_WALL_H , player->pos->y -2*SIZE_WALL_H, SIZE_WALL_W,  SIZE_WALL_H});
-    SDL_RenderFillRect(renderer, &(SDL_Rect){player->pos->x +2*SIZE_WALL_H , player->pos->y -2*SIZE_WALL_H, SIZE_WALL_W,  SIZE_WALL_H});
-    SDL_RenderFillRect(renderer, &(SDL_Rect){player->pos->x -2*SIZE_WALL_H , player->pos->y +2*SIZE_WALL_H, SIZE_WALL_W,  SIZE_WALL_H});
-    SDL_RenderFillRect(renderer, &(SDL_Rect){player->pos->x +2*SIZE_WALL_H , player->pos->y +2*SIZE_WALL_H, SIZE_WALL_W,  SIZE_WALL_H});
-    SDL_RenderFillRect(renderer, &(SDL_Rect){0, 0, WINDOW_WIDTH,  player->pos->y - 2*SIZE_WALL_H});
-    SDL_RenderFillRect(renderer, &(SDL_Rect){0, player->pos->y + 3*SIZE_WALL_H, WINDOW_WIDTH,  WINDOW_HEIGHT});
-    SDL_RenderFillRect(renderer, &(SDL_Rect){0, player->pos->y - 2*SIZE_WALL_H, player->pos->x - 2*SIZE_WALL_W,5*SIZE_WALL_H});
-    SDL_RenderFillRect(renderer, &(SDL_Rect){player->pos->x + 3*SIZE_WALL_W, player->pos->y - 2*SIZE_WALL_H, WINDOW_WIDTH -  player->pos->x + 5*SIZE_WALL_W ,5*SIZE_WALL_H});
+void drawTransparency(SDL_Renderer* renderer, Entity* player) {
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 230);
+    int x = player->pos->x;
+    int y = player->pos->y;
+
+    SDL_RenderFillRect(renderer, &(SDL_Rect){x - 2*SIZE_WALL_W, y - 2*SIZE_WALL_H, SIZE_WALL_W, SIZE_WALL_H});
+    SDL_RenderFillRect(renderer, &(SDL_Rect){x + 2*SIZE_WALL_W, y - 2*SIZE_WALL_H, SIZE_WALL_W, SIZE_WALL_H});
+    SDL_RenderFillRect(renderer, &(SDL_Rect){x - 2*SIZE_WALL_W, y + 2*SIZE_WALL_H, SIZE_WALL_W, SIZE_WALL_H});
+    SDL_RenderFillRect(renderer, &(SDL_Rect){x + 2*SIZE_WALL_W, y + 2*SIZE_WALL_H, SIZE_WALL_W, SIZE_WALL_H});
+    SDL_RenderFillRect(renderer, &(SDL_Rect){0, 0, WINDOW_WIDTH, y - 2*SIZE_WALL_H});
+    SDL_RenderFillRect(renderer, &(SDL_Rect){0, y + 3*SIZE_WALL_H, WINDOW_WIDTH, WINDOW_HEIGHT});
+    SDL_RenderFillRect(renderer, &(SDL_Rect){0, y - 2*SIZE_WALL_H, x - 2*SIZE_WALL_W, 5*SIZE_WALL_H});
+    SDL_RenderFillRect(renderer, &(SDL_Rect){x + 3*SIZE_WALL_W, y - 2*SIZE_WALL_H, WINDOW_WIDTH -x + 5*SIZE_WALL_W, 5*SIZE_WALL_H});
 }
+
+
 
 SDL_bool collisions(SDL_Rect* player, Map* map){
     for (int i = 0;i<map->rows;i++){

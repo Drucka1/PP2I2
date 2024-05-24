@@ -4,23 +4,26 @@
 #include "defs.h"
 
 typedef struct {
-    int x;
-    int y;
+    int x,y;
 } Tuple;
 
 typedef struct {
-    int level;
-    int x;
-    int y;
+    int level,x,y;
 } Triple;
+
+typedef struct {
+    int num,r,g,b;
+} Number;
 
 typedef struct {
     int type_object;
     SDL_Texture *texture;
     SDL_Rect *pos;
 
-    //Utilisé seulement si l'objet est une clé / levier
+    //Utilisé pour les clés et leviers
     Triple* action;
+    //Utilisé pour affichage des nombres
+    Number* number;
 } Object;
 
 typedef struct _ListObj{
@@ -68,4 +71,4 @@ void freeEntity(Entity *entity);
 void freeSprites(SDL_Texture** textures);
 void freePlayer(Entity* player);
 
-#endif
+#endif 

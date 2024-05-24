@@ -13,7 +13,8 @@ int main(){
     textures[KEY] = load_sprite(renderer,"assets/sprite/key.png");
     textures[LEVER] = load_sprite(renderer,"assets/sprite/lever.png");
     textures[ICE] = load_sprite(renderer,"assets/sprite/ice.png");
-    textures[PUSH]=load_sprite(renderer,"assets/sprite/push.png");
+    textures[PUSH] = load_sprite(renderer,"assets/sprite/push.png");
+    textures[NUMBER] = load_sprite(renderer,"assets/sprite/numbers.png");
 
     Entity* player;
     Map* map;
@@ -93,7 +94,7 @@ int main(){
                                 savePlayerStatus(player,map->level);
                             }
                             break;
-                        case SDLK_a:
+                        case SDLK_d:
                             dark = !dark;
                             break;
                         case SDLK_i:
@@ -103,14 +104,19 @@ int main(){
                             save_screenshot(renderer);
                             break;    
                         case SDLK_r:
+                        
                             {   
-                                char* path = getPath(false,map->level);
-                                char commande[150] = "cp -f ";
-                                char* defaultPath = getPath(true,map->level);
-                                strcat(commande,defaultPath);
-                                strcat(commande," ");
-                                strcat(commande,path);
-                                system(commande);
+                                char* path = getPath(true,map->level);
+                                if(ENABLE_SAVE){
+                                    path = getPath(false,map->level);
+                                    char commande[150] = "cp -f ";
+                                    char* defaultPath = getPath(true,map->level);
+                                    strcat(commande,defaultPath);
+                                    strcat(commande," ");
+                                    strcat(commande,path);
+                                    system(commande);
+                                    free(defaultPath);
+                                }
 
                                 player->inventory = removeKeyInventory(player->inventory,map->level);
                                 freeMap(map);
@@ -121,8 +127,8 @@ int main(){
                                 player->pos->x = map->offset_map.x+offset_player_x*SIZE_WALL_W;
                                 player->pos->y = map->offset_map.y+offset_player_y*SIZE_WALL_H;
                                 free(path);
-                                free(defaultPath);
-                                break; 
+                                break;
+                             
                             }  
                         case SDLK_e://Prend la clé dans l'inventaire
                             interact(&map,player,textures);
