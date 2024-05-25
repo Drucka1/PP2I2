@@ -15,6 +15,11 @@ void interact(Entity *player, Map *map, Map **rooms) {
     switchLever(index, map, rooms);
     return;
   }
+  if (listObjContains(objects(player->index.i, player->index.j), GENERATEUR)){
+    printf("Switching electrical generator");
+    player->status.blind=false;
+    return;
+  }
 
   switch (player->facing) {
   case UP:

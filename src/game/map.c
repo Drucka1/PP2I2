@@ -106,6 +106,13 @@ Map *loadMap(int room, SDL_Texture **textures) {
         listObjAppend(&objects, object);
       }
 
+      else if (atoi(token) == GENERATEUR){
+        Object *object = initObject((Index){i, j});
+        object->texture = textures[GENERATEUR];
+        object->objectType = GENERATEUR;
+        listObjAppend(&objects, object);
+      }
+
       else if (atoi(token) == WALL) {
         cell(i, j)->steppable = false;
         Object *object = initObject((Index){i, j});
@@ -129,7 +136,7 @@ Map *loadMap(int room, SDL_Texture **textures) {
         object->objectType = PUSH;
         listObjAppend(&objects, object);
       }
-
+      
       else if (sscanf(token, "2[%d(%d,%d)%d]", &p, &q, &r, &o) == 4) {
         Object *object = initObject((Index){i, j});
         object->texture = textures[DOOR];
