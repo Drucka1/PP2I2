@@ -16,7 +16,7 @@ void interact(Entity *player, Map *map, Map **rooms) {
     return;
   }
   if (listObjContains(objects(player->index.i, player->index.j), GENERATEUR)){
-    printf("Switching electrical generator");
+    printf("Switching electrical generator on");
     player->status.blind=false;
     return;
   }

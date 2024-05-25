@@ -78,7 +78,31 @@ void play(SDL_Event event, Entity *player, Map *map, Map **rooms) {
 
 void update(Entity *player, Map **map, Map **rooms) {
   Index currentIndex = player->index;
+  Index next = nextIndex(player->index, player->facing);
   ListObj *current = (*map)->data[currentIndex.i][currentIndex.j]->objects;
+  if (listObjContains(current,LEVER)){
+    ListObj *nextObjects = (*map)->data[next.i][next.j]->objects;
+    if (stackable(nextObjects)){ 
+      moveObject(LEVER, currentIndex,*map,next);
+    }
+    else if (player->facing%2==0)
+    {
+      Index nextup = nextIndex(currentIndex,1);
+      ListObj *nextupObjects = (*map)->data[nextup.i][nextup.j]->objects;
+      if (stackable(nextupObjects)){ 
+        moveObject(LEVER, currentIndex,*map,nextup);
+    }
+    }
+    
+    else {
+      Index nextleft = nextIndex(currentIndex,2);
+      ListObj *nextleftObjects = (*map)->data[nextleft.i][nextleft.j]->objects;
+      if (stackable(nextleftObjects)){
+        moveObject(LEVER,currentIndex,*map,nextleft);
+      }
+    }
+    
+  }
   if (listObjContains(current, DOOR)) {
     Object *srcDoor = listObjGet(current, DOOR);
     Path door = srcDoor->path;
@@ -102,7 +126,7 @@ void update(Entity *player, Map **map, Map **rooms) {
   }
   if (listObjContains(current, ICE)) {
     player->status.icy = true;
-    Index next = nextIndex(player->index, player->facing);
+    
     if ((*map)->data[next.i][next.j]->steppable) {
       movePlayer(player, *map, next);
       SDL_Delay(50);
