@@ -89,22 +89,7 @@ void launchGame(SDL_Renderer *renderer,TTF_Font * font)
         break;
       }
       update(player, &map, rooms);
-      render(renderer, map, player);
-      if(player->status.indigit){ //horrible mais bon pour le moment je test hein
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Black background
-        SDL_RenderClear(renderer);
-
-        for (int i = 0; i < 12; ++i) {
-            drawButton(renderer, font, buttons[i]);
-        }
-
-        // Render entered code if not empty
-        if (strlen(enteredCode) > 0) {
-            drawText(renderer, font, enteredCode, BUTTON_PADDING, 50);
-        }
-
-        SDL_RenderPresent(renderer);
-      }
+      render(renderer, map, player,font,enteredCode,buttons);
     }
   }
 
@@ -325,13 +310,29 @@ void renderMap(Map *map, Entity *player, SDL_Renderer *renderer)
     }
   }
 }
+void rendercode(SDL_Renderer *renderer, Entity * player,TTF_Font * font,char* enteredCode,Button * buttons){
+  if(player->status.indigit){ //horrible mais bon pour le moment je test hein
 
-void render(SDL_Renderer *renderer, Map *map, Entity *player)
+        for (int i = 0; i < 12; ++i) {
+            drawButton(renderer, font, buttons[i]);
+        }
+
+        // Render entered code if not empty
+        if (strlen(enteredCode) > 0) {
+            drawText(renderer, font, enteredCode, BUTTON_PADDING, 50);
+        }
+
+        SDL_RenderPresent(renderer);
+      }
+}
+
+void render(SDL_Renderer *renderer, Map *map, Entity *player,TTF_Font *font,char* enteredCode, Button* buttons)
 {
   moveMapBuffer(map, player);
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderClear(renderer);
   renderMap(map, player, renderer);
+  rendercode(renderer,player,font,enteredCode,buttons);
   renderPlayer(player, renderer);
   SDL_RenderPresent(renderer);
   SDL_Delay(10);
@@ -351,6 +352,11 @@ void freeGame(Entity *player, SDL_Texture **textures, Map **rooms)
   free(textures);
   freePlayer(player);
 }
+
+
+
+
+
 
 void drawButton(SDL_Renderer *renderer, TTF_Font *font, Button button)
 {
