@@ -11,9 +11,11 @@ void interact(Entity *player, Map *map, Map **rooms) {
     return;
   } else if (listObjContains(objects(player->index.i, player->index.j),
                              LEVER)) {
-    printf("Switching lever\n");
-    switchLever(index, map, rooms);
-    return;
+    if (!player->status.scary){
+      printf("Switching lever\n");
+      switchLever(index, map, rooms);
+      return;
+    }
   }
   if (listObjContains(objects(player->index.i, player->index.j), GENERATEUR)){
     printf("Switching electrical generator on");

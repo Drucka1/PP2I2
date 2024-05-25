@@ -13,6 +13,7 @@
 #define ICE 5
 #define PUSH 6
 #define GENERATEUR 7
+#define FEARFULLEVER 8
 
 #define TEXTURE_TAGS                                                           \
   { "ground", "wall", "door", "key", "lever", "ice", "push", "generateur" }
