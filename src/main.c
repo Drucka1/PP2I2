@@ -6,11 +6,11 @@ int main(int argc, char *argv[]) {
 
   SDL_Renderer *renderer = NULL;
   SDL_Window *window = NULL;
+  TTF_Font * font = NULL;
+  initSDL(&window, &renderer,&font);
 
-  initSDL(&window, &renderer);
+  launchGame(renderer,font);
 
-  launchGame(renderer);
-
-  quitSDL(window, renderer);
+  quitSDL(window, renderer,font);
   return 0;
 }

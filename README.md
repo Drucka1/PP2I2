@@ -29,3 +29,6 @@ par exemple,
 
 - une implémentation des objets clés qui couvre plus de possibilités : une clé peut agir sur plusieurs éléments de plusieurs map diférentes
 - pareil pour les leviers : la structure permet d'ajouter plus de fonctionnalité au levier comme sa durée d'activation, en fait ça peut être un bouton minecraft.
+
+
+Bon c'est Léo qui parle du digicode ou crise d'epilepsie code. Le seul probleme c'est l'affichage je fait ça demain par ce qu'il est tard la. le code ressemble a rien me tue pas Cédric stp j'aurais des question sur comment bien le ranger et bien comprendre ton renderer. J'ai fait en sorte qu'il y ai pas de memory leak et que TTF s'init et se quit comme le reste de SDL mais sinon c'est un peu la merde. bref personne va lire ça bonne nuit la tcheam. ps fk sdl. 

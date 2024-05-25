@@ -11,6 +11,9 @@
 #define roomCell(room, i, j) (rooms[room]->data[i][j])
 #define roomObjects(room, i, j) (rooms[room]->data[i][j]->objects)
 
+#define BUTTON_SIZE 80
+#define BUTTON_PADDING 20
+
 #define RIGHT 0
 #define UP 1
 #define LEFT 2
@@ -100,6 +103,7 @@ typedef struct _ListObj {
 typedef struct {
   bool icy;
   bool blind;
+  bool indigit;
 } Status;
 
 typedef struct {
@@ -142,6 +146,12 @@ typedef struct {
   // Décalage de la carte
   Index offset;
 } Map;
+
+typedef struct {
+    int x, y;
+    int w, h;
+    char label[2];
+} Button;
 
 void freeObject(Object *object);
 void freeListObj(ListObj *list);
