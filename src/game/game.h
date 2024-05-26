@@ -1,7 +1,6 @@
 #ifndef __GAME__
 #define __GAME__
 
-#include "../text.h"
 #include "../utils.h"
 #include "homepage.h"
 #include "interact.h"
@@ -19,4 +18,5 @@ void renderMap(Map *map, Entity *player, SDL_Renderer *renderer);
 void render(SDL_Renderer *renderer, Map *map, Entity *player);
 
 void freeGame(Entity *player, SDL_Texture **textures, Map **rooms);
+
 #endif
