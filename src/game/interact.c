@@ -37,7 +37,7 @@ void interact(Entity *player, Map *map, Map **rooms) {
       openDoor(index, player, map, rooms);
       return;
     } else if (listObjContains(objects(index.i, index.j), DIGIC)) {
-      if(player->status.blind) {
+      if(player->status.blind) { //on verifie si il est powered
         printf("Turn on the power\n");
         return;
       }

@@ -17,8 +17,8 @@ void launchGame(SDL_Renderer *renderer,TTF_Font * font)
   int quit = 0;
 
   ///////////////////////////
-  char* code = "1234";
-  digicode * digi = initdigicode(code);
+  char* code = "1234"; //Ce c'est le code
+  digicode * digi = initdigicode(code); //Initialisation du digicode c'est dans struct.c
 
   ////////////////////////
 
@@ -36,7 +36,7 @@ void launchGame(SDL_Renderer *renderer,TTF_Font * font)
           int y = event.button.y;
           for (int i = 0; i < 12; ++i) {
             Button b = digi->buttons[i];
-            if (x > b.x && x < b.x + b.w && y > b.y && y < b.y + b.h) {
+            if (x > b.x && x < b.x + b.w && y > b.y && y < b.y + b.h) { //on check sur quel bouton on a cliqué
               if(strcmp(digi->enteredCode,"Incorrect")==0){
                 digi->codeIndex = 0;
                 digi->enteredCode[0] = '\0';
@@ -47,7 +47,7 @@ void launchGame(SDL_Renderer *renderer,TTF_Font * font)
                 }
               } else if (b.label[0] == 'V') {
                 if (strcmp(digi->enteredCode, code) == 0) {
-                    listObjGet(objects(player->index.i-1, player->index.j), DIGIC)->switchObj.state = true;
+                    listObjGet(objects(player->index.i-1, player->index.j), DIGIC)->switchObj.state = true; // je me sert de l'etat activé
                     printf("Code correct\n");
                     player->status.indigit = false;
                     digi->enteredCode[0] = '\0';
@@ -75,7 +75,7 @@ void launchGame(SDL_Renderer *renderer,TTF_Font * font)
           break;
         }
         if(player->status.indigit){
-          if(event.key.keysym.sym == SDLK_ESCAPE){
+          if(event.key.keysym.sym == SDLK_ESCAPE){ //pour pouvoir faire escape
             player->status.indigit = false;
             digi->enteredCode[0] = '\0';
           }

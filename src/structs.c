@@ -227,7 +227,7 @@ ListObj *listObjCopy(ListObj *list)
 }
 
 digicode *initdigicode(char *code) {
-  digicode *digi = malloc(sizeof(digicode));
+  digicode *digi = malloc(sizeof(digicode)); //je crée un digicode c'est pour facilité le renderer
   const char *labels = "123456789<0V";
   for (int i = 0; i < 12; ++i)
   {
@@ -239,7 +239,7 @@ digicode *initdigicode(char *code) {
     digi->buttons[i].label[1] = '\0';
   }
   digi->code = code;
-  digi->enteredCode[0] = '\0';  
+  digi->enteredCode[0] = '\0';  //on stocke le code entré par le joueur
   digi->codeIndex = 0;
   return digi;
 

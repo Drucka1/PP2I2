@@ -31,4 +31,7 @@ par exemple,
 - pareil pour les leviers : la structure permet d'ajouter plus de fonctionnalité au levier comme sa durée d'activation, en fait ça peut être un bouton minecraft.
 
 
-Bon c'est Léo qui parle du digicode ou crise d'epilepsie code. Le seul probleme c'est l'affichage je fait ça demain par ce qu'il est tard la. le code ressemble a rien me tue pas Cédric stp j'aurais des question sur comment bien le ranger et bien comprendre ton renderer. J'ai fait en sorte qu'il y ai pas de memory leak et que TTF s'init et se quit comme le reste de SDL mais sinon c'est un peu la merde. bref personne va lire ça bonne nuit la tcheam. ps fk sdl. 
+Bon le digicode est pret une seule ombre au tableau les sprites des portes qui ne se changent pas parfaitement.
+Ok pour faire fonctionner un digicode il faut une porte digicode à coté car elle fait des tests sur les murs adjacents.
+On peut quitter le digicode en appuiant sur escape. Il se rentre a la souris. Les portes doorc sont un ctrl c ctrl v de celle normale.
+!!!ATTENTION une porte doorc doit mener vers une doorc.

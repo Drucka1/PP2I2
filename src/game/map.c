@@ -164,7 +164,7 @@ Map *loadMap(int room, SDL_Texture **textures) {
 
         listObjAppend(&objects, object);
       }
-      else if (sscanf(token, "8[%d(%d,%d)%d]", &p, &q, &r, &o) == 4) {
+      else if (sscanf(token, "8[%d(%d,%d)%d]", &p, &q, &r, &o) == 4) { //littéralement la meme chose qu'une porte classique.
         Object *object = initObject((Index){i, j});
         object->texture = textures[DOORC];
 

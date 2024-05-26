@@ -77,7 +77,7 @@ void openDoorc(Index doorIndex, Map *map, Map **rooms) {
     return;
   }
   bool validate;
-  if(listObjContains(objects(doorIndex.i, doorIndex.j-1), DIGIC)){
+  if(listObjContains(objects(doorIndex.i, doorIndex.j-1), DIGIC)){ //On verifie si à gauche ou à droite il y a un digicode -> on recupere son etat
     validate = listObjGet(objects(doorIndex.i, doorIndex.j-1), DIGIC)->switchObj.state;
   }else if(listObjContains(objects(doorIndex.i, doorIndex.j+1), DIGIC)){
     validate = listObjGet(objects(doorIndex.i, doorIndex.j+1), DIGIC)->switchObj.state;
