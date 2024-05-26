@@ -82,6 +82,7 @@ typedef struct {
   SDL_Rect *textureBuffer;
   // Montrer ou pas
   bool visible;
+  bool fearful;
 
   // Action éventuelle réalisée par l'objet
   void (*active)(void);

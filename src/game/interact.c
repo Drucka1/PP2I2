@@ -11,8 +11,15 @@ void interact(Entity *player, Map *map, Map **rooms) {
     return;
   } else if (listObjContains(objects(player->index.i, player->index.j),
                              LEVER)) {
-    printf("Switching lever\n");
-    switchLever(index, map, rooms);
+    if (!player->status.scary){
+      printf("Switching lever\n");
+      switchLever(index, map, rooms);
+      return;
+    }
+  }
+  if (listObjContains(objects(player->index.i, player->index.j), GENERATEUR)){
+    printf("Switching electrical generator on\n");
+    player->status.blind=false;
     return;
   }
 
@@ -51,6 +58,10 @@ void interact(Entity *player, Map *map, Map **rooms) {
     } else if (listObjContains(objects(index.i, index.j), DOORC)) {
       printf("opening door\n");
       openDoorc(index, map, rooms);
+      return; 
+    }else if (listObjContains(objects(index.i, index.j), DOOROPEN)) {
+      printf("opening door\n");
+      openDooropen(index, map, rooms);
       return; 
     }else if (listObjContains(objects(index.i, index.j), LEVER)) {
       switchLever(index, map, rooms);

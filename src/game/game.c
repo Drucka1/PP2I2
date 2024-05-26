@@ -157,6 +157,12 @@ void play(SDL_Event event, Entity *player, Map *map, Map **rooms) {
     player->status.indigit = !player->status.indigit;
 
     break;
+
+  case SDLK_f:
+    player->status.scary = !player->status.scary;
+    break;
+
+    
   default:
     break;
   }
@@ -165,8 +171,14 @@ void play(SDL_Event event, Entity *player, Map *map, Map **rooms) {
 
 void update(Entity *player, Map **map, Map **rooms) {
   Index currentIndex = player->index;
+  Index next = nextIndex(player->index, player->facing);
   ListObj *current = (*map)->data[currentIndex.i][currentIndex.j]->objects;
-  if (listObjContains(current, DOOR)) {
+
+  if (player->status.scary){
+    fleeingLever(player,*map);
+  }
+  if (listObjContains(current, DOOR))
+  {
     Object *srcDoor = listObjGet(current, DOOR);
     Path door = srcDoor->path;
     Object *destDoor = listObjGet(
@@ -208,10 +220,44 @@ void update(Entity *player, Map **map, Map **rooms) {
       teleport(door.room, spawnIndex, player, map, rooms);
     }
   }
-  if (listObjContains(current, ICE)) {
+  if (listObjContains(current, DOOROPEN))
+  {
+    Object *srcDoor = listObjGet(current, DOOROPEN);
+    Path door = srcDoor->path;
+    Object *destDoor = listObjGet(
+        rooms[door.room]->data[door.pairedIndex.i][door.pairedIndex.j]->objects,
+        DOOROPEN);
+    Index spawnIndex = srcDoor->path.pairedIndex;
+    if (destDoor->facing == RIGHT)
+    {
+      spawnIndex.j++;
+    }
+    else if (destDoor->facing == UP)
+    {
+      spawnIndex.i--;
+    }
+    else if (destDoor->facing == LEFT)
+    {
+      spawnIndex.j--;
+    }
+    else if (destDoor->facing == DOWN)
+    {
+      spawnIndex.i++;
+    }
+    else
+    {
+    }
+    if (door.open)
+    {
+      teleport(door.room, spawnIndex, player, map, rooms);
+    }
+  }
+  if (listObjContains(current, ICE))
+  {
     player->status.icy = true;
-    Index next = nextIndex(player->index, player->facing);
-    if ((*map)->data[next.i][next.j]->steppable) {
+    
+    if ((*map)->data[next.i][next.j]->steppable)
+    {
       movePlayer(player, *map, next);
       SDL_Delay(50);
     } else {
@@ -285,6 +331,14 @@ void renderObject(Object *object, SDL_Renderer *renderer) {
     object->textureBuffer->x =
         (object->path.open) ? 3 * object->textureBuffer->w : 0;
     break;
+  case DOORC:
+  object->textureBuffer->x =
+      (object->path.open) ? 3 * object->textureBuffer->w : 0;
+  break;
+  case DOOROPEN:
+  object->textureBuffer->x =
+      (object->path.open) ? 3 * object->textureBuffer->w : 0;
+  break;
   case LEVER:
     if (object->switchObj.state) {
       SDL_RenderCopyEx(renderer, object->texture, object->textureBuffer,

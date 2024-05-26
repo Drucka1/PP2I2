@@ -3,7 +3,7 @@
 
 #include "sdl.h"
 
-#define TEXTURE_COUNT 9
+#define TEXTURE_COUNT 12
 
 #define GROUND 0
 #define WALL 1
@@ -14,11 +14,14 @@
 #define PUSH 6
 #define DIGIC 7
 #define DOORC 8
+#define FEARFULLEVER 9
+#define GENERATEUR 10
+#define DOOROPEN 11
 
 #define TEXTURE_TAGS                                                           \
-  { "ground", "wall", "door", "key", "lever", "ice", "push", "digic", "doorc" }
+  { "ground", "wall", "door", "key", "lever", "ice", "push", "digic", "doorc", "lever" ,"generateur","dooropen" }
 
-#define ROOM_COUNT 4
+#define ROOM_COUNT 9
 
 SDL_Texture **loadTextures(SDL_Renderer *renderer);
 
