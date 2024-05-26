@@ -88,7 +88,6 @@ void openDoorc(Index doorIndex, Map *map, Map **rooms) {
         Index destIndex = door->path.pairedIndex;
         rooms[door->path.room]->data[destIndex.i][destIndex.j]->steppable =
             true;
-
         Object *destDoor = listObjGet(
             rooms[door->path.room]->data[destIndex.i][destIndex.j]->objects,
             DOORC);

@@ -37,6 +37,10 @@ void interact(Entity *player, Map *map, Map **rooms) {
       openDoor(index, player, map, rooms);
       return;
     } else if (listObjContains(objects(index.i, index.j), DIGIC)) {
+      if(player->status.blind) {
+        printf("Turn on the power\n");
+        return;
+      }
       if(listObjGet(objects(index.i, index.j), DIGIC)->switchObj.state) {
         printf("Code already entered\n");
         return;
