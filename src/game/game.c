@@ -48,6 +48,7 @@ void launchGame(SDL_Renderer *renderer,TTF_Font * font)
               } else if (b.label[0] == 'V') {
                 if (strcmp(digi->enteredCode, code) == 0) {
                     listObjGet(objects(player->index.i-1, player->index.j), DIGIC)->switchObj.state = true;
+                    printf("Code correct\n");
                     player->status.indigit = false;
                     digi->enteredCode[0] = '\0';
                   } else {
@@ -144,6 +145,38 @@ void update(Entity *player, Map **map, Map **rooms)
     Object *destDoor = listObjGet(
         rooms[door.room]->data[door.pairedIndex.i][door.pairedIndex.j]->objects,
         DOOR);
+    Index spawnIndex = srcDoor->path.pairedIndex;
+    if (destDoor->facing == RIGHT)
+    {
+      spawnIndex.j++;
+    }
+    else if (destDoor->facing == UP)
+    {
+      spawnIndex.i--;
+    }
+    else if (destDoor->facing == LEFT)
+    {
+      spawnIndex.j--;
+    }
+    else if (destDoor->facing == DOWN)
+    {
+      spawnIndex.i++;
+    }
+    else
+    {
+    }
+    if (door.open)
+    {
+      teleport(door.room, spawnIndex, player, map, rooms);
+    }
+  }
+  if (listObjContains(current, DOORC))
+  {
+    Object *srcDoor = listObjGet(current, DOORC);
+    Path door = srcDoor->path;
+    Object *destDoor = listObjGet(
+        rooms[door.room]->data[door.pairedIndex.i][door.pairedIndex.j]->objects,
+        DOORC);
     Index spawnIndex = srcDoor->path.pairedIndex;
     if (destDoor->facing == RIGHT)
     {
