@@ -100,6 +100,7 @@ typedef struct _ListObj {
 typedef struct {
   bool icy;
   bool blind;
+  bool speaking;
 } Status;
 
 typedef struct {

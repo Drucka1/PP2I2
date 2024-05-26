@@ -1,6 +1,7 @@
 #ifndef __GAME__
 #define __GAME__
 
+#include "../text.h"
 #include "../utils.h"
 #include "interact.h"
 

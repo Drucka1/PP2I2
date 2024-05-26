@@ -29,6 +29,12 @@ void launchGame(SDL_Renderer *renderer) {
         if (player->status.icy) {
           break;
         }
+        if (player->status.speaking) {
+          if (event.key.keysym.sym == SDLK_SPACE) {
+            player->status.speaking = false;
+            break;
+          }
+        }
         play(event, player, map, rooms);
         break;
       default:
@@ -203,7 +209,7 @@ void renderCell(Cell *cell, SDL_Renderer *renderer) {
 }
 
 void renderMap(Map *map, Entity *player, SDL_Renderer *renderer) {
-  double radius = (player->status.blind) ? 2.5: 0.0;
+  double radius = (player->status.blind) ? 2.5 : 0.0;
   for (int i = renderMinI(player, map); i < renderMaxI(player, map); i++) {
     for (int j = renderMinJ(player, map); j < renderMaxJ(player, map); j++) {
       if (radius != 0 && (distance(player->index, (Index){i, j})) > radius) {
@@ -220,6 +226,10 @@ void render(SDL_Renderer *renderer, Map *map, Entity *player) {
   SDL_RenderClear(renderer);
   renderMap(map, player, renderer);
   renderPlayer(player, renderer);
+
+  // if (true) {
+  //   renderMessage(renderer, "Press B to toggle blindness");
+  // }
   SDL_RenderPresent(renderer);
   SDL_Delay(10);
 }

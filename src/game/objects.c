@@ -42,15 +42,18 @@ void openDoor(Index doorIndex, Entity *player, Map *map, Map **rooms) {
   if (door->path.open) {
     return;
   }
+  Index destIndex = door->path.pairedIndex;
+
   ListObj *keys = listObjGetAll(player->inventory, KEY);
   while (keys != NULL) {
     Object *currentKey = listObjPop(&keys, KEY);
     ListIndex *affected = currentKey->switchObj.affected;
+
     while (affected != NULL) {
-      if (isIndexEqual(affected->index, doorIndex)) {
+      if (isIndexEqual(affected->index, doorIndex) ||
+          isIndexEqual(affected->index, destIndex)) {
         cell(doorIndex.i, doorIndex.j)->steppable = true;
         door->path.open = true;
-        Index destIndex = door->path.pairedIndex;
         rooms[door->path.room]->data[destIndex.i][destIndex.j]->steppable =
             true;
 
