@@ -68,3 +68,19 @@ SDL_Texture *getTexture(char *tag, SDL_Renderer *renderer) {
   SDL_FreeSurface(surface);
   return texture;
 }
+
+SDL_Texture *textTexture(SDL_Renderer *renderer, TTF_Font *font,
+                         const char *text, SDL_Color color) {
+  SDL_Surface *textSurface = TTF_RenderText_Solid(font, text, color);
+  if (textSurface == NULL) {
+    printf("Unable to render text surface! TTF_Error: %s\n", TTF_GetError());
+    return NULL;
+  }
+  SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, textSurface);
+  if (texture == NULL) {
+    printf("Unable to create texture from rendered text! SDL_Error: %s\n",
+           SDL_GetError());
+  }
+  SDL_FreeSurface(textSurface);
+  return texture;
+}

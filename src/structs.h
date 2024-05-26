@@ -101,6 +101,7 @@ typedef struct {
   bool icy;
   bool blind;
   bool speaking;
+  bool home;
 } Status;
 
 typedef struct {

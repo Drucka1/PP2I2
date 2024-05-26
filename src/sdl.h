@@ -12,5 +12,7 @@ void initSDL(SDL_Window **window, SDL_Renderer **renderer);
 void quitSDL(SDL_Window *window, SDL_Renderer *renderer);
 
 SDL_Texture *getTexture(char *tag, SDL_Renderer *renderer);
+SDL_Texture *textTexture(SDL_Renderer *renderer, TTF_Font *font,
+                         const char *text, SDL_Color color);
 
 #endif // __SDL_H__

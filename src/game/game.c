@@ -1,5 +1,5 @@
 #include "game.h"
-#include "player.h"
+#include <SDL2/SDL_keycode.h>
 
 void launchGame(SDL_Renderer *renderer) {
   printf("Launching game...\n");
@@ -11,8 +11,7 @@ void launchGame(SDL_Renderer *renderer) {
   Entity *player = loadPlayer(map->spawnIndex, renderer);
   movePlayer(player, map, map->spawnIndex);
   player->moving = 0;
-
-  char *message;
+  player->status.home = true;
 
   SDL_Event event;
   int quit = 0;
@@ -23,6 +22,29 @@ void launchGame(SDL_Renderer *renderer) {
       switch (event.type) {
       case SDL_QUIT:
         quit = 1;
+        break;
+      case SDL_MOUSEBUTTONDOWN:
+        if (player->status.home) {
+          int x, y;
+          SDL_GetMouseState(&x, &y);
+          printf("x: %d, y: %d\n", x, y);
+
+          SDL_Rect startRect = {(WINDOW_WIDTH - 200) / 2,
+                                (WINDOW_HEIGHT - 150) / 2, 200, 50};
+          SDL_Rect quitRect = {(WINDOW_WIDTH - 200) / 2,
+                               (WINDOW_HEIGHT - 150) / 2 + 100, 200, 50};
+          // Check if start button is clicked
+          if (x >= startRect.x && x <= startRect.x + startRect.w &&
+              y >= startRect.y && y <= startRect.y + startRect.h) {
+            player->status.home = false;
+          }
+
+          // Check if quit button is clicked
+          if (x >= quitRect.x && x <= quitRect.x + quitRect.w &&
+              y >= quitRect.y && y <= quitRect.y + quitRect.h) {
+            quit = true;
+          }
+        }
         break;
       case SDL_KEYUP:
         player->moving = 0;
@@ -37,7 +59,7 @@ void launchGame(SDL_Renderer *renderer) {
             player->status.speaking = false;
             break;
           }
-            break;
+          break;
         }
         play(event, player, map, rooms);
         break;
@@ -78,6 +100,9 @@ void play(SDL_Event event, Entity *player, Map *map, Map **rooms) {
     break;
   case SDLK_b:
     player->status.blind = !player->status.blind;
+    break;
+  case SDLK_ESCAPE:
+    player->status.home = true;
     break;
 
   default:
@@ -225,6 +250,10 @@ void renderMap(Map *map, Entity *player, SDL_Renderer *renderer) {
 }
 
 void render(SDL_Renderer *renderer, Map *map, Entity *player) {
+  if (player->status.home) {
+    renderHomepage(renderer);
+    return;
+  }
   moveMapBuffer(map, player);
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderClear(renderer);

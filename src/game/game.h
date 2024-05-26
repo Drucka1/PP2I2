@@ -3,6 +3,7 @@
 
 #include "../text.h"
 #include "../utils.h"
+#include "homepage.h"
 #include "interact.h"
 
 void launchGame(SDL_Renderer *renderer);

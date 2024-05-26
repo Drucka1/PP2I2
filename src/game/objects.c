@@ -65,7 +65,7 @@ void openDoor(Index doorIndex, Entity *player, Map *map, Map **rooms) {
           exit(-1);
         }
         destDoor->path.open = true;
-        tell(player, "Door opened");
+        // tell(player, "Door opened");
         return;
       }
       affected = affected->next;
@@ -90,16 +90,15 @@ bool stackable(ListObj *objects) {
 
 void moveObject(int objectType, Index src, Map *map, Index dest) {
   if (VALID_INDEX(dest)) {
-    ListObj *blockObjects = map->data[src.i][src.j]->objects;
-    Object *block = listObjPop(&objects(src.i, src.j), objectType);
+    Object *object = listObjPop(&objects(src.i, src.j), objectType);
 
-    block->index.i = dest.i;
-    block->index.j = dest.j;
+    object->index.i = dest.i;
+    object->index.j = dest.j;
 
-    block->buffer->x = indexToPixel(block->index.j);
-    block->buffer->y = indexToPixel(block->index.i);
+    object->buffer->x = indexToPixel(object->index.j);
+    object->buffer->y = indexToPixel(object->index.i);
 
-    listObjAppend(&objects(dest.i, dest.j), block);
+    listObjAppend(&objects(dest.i, dest.j), object);
   }
 }
 
