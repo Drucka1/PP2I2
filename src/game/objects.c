@@ -72,12 +72,17 @@ void openDoor(Index doorIndex, Entity *player, Map *map, Map **rooms) {
 }
 
 void openDoorc(Index doorIndex, Map *map, Map **rooms) {
-  Object *door = listObjGet(objects(doorIndex.i, doorIndex.j), DOOR);
+  Object *door = listObjGet(objects(doorIndex.i, doorIndex.j), DOORC);
   if (door->path.open) {
     return;
   }
-  
-      if (listObjGet(objects(doorIndex.i, doorIndex.j-1), DIGIC)->switchObj.state||listObjGet(objects(doorIndex.i, doorIndex.j+1), DIGIC)->switchObj.state){
+  bool validate;
+  if(listObjContains(objects(doorIndex.i, doorIndex.j-1), DIGIC)){
+    validate = listObjGet(objects(doorIndex.i, doorIndex.j-1), DIGIC)->switchObj.state;
+  }else if(listObjContains(objects(doorIndex.i, doorIndex.j+1), DIGIC)){
+    validate = listObjGet(objects(doorIndex.i, doorIndex.j+1), DIGIC)->switchObj.state;
+  }
+      if (validate){
         cell(doorIndex.i, doorIndex.j)->steppable = true;
         door->path.open = true;
         Index destIndex = door->path.pairedIndex;
@@ -86,7 +91,7 @@ void openDoorc(Index doorIndex, Map *map, Map **rooms) {
 
         Object *destDoor = listObjGet(
             rooms[door->path.room]->data[destIndex.i][destIndex.j]->objects,
-            DOOR);
+            DOORC);
         if (destDoor == NULL) {
           printf("Door is not paired\n");
           exit(-1);
