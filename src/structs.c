@@ -1,16 +1,20 @@
 #include "structs.h"
 #include <stdio.h>
 
-void freeListIndex(ListIndex *list) {
-  if (list == NULL) {
+void freeListIndex(ListIndex *list)
+{
+  if (list == NULL)
+  {
     return;
   }
   freeListIndex(list->next);
   free(list);
 }
 
-void freeObject(Object *object) {
-  if (object->objectType == 3 || object->objectType == 4) {
+void freeObject(Object *object)
+{
+  if (object->objectType == 3 || object->objectType == 4)
+  {
     freeListIndex(object->switchObj.affected);
   }
   free(object->textureBuffer);
@@ -18,7 +22,8 @@ void freeObject(Object *object) {
   free(object);
 }
 
-void freeListObj(ListObj *list) {
+void freeListObj(ListObj *list)
+{
   if (list == NULL)
     return;
   freeListObj(list->next);
@@ -26,14 +31,18 @@ void freeListObj(ListObj *list) {
   free(list);
 }
 
-void freeCell(Cell *cell) {
+void freeCell(Cell *cell)
+{
   freeListObj(cell->objects);
   free(cell);
 }
 
-void freeMap(Map *map) {
-  for (int i = 0; i < map->dimensions.i; i++) {
-    for (int j = 0; j < map->dimensions.j; j++) {
+void freeMap(Map *map)
+{
+  for (int i = 0; i < map->dimensions.i; i++)
+  {
+    for (int j = 0; j < map->dimensions.j; j++)
+    {
       freeCell(cell(i, j));
     }
     free(map->data[i]);
@@ -44,9 +53,11 @@ void freeMap(Map *map) {
 
 bool isIndexEqual(Index a, Index b) { return a.i == b.i && a.j == b.j; }
 
-Index nextIndex(Index index, int direction) {
+Index nextIndex(Index index, int direction)
+{
   Index next = index;
-  switch (direction) {
+  switch (direction)
+  {
   case RIGHT:
     next.j++;
     break;
@@ -65,12 +76,15 @@ Index nextIndex(Index index, int direction) {
   return next;
 }
 
-double distance(Index a, Index b) {
+double distance(Index a, Index b)
+{
   return sqrt(pow(a.i - b.i, 2) + pow(a.j - b.j, 2));
 }
 
-void listIndexAppend(ListIndex **list, Index index, int room) {
-  if (*list == NULL) {
+void listIndexAppend(ListIndex **list, Index index, int room)
+{
+  if (*list == NULL)
+  {
     ListIndex *new = malloc(sizeof(ListIndex));
     new->index = index;
     new->room = room;
@@ -81,8 +95,10 @@ void listIndexAppend(ListIndex **list, Index index, int room) {
   listIndexAppend(&((*list)->next), index, room);
 }
 
-void listIndexPrint(ListIndex *list) {
-  if (list == NULL) {
+void listIndexPrint(ListIndex *list)
+{
+  if (list == NULL)
+  {
     printf("\n");
     return;
   }
@@ -90,8 +106,10 @@ void listIndexPrint(ListIndex *list) {
   listIndexPrint(list->next);
 }
 
-void listObjAppend(ListObj **list, Object *obj) {
-  if (*list == NULL) {
+void listObjAppend(ListObj **list, Object *obj)
+{
+  if (*list == NULL)
+  {
     ListObj *new = malloc(sizeof(ListObj));
     new->object = obj;
     new->next = NULL;
@@ -101,11 +119,14 @@ void listObjAppend(ListObj **list, Object *obj) {
   listObjAppend(&((*list)->next), obj);
 }
 
-void listObjRemove(ListObj **list, int objectType) {
-  if (*list == NULL || (*list)->object == NULL) {
+void listObjRemove(ListObj **list, int objectType)
+{
+  if (*list == NULL || (*list)->object == NULL)
+  {
     return;
   }
-  if ((*list)->object->objectType == objectType) {
+  if ((*list)->object->objectType == objectType)
+  {
     ListObj *temp = *list;
     *list = listObjCopy((*list)->next);
     freeListObj(temp);
@@ -113,26 +134,33 @@ void listObjRemove(ListObj **list, int objectType) {
   }
 }
 
-bool listObjContains(ListObj *list, int objectType) {
-  if (list == NULL || list->object == NULL) {
+bool listObjContains(ListObj *list, int objectType)
+{
+  if (list == NULL || list->object == NULL)
+  {
     return false;
   }
-  if (list->object->objectType == objectType) {
+  if (list->object->objectType == objectType)
+  {
     return true;
   }
   return listObjContains(list->next, objectType);
 }
 
-void listObjAdd(ListObj **list, ListObj *listToAdd) {
-  if (*list == NULL) {
+void listObjAdd(ListObj **list, ListObj *listToAdd)
+{
+  if (*list == NULL)
+  {
     *list = listToAdd;
     return;
   }
   listObjAdd(&((*list)->next), listToAdd);
 }
 
-void listObjPrint(ListObj *list) {
-  if (list == NULL || list->object == NULL) {
+void listObjPrint(ListObj *list)
+{
+  if (list == NULL || list->object == NULL)
+  {
     printf("\n");
     return;
   }
@@ -140,21 +168,27 @@ void listObjPrint(ListObj *list) {
   listObjPrint(list->next);
 }
 
-Object *listObjGet(ListObj *list, int objectType) {
-  if (list == NULL || list->object == NULL) {
+Object *listObjGet(ListObj *list, int objectType)
+{
+  if (list == NULL || list->object == NULL)
+  {
     return NULL;
   }
-  if (list->object->objectType == objectType) {
+  if (list->object->objectType == objectType)
+  {
     return list->object;
   }
   return listObjGet(list->next, objectType);
 }
 
-ListObj *listObjGetAll(ListObj *list, int objectType) {
-  if (list == NULL || list->object == NULL) {
+ListObj *listObjGetAll(ListObj *list, int objectType)
+{
+  if (list == NULL || list->object == NULL)
+  {
     return NULL;
   }
-  if (list->object->objectType == objectType) {
+  if (list->object->objectType == objectType)
+  {
     ListObj *new = malloc(sizeof(ListObj));
     new->object = list->object;
     new->next = listObjGetAll(list->next, objectType);
@@ -163,11 +197,14 @@ ListObj *listObjGetAll(ListObj *list, int objectType) {
   return listObjGetAll(list->next, objectType);
 }
 
-Object *listObjPop(ListObj **list, int objectType) {
-  if (*list == NULL || (*list)->object == NULL) {
+Object *listObjPop(ListObj **list, int objectType)
+{
+  if (*list == NULL || (*list)->object == NULL)
+  {
     return NULL;
   }
-  if ((*list)->object->objectType == objectType) {
+  if ((*list)->object->objectType == objectType)
+  {
     ListObj *temp = *list;
     Object *obj = (*list)->object;
     *list = listObjCopy((*list)->next);
@@ -177,8 +214,10 @@ Object *listObjPop(ListObj **list, int objectType) {
   return listObjPop(&((*list)->next), objectType);
 }
 
-ListObj *listObjCopy(ListObj *list) {
-  if (list == NULL) {
+ListObj *listObjCopy(ListObj *list)
+{
+  if (list == NULL)
+  {
     return NULL;
   }
   ListObj *new = malloc(sizeof(ListObj));
@@ -186,3 +225,22 @@ ListObj *listObjCopy(ListObj *list) {
   new->next = listObjCopy(list->next);
   return new;
 }
+
+digicode *initdigicode(char *code) {
+  digicode *digi = malloc(sizeof(digicode)); //je crée un digicode c'est pour facilité le renderer
+  const char *labels = "123456789<0V";
+  for (int i = 0; i < 12; ++i)
+  {
+    digi->buttons[i].x = (i % 3) * (BUTTON_SIZE + BUTTON_PADDING) + BUTTON_PADDING;
+    digi->buttons[i].y = (i / 3) * (BUTTON_SIZE + BUTTON_PADDING) + 150;
+    digi->buttons[i].w = BUTTON_SIZE;
+    digi->buttons[i].h = BUTTON_SIZE;
+    digi->buttons[i].label[0] = labels[i];
+    digi->buttons[i].label[1] = '\0';
+  }
+  digi->code = code;
+  digi->enteredCode[0] = '\0';  //on stocke le code entré par le joueur
+  digi->codeIndex = 0;
+  return digi;
+
+} 

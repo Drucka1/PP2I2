@@ -121,7 +121,20 @@ Map *loadMap(int room, SDL_Texture **textures) {
         object->textureBuffer->h = h;
         listObjAppend(&objects, object);
       }
+      else if (atoi(token)== DIGIC){
+        Object *object = initObject((Index){i, j});
+        object->texture = textures[DIGIC];
+        object->objectType = DIGIC;
+        object->switchObj.state = false;
+        SDL_QueryTexture(object->texture, NULL, NULL, &w, &h);
 
+        object->textureBuffer = malloc(sizeof(SDL_Rect));
+        object->textureBuffer->x = w / 3;
+        object->textureBuffer->y = 0;
+        object->textureBuffer->w = h;
+        object->textureBuffer->h = h;
+        listObjAppend(&objects, object);
+      }
       else if (atoi(token) == PUSH) {
         cell(i, j)->steppable = false;
         Object *object = initObject((Index){i, j});
@@ -141,6 +154,27 @@ Map *loadMap(int room, SDL_Texture **textures) {
         object->textureBuffer->w = w / 4;
         object->textureBuffer->h = h;
         object->objectType = DOOR;
+        object->facing = o;
+
+        object->path.room = p;
+        object->path.pairedIndex = (Index){q, r};
+
+        cell(i, j)->steppable = false;
+        object->path.open = false;
+
+        listObjAppend(&objects, object);
+      }
+      else if (sscanf(token, "8[%d(%d,%d)%d]", &p, &q, &r, &o) == 4) { //littéralement la meme chose qu'une porte classique.
+        Object *object = initObject((Index){i, j});
+        object->texture = textures[DOORC];
+
+        SDL_QueryTexture(object->texture, NULL, NULL, &w, &h);
+        object->textureBuffer = malloc(sizeof(SDL_Rect));
+        object->textureBuffer->x = 0;
+        object->textureBuffer->y = 0;
+        object->textureBuffer->w = w / 4;
+        object->textureBuffer->h = h;
+        object->objectType = DOORC;
         object->facing = o;
 
         object->path.room = p;
@@ -217,6 +251,15 @@ Map **loadRooms(SDL_Texture **textures) {
                               ->data[door.pairedIndex.i][door.pairedIndex.j]
                               ->objects,
                           DOOR)
+                   ->path;
+        }
+        if(object->objectType == DOORC){
+          Path door = object->path;
+          door.pairedPath =
+              &listObjGet(rooms[door.room]
+                              ->data[door.pairedIndex.i][door.pairedIndex.j]
+                              ->objects,
+                          DOORC)
                    ->path;
         }
       }

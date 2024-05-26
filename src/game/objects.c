@@ -74,6 +74,37 @@ void openDoor(Index doorIndex, Entity *player, Map *map, Map **rooms) {
   tell(player, "I need a key to open this door");
 }
 
+void openDoorc(Index doorIndex, Map *map, Map **rooms) {
+  Object *door = listObjGet(objects(doorIndex.i, doorIndex.j), DOORC);
+  if (door->path.open) {
+    return;
+  }
+  bool validate;
+  if(listObjContains(objects(doorIndex.i, doorIndex.j-1), DIGIC)){ //On verifie si à gauche ou à droite il y a un digicode -> on recupere son etat
+    validate = listObjGet(objects(doorIndex.i, doorIndex.j-1), DIGIC)->switchObj.state;
+  }else if(listObjContains(objects(doorIndex.i, doorIndex.j+1), DIGIC)){
+    validate = listObjGet(objects(doorIndex.i, doorIndex.j+1), DIGIC)->switchObj.state;
+  }
+      if (validate){
+        cell(doorIndex.i, doorIndex.j)->steppable = true;
+        door->path.open = true;
+        Index destIndex = door->path.pairedIndex;
+        rooms[door->path.room]->data[destIndex.i][destIndex.j]->steppable =
+            true;
+        Object *destDoor = listObjGet(
+            rooms[door->path.room]->data[destIndex.i][destIndex.j]->objects,
+            DOORC);
+        if (destDoor == NULL) {
+          printf("Door is not paired\n");
+          exit(-1);
+        }
+        destDoor->path.open = true;
+        printf("Door opened\n");
+        return;
+      }
+  printf("You need to enter the code to open this door\n");
+}
+
 bool stackable(ListObj *objects) {
   if (objects == NULL) {
     return true;
