@@ -117,6 +117,20 @@ bool stackable(ListObj *objects) {
   return stackable(objects->next);
 }
 
+bool stackablepush(ListObj *objects) {
+  if (objects == NULL) {
+    return true;
+  }
+  if (
+      objects->object->objectType == DOOR ||
+      objects->object->objectType == LEVER ||
+      objects->object->objectType == KEY ||
+      objects->object->objectType == PUSH) {
+    return false;
+  }
+  return stackablepush(objects->next);
+}
+
 void fleeingLever(Entity *player,Map *map){
   Index currentIndex = player->index;
   Index next = nextIndex(currentIndex,player->facing);
@@ -188,7 +202,11 @@ void moveObject(int objectType, Index src, Map *map, Index dest) {
 void pushBlock(Index blockIndex, Entity *player, Map *map) {
   Index next = nextIndex(blockIndex, player->facing);
   ListObj *nextObjects = objects(next.i, next.j);
-  if (stackable(nextObjects)) {
+  printf("%d,%d\n",cell(next.i,next.j)->steppable,stackablepush(nextObjects));
+  if(cell(next.i,next.j)->steppable == false){
+    return;
+  }
+  if (stackablepush(nextObjects)) {
     cell(blockIndex.i, blockIndex.j)->steppable = true;
     cell(next.i, next.j)->steppable = false;
     moveObject(PUSH, blockIndex, map, next);
