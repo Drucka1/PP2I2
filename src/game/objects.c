@@ -71,6 +71,33 @@ void openDoor(Index doorIndex, Entity *player, Map *map, Map **rooms) {
   printf("You need a key to open this door\n");
 }
 
+void openDoorc(Index doorIndex, Map *map, Map **rooms) {
+  Object *door = listObjGet(objects(doorIndex.i, doorIndex.j), DOOR);
+  if (door->path.open) {
+    return;
+  }
+  
+      if (listObjGet(objects(doorIndex.i, doorIndex.j-1), DIGIC)->switchObj.state||listObjGet(objects(doorIndex.i, doorIndex.j+1), DIGIC)->switchObj.state){
+        cell(doorIndex.i, doorIndex.j)->steppable = true;
+        door->path.open = true;
+        Index destIndex = door->path.pairedIndex;
+        rooms[door->path.room]->data[destIndex.i][destIndex.j]->steppable =
+            true;
+
+        Object *destDoor = listObjGet(
+            rooms[door->path.room]->data[destIndex.i][destIndex.j]->objects,
+            DOOR);
+        if (destDoor == NULL) {
+          printf("Door is not paired\n");
+          exit(-1);
+        }
+        destDoor->path.open = true;
+        printf("Door opened\n");
+        return;
+      }
+  printf("You need to enter the code to open this door\n");
+}
+
 bool stackable(ListObj *objects) {
   if (objects == NULL) {
     return true;

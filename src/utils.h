@@ -3,7 +3,7 @@
 
 #include "sdl.h"
 
-#define TEXTURE_COUNT 7
+#define TEXTURE_COUNT 9
 
 #define GROUND 0
 #define WALL 1
@@ -12,9 +12,11 @@
 #define LEVER 4
 #define ICE 5
 #define PUSH 6
+#define DIGIC 7
+#define DOORC 8
 
 #define TEXTURE_TAGS                                                           \
-  { "ground", "wall", "door", "key", "lever", "ice", "push" }
+  { "ground", "wall", "door", "key", "lever", "ice", "push", "digic", "door" }
 
 #define ROOM_COUNT 4
 

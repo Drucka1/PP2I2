@@ -17,20 +17,8 @@ void launchGame(SDL_Renderer *renderer,TTF_Font * font)
   int quit = 0;
 
   ///////////////////////////
-  Button buttons[12];
-  const char *labels = "123456789<0V";
-  for (int i = 0; i < 12; ++i)
-  {
-    buttons[i].x = (i % 3) * (BUTTON_SIZE + BUTTON_PADDING) + BUTTON_PADDING;
-    buttons[i].y = (i / 3) * (BUTTON_SIZE + BUTTON_PADDING) + 150;
-    buttons[i].w = BUTTON_SIZE;
-    buttons[i].h = BUTTON_SIZE;
-    buttons[i].label[0] = labels[i];
-    buttons[i].label[1] = '\0';
-  }
-  char enteredCode[15] = {0};
-  int codeIndex = 0;
   char* code = "1234";
+  digicode * digi = initdigicode(code);
 
   ////////////////////////
 
@@ -47,26 +35,27 @@ void launchGame(SDL_Renderer *renderer,TTF_Font * font)
           int x = event.button.x;
           int y = event.button.y;
           for (int i = 0; i < 12; ++i) {
-            Button b = buttons[i];
+            Button b = digi->buttons[i];
             if (x > b.x && x < b.x + b.w && y > b.y && y < b.y + b.h) {
-              if(strcmp(enteredCode,"Incorrect")==0){
-                codeIndex = 0;
-                enteredCode[0] = '\0';
+              if(strcmp(digi->enteredCode,"Incorrect")==0){
+                digi->codeIndex = 0;
+                digi->enteredCode[0] = '\0';
               }
               if (b.label[0] == '<') {
-                if (codeIndex > 0) {
-                  enteredCode[--codeIndex] = '\0';
+                if (digi->codeIndex > 0) {
+                  digi->enteredCode[--digi->codeIndex] = '\0';
                 }
               } else if (b.label[0] == 'V') {
-                if (strcmp(enteredCode, code) == 0) {
-                  strcpy(enteredCode, "Correct");
-                  player->status.indigit=false;
-                } else {
-                  strcpy(enteredCode, "Incorrect");
-                }
-              } else if (codeIndex < 15) {
-                enteredCode[codeIndex++] = b.label[0];
-                enteredCode[codeIndex] = '\0';
+                if (strcmp(digi->enteredCode, code) == 0) {
+                    listObjGet(objects(player->index.i-1, player->index.j), DIGIC)->switchObj.state = true;
+                    player->status.indigit = false;
+                    digi->enteredCode[0] = '\0';
+                  } else {
+                    strcpy(digi->enteredCode, "Incorrect");
+                  }
+                  } else if (digi->codeIndex < 15) {
+                  digi->enteredCode[digi->codeIndex++] = b.label[0];
+                  digi->enteredCode[digi->codeIndex] = '\0';
               }
             }
           }
@@ -79,8 +68,15 @@ void launchGame(SDL_Renderer *renderer,TTF_Font * font)
         player->moving = 0;
         break;
       case SDL_KEYDOWN:
-        if (player->status.icy || player->status.indigit)
+        if (player->status.icy)
         {
+          break;
+        }
+        if(player->status.indigit){
+          if(event.key.keysym.sym == SDLK_ESCAPE){
+            player->status.indigit = false;
+            digi->enteredCode[0] = '\0';
+          }
           break;
         }
         play(event, player, map, rooms);
@@ -89,12 +85,12 @@ void launchGame(SDL_Renderer *renderer,TTF_Font * font)
         break;
       }
       update(player, &map, rooms);
-      render(renderer, map, player,font,enteredCode,buttons);
+      render(renderer, map, player,font,digi);
     }
   }
-
+  free(digi);
   freeGame(player, textures, rooms);
-}
+  }
 
 void play(SDL_Event event, Entity *player, Map *map, Map **rooms)
 {
@@ -310,30 +306,37 @@ void renderMap(Map *map, Entity *player, SDL_Renderer *renderer)
     }
   }
 }
-void rendercode(SDL_Renderer *renderer, Entity * player,TTF_Font * font,char* enteredCode,Button * buttons){
+void rendercode(SDL_Renderer *renderer, Entity * player,TTF_Font * font,digicode* digi){
   if(player->status.indigit){ //horrible mais bon pour le moment je test hein
+         // Définir les dimensions du rectangle
+        int rectX = BUTTON_PADDING - 5;  
+        int rectY = 50;  
+        int rectW = 3 * BUTTON_SIZE + 4 * BUTTON_PADDING + 10;
+        int rectH = 4 * BUTTON_SIZE + 5 * BUTTON_PADDING + 70;
 
+        // Dessiner le rectangle gris
+        SDL_Rect rect = {rectX, rectY, rectW, rectH};
+        SDL_SetRenderDrawColor(renderer, 169, 169, 169, 255); // Gris clair
+        SDL_RenderFillRect(renderer, &rect);
         for (int i = 0; i < 12; ++i) {
-            drawButton(renderer, font, buttons[i]);
+            drawButton(renderer, font, digi->buttons[i]);
         }
 
         // Render entered code if not empty
-        if (strlen(enteredCode) > 0) {
-            drawText(renderer, font, enteredCode, BUTTON_PADDING, 50);
+        if (strlen(digi->enteredCode) > 0) {
+            drawText(renderer, font, digi->enteredCode, BUTTON_PADDING, 50);
         }
-
-        SDL_RenderPresent(renderer);
       }
 }
 
-void render(SDL_Renderer *renderer, Map *map, Entity *player,TTF_Font *font,char* enteredCode, Button* buttons)
+void render(SDL_Renderer *renderer, Map *map, Entity *player,TTF_Font *font,digicode * digi)
 {
   moveMapBuffer(map, player);
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderClear(renderer);
   renderMap(map, player, renderer);
-  rendercode(renderer,player,font,enteredCode,buttons);
   renderPlayer(player, renderer);
+  rendercode(renderer,player,font,digi);
   SDL_RenderPresent(renderer);
   SDL_Delay(10);
 }

@@ -153,10 +153,20 @@ typedef struct {
     char label[2];
 } Button;
 
+typedef struct {
+    Button buttons[12];
+    char enteredCode[15];
+    char* code;
+    int codeIndex;
+
+}digicode;
+
 void freeObject(Object *object);
 void freeListObj(ListObj *list);
 void freeCell(Cell *cell);
 void freeMap(Map *map);
+
+digicode* initdigicode(char* code);
 
 bool isIndexEqual(Index index1, Index index2);
 Index nextIndex(Index index, int direction);
