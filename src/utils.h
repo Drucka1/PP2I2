@@ -21,7 +21,7 @@
 #define TEXTURE_TAGS                                                           \
   { "ground", "wall", "door", "key", "lever", "ice", "push", "digic", "doorc", "lever" ,"generateur","dooropen" }
 
-#define ROOM_COUNT 7
+#define ROOM_COUNT 9
 
 SDL_Texture **loadTextures(SDL_Renderer *renderer);
 
