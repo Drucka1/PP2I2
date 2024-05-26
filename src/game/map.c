@@ -205,8 +205,8 @@ Map **loadRooms(SDL_Texture **textures) {
     rooms[i] = loadMap(i, textures);
   }
 
-  for (int i = 0; i < ROOM_COUNT; i++) {
-    Map *map = rooms[i];
+  for (int k = 0; k < ROOM_COUNT; k++) {
+    Map *map = rooms[k];
     for (int i = 0; i < map->dimensions.i; i++) {
       for (int j = 0; j < map->dimensions.j; j++) {
         Object *object = cell(i, j)->objects->object;

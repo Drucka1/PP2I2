@@ -1,33 +1,57 @@
 #include "text.h"
 
-void renderMessage(SDL_Renderer *renderer, char *text) {
-  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Couleur fond
-  SDL_RenderClear(renderer);
+void tell(Entity *player, char *message) {
+  player->tells = copy_string(message);
+  player->status.speaking = true;
+}
+
+void renderMessage(SDL_Renderer *renderer, Entity *player) {
+  if (!player->status.speaking) {
+    return;
+  }
 
   // Petit rectangle
   SDL_Rect little_rect = {RECT_X_OFFSET, RECT_Y_OFFSET,
                           WINDOW_WIDTH - 2 * RECT_X_OFFSET, RECT_HEIGHT};
-  SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Couleur petit rectangle
+  SDL_SetRenderDrawColor(renderer, 192, 192, 192,
+                         192); // Couleur petit rectangle
   SDL_RenderFillRect(renderer, &little_rect);
+
+  int thickness = 5;
+  // Draw top border
+  SDL_Rect topBorder = {little_rect.x, little_rect.y, little_rect.w, thickness};
+  SDL_RenderFillRect(renderer, &topBorder);
+
+  // Draw bottom border
+  SDL_Rect bottomBorder = {little_rect.x, little_rect.y + little_rect.h - thickness, little_rect.w,
+                           thickness};
+  SDL_RenderFillRect(renderer, &bottomBorder);
+
+  // Draw left border
+  SDL_Rect leftBorder = {little_rect.x, little_rect.y, thickness, little_rect.h};
+  SDL_RenderFillRect(renderer, &leftBorder);
+
+  // Draw right border
+  SDL_Rect rightBorder = {little_rect.x + little_rect.w - thickness, little_rect.y, thickness,
+                          little_rect.h};
+  SDL_RenderFillRect(renderer, &rightBorder);
   SDL_RenderCopy(renderer, NULL, NULL, &little_rect);
 
   // Affichage texte
-  TTF_Font *font = TTF_OpenFont("assets/VeraMono.ttf", 24); // taille police :
-                                                            // 24
+  TTF_Font *font = TTF_OpenFont("assets/font/VeraMono.ttf", 24); // taille
+                                                                 // police : 24
   if (!font) {
-    fprintf(stderr, "Erreur los du chargement de la police :%s\n",
+    fprintf(stderr, "Erreur lors du chargement de la police :%s\n",
             TTF_GetError());
     return; // en plus
   }
 
-  int high_text = RECT_Y_OFFSET + 10;
-  char *str =
-      "Bienvenue dans notre escape game nous allons vous presenter les regles "
-      "du jeu hdzzlejakdzejdf fzejhfze dhzejkldz azdhjzd zdjzbedez !";
+  int high_text = RECT_Y_OFFSET + 20;
+  char *str = player->tells;
 
   char *res = cut_string(str);
 
-  text_display(renderer, font, res, RECT_X_OFFSET + 10, high_text);
+  text_display(renderer, font, res, RECT_X_OFFSET + 20, high_text);
   char *reste = difference_str(str, res);
   char *temp_str = copy_string(reste);
   free(res);
@@ -37,7 +61,7 @@ void renderMessage(SDL_Renderer *renderer, char *text) {
   while (str) {
     res = cut_string(str);
     high_text += 50;
-    text_display(renderer, font, res, RECT_X_OFFSET + 10, high_text);
+    text_display(renderer, font, res, RECT_X_OFFSET + 20, high_text);
 
     reste = difference_str(str, res);
 
@@ -179,6 +203,9 @@ char *difference_str(char *big_str, char *small_str) {
 // Copier une chaine de caractère
 
 char *copy_string(char *str) {
+  if (str == NULL) {
+    return NULL;
+  }
   char *res = malloc(strlen(str) + 1);
   char *p = res;
   while (*str != '\0') {

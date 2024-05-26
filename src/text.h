@@ -1,14 +1,15 @@
 #ifndef __TEXT_H__
 #define __TEXT_H__
 
-#include "sdl.h"
+#include "structs.h"
 #define COUPAGE 90
 
 #define RECT_HEIGHT 200
 #define RECT_X_OFFSET 50
 #define RECT_Y_OFFSET 50
 
-void renderMessage(SDL_Renderer *renderer, char *text);
+void tell(Entity *player, char *message);
+void renderMessage(SDL_Renderer *renderer, Entity *player);
 void show_text(SDL_Renderer *renderer, char *text);
 void text_display(SDL_Renderer *renderer, TTF_Font *font, const char *text,
                   int x, int y);

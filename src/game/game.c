@@ -12,6 +12,8 @@ void launchGame(SDL_Renderer *renderer) {
   movePlayer(player, map, map->spawnIndex);
   player->moving = 0;
 
+  char *message;
+
   SDL_Event event;
   int quit = 0;
 
@@ -31,9 +33,11 @@ void launchGame(SDL_Renderer *renderer) {
         }
         if (player->status.speaking) {
           if (event.key.keysym.sym == SDLK_SPACE) {
+            free(player->tells);
             player->status.speaking = false;
             break;
           }
+            break;
         }
         play(event, player, map, rooms);
         break;
@@ -227,9 +231,7 @@ void render(SDL_Renderer *renderer, Map *map, Entity *player) {
   renderMap(map, player, renderer);
   renderPlayer(player, renderer);
 
-  // if (true) {
-  //   renderMessage(renderer, "Press B to toggle blindness");
-  // }
+  renderMessage(renderer, player);
   SDL_RenderPresent(renderer);
   SDL_Delay(10);
 }

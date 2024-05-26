@@ -30,6 +30,16 @@ void initSDL(SDL_Window **window, SDL_Renderer **renderer) {
                  IMG_GetError());
     exit(-1);
   }
+
+  if (TTF_Init() != 0) {
+    fprintf(stderr, "Erreur d'initialisation de SDL_ttf : %s\n",
+            TTF_GetError());
+    SDL_DestroyRenderer(*renderer);
+    SDL_DestroyWindow(*window);
+    SDL_Quit();
+  }
+
+  SDL_SetRenderDrawBlendMode(*renderer, SDL_BLENDMODE_BLEND);
 }
 
 void quitSDL(SDL_Window *window, SDL_Renderer *renderer) {

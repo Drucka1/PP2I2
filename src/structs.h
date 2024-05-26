@@ -122,6 +122,8 @@ typedef struct {
   ListObj *inventory;
   // État du joueur
   Status status;
+  // Ce que le joueur dit
+  char *tells;
 } Entity;
 
 typedef struct {

@@ -65,13 +65,13 @@ void openDoor(Index doorIndex, Entity *player, Map *map, Map **rooms) {
           exit(-1);
         }
         destDoor->path.open = true;
-        printf("Door opened\n");
+        tell(player, "Door opened");
         return;
       }
       affected = affected->next;
     }
   }
-  printf("You need a key to open this door\n");
+  tell(player, "I need a key to open this door");
 }
 
 bool stackable(ListObj *objects) {
