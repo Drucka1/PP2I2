@@ -3,7 +3,7 @@
 
 #include "sdl.h"
 
-#define TEXTURE_COUNT 10
+#define TEXTURE_COUNT 11
 
 #define GROUND 0
 #define WALL 1
