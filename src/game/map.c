@@ -156,12 +156,12 @@ Map *loadMap(int room, SDL_Texture **textures) {
         Object *object = initObject((Index){i, j});
         object->texture = textures[KEY];
         object->objectType = KEY;
+        object->switchObj.affected = NULL;
 
         char *t = strtok(s, ";");
 
         while (t) {
           if (sscanf(t, "%d(%d,%d)", &p, &q, &r) == 3) {
-            object->switchObj.affected = NULL;
             listIndexAppend(&(object->switchObj.affected), (Index){q, r}, p);
           }
           t = strtok(NULL, ";");
@@ -173,13 +173,13 @@ Map *loadMap(int room, SDL_Texture **textures) {
         Object *object = initObject((Index){i, j});
         object->objectType = LEVER;
         object->texture = textures[LEVER];
+        object->switchObj.state = false;
+        object->switchObj.affected = NULL;
 
         char *t = strtok(s, ";");
 
         while (t) {
           if (sscanf(t, "%d(%d,%d)", &p, &q, &r) == 3) {
-            object->switchObj.state = false;
-            object->switchObj.affected = NULL;
             listIndexAppend(&object->switchObj.affected, (Index){q, r}, p);
           }
           t = strtok(NULL, ";");
