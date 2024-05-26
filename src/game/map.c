@@ -241,11 +241,18 @@ Map *loadMap(int room, SDL_Texture **textures) {
         char *t = strtok(s, ";");
 
         while (t) {
-          if (sscanf(t, "%d(%d,%d)", &p, &q, &r) == 3) {
-
- 
+          if(sscanf(t, "%d(%d,%d)", &p, &q, &r) == 3){
+            listIndexAppend(&object->switchObj.affected, (Index){q, r}, p);
+            object->switchObj.state = false;
+          }
+          
+          else if (sscanf(t, "%d(%d,%d)%d", &p, &q, &r,&o) == 4) {
+            if(o==1){
+              object->switchObj.state = true;
+            }
             listIndexAppend(&object->switchObj.affected, (Index){q, r}, p);
           }
+
           t = strtok(NULL, ";");
         }
 
@@ -300,6 +307,11 @@ Map **loadRooms(SDL_Texture **textures) {
                               ->objects,
                           DOOROPEN)
                    ->path;
+        }
+        if(object->objectType == LEVER){
+          if(object->switchObj.state==true){
+            switchLever((Index){i,j}, map, rooms);
+          }
         }
       }
     }
