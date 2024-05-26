@@ -192,6 +192,27 @@ Map *loadMap(int room, SDL_Texture **textures) {
 
         listObjAppend(&objects, object);
       }
+      else if (sscanf(token, "11[%d(%d,%d)%d]", &p, &q, &r, &o) == 4) {
+        Object *object = initObject((Index){i, j});
+        object->texture = textures[DOOROPEN];
+
+        SDL_QueryTexture(object->texture, NULL, NULL, &w, &h);
+        object->textureBuffer = malloc(sizeof(SDL_Rect));
+        object->textureBuffer->x = 0;
+        object->textureBuffer->y = 0;
+        object->textureBuffer->w = w / 4;
+        object->textureBuffer->h = h;
+        object->objectType = DOOROPEN;
+        object->facing = o;
+
+        object->path.room = p;
+        object->path.pairedIndex = (Index){q, r};
+
+        cell(i, j)->steppable = false;
+        object->path.open = false;
+
+        listObjAppend(&objects, object);
+      }
 
       else if (sscanf(token, "3[%s]", s) == 1) {
         Object *object = initObject((Index){i, j});
@@ -267,6 +288,15 @@ Map **loadRooms(SDL_Texture **textures) {
                               ->data[door.pairedIndex.i][door.pairedIndex.j]
                               ->objects,
                           DOORC)
+                   ->path;
+        }
+        if(object->objectType == DOOROPEN){
+          Path door = object->path;
+          door.pairedPath =
+              &listObjGet(rooms[door.room]
+                              ->data[door.pairedIndex.i][door.pairedIndex.j]
+                              ->objects,
+                          DOOROPEN)
                    ->path;
         }
       }

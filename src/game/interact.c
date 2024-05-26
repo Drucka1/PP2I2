@@ -55,6 +55,10 @@ void interact(Entity *player, Map *map, Map **rooms) {
       printf("opening door\n");
       openDoorc(index, map, rooms);
       return; 
+    }else if (listObjContains(objects(index.i, index.j), DOOROPEN)) {
+      printf("opening door\n");
+      openDooropen(index, map, rooms);
+      return; 
     }else if (listObjContains(objects(index.i, index.j), LEVER)) {
       switchLever(index, map, rooms);
       return;

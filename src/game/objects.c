@@ -103,6 +103,31 @@ void openDoorc(Index doorIndex, Map *map, Map **rooms) {
   printf("You need to enter the code to open this door\n");
 }
 
+void openDooropen(Index doorIndex, Map *map, Map **rooms) {
+  Object *door = listObjGet(objects(doorIndex.i, doorIndex.j), DOOROPEN);
+  if (door->path.open) {
+    return;
+  }
+  
+  cell(doorIndex.i, doorIndex.j)->steppable = true;
+  door->path.open = true;
+  Index destIndex = door->path.pairedIndex;
+  rooms[door->path.room]->data[destIndex.i][destIndex.j]->steppable =
+      true;
+
+  Object *destDoor = listObjGet(
+      rooms[door->path.room]->data[destIndex.i][destIndex.j]->objects,
+      DOOROPEN);
+  if (destDoor == NULL) {
+    printf("Door is not paired\n");
+    exit(-1);
+  }
+  destDoor->path.open = true;
+  printf("Door opened\n");
+  return;
+  printf("You need to enter the code to open this door\n");
+}
+
 bool stackable(ListObj *objects) {
   if (objects == NULL) {
     return true;
@@ -202,8 +227,7 @@ void moveObject(int objectType, Index src, Map *map, Index dest) {
 void pushBlock(Index blockIndex, Entity *player, Map *map) {
   Index next = nextIndex(blockIndex, player->facing);
   ListObj *nextObjects = objects(next.i, next.j);
-  printf("%d,%d\n",cell(next.i,next.j)->steppable,stackablepush(nextObjects));
-  if(cell(next.i,next.j)->steppable == false){
+    if(cell(next.i,next.j)->steppable == false){
     return;
   }
   if (stackablepush(nextObjects)) {

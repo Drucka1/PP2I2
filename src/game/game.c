@@ -215,6 +215,38 @@ void update(Entity *player, Map **map, Map **rooms)
       teleport(door.room, spawnIndex, player, map, rooms);
     }
   }
+  if (listObjContains(current, DOOROPEN))
+  {
+    Object *srcDoor = listObjGet(current, DOOROPEN);
+    Path door = srcDoor->path;
+    Object *destDoor = listObjGet(
+        rooms[door.room]->data[door.pairedIndex.i][door.pairedIndex.j]->objects,
+        DOOROPEN);
+    Index spawnIndex = srcDoor->path.pairedIndex;
+    if (destDoor->facing == RIGHT)
+    {
+      spawnIndex.j++;
+    }
+    else if (destDoor->facing == UP)
+    {
+      spawnIndex.i--;
+    }
+    else if (destDoor->facing == LEFT)
+    {
+      spawnIndex.j--;
+    }
+    else if (destDoor->facing == DOWN)
+    {
+      spawnIndex.i++;
+    }
+    else
+    {
+    }
+    if (door.open)
+    {
+      teleport(door.room, spawnIndex, player, map, rooms);
+    }
+  }
   if (listObjContains(current, ICE))
   {
     player->status.icy = true;
@@ -308,6 +340,14 @@ void renderObject(Object *object, SDL_Renderer *renderer)
     object->textureBuffer->x =
         (object->path.open) ? 3 * object->textureBuffer->w : 0;
     break;
+  case DOORC:
+  object->textureBuffer->x =
+      (object->path.open) ? 3 * object->textureBuffer->w : 0;
+  break;
+  case DOOROPEN:
+  object->textureBuffer->x =
+      (object->path.open) ? 3 * object->textureBuffer->w : 0;
+  break;
   case LEVER:
     if (object->switchObj.state)
     {
