@@ -148,11 +148,11 @@ void freeListObj(ListObj *list);
 void freeCell(Cell *cell);
 void freeMap(Map *map);
 
-bool isIndexEqual(Index index1, Index index2);
+bool isIndexEqual(Index a, Index b);
 Index nextIndex(Index index, int direction);
 void listIndexAppend(ListIndex **list, Index index, int room);
 void listIndexPrint(ListIndex *list);
-double distance(Index index1, Index index2);
+double distance(Index a, Index b);
 
 void listObjAppend(ListObj **list, Object *obj);
 void listObjRemove(ListObj **list, int objectType);
