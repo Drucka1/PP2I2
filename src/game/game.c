@@ -85,7 +85,7 @@ void update(Entity *player, Map **map, Map **rooms) {
   Index next = nextIndex(player->index, player->facing);
   ListObj *current = (*map)->data[currentIndex.i][currentIndex.j]->objects;
   if (listObjContains(current, LEVER)){
-    player->status.scary=!player->status.scary;
+    player->status.scary=!player->status.scary; // il faut que le joueur fasse peur pour que les leviers peureux fuient
   }
   if (player->status.scary){
     fleeingLever(player,*map);

@@ -91,7 +91,7 @@ void fleeingLever(Entity *player,Map *map){
   Index next2 = nextIndex(next,player->facing);
   ListObj *adjacentObj= (map)->data[next.i][next.j]->objects;
   ListObj *current = (map)->data[currentIndex.i][currentIndex.j]->objects;
-  if (listObjContains(current,LEVER)){ // levier a distance 0,
+  if (listObjContains(current,LEVER)){ // levier a distance 0, il essaye de se déplacer dans le meme sens que le joueur, sinon dans le sens direct
     if (stackable(adjacentObj)){
       moveObject(LEVER,currentIndex,map,next);
     }
@@ -112,7 +112,7 @@ void fleeingLever(Entity *player,Map *map){
       }
     }
   if (listObjContains(adjacentObj,LEVER)){
-    ListObj *nextObj= (map)->data[next2.i][next2.j]->objects;
+    ListObj *nextObj= (map)->data[next2.i][next2.j]->objects; // levier a distance 1
     if(stackable(nextObj)){
       moveObject(LEVER,next,map,next2);
     }
