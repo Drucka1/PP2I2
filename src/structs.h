@@ -105,6 +105,7 @@ typedef struct {
   bool blind;
   bool speaking;
   bool home;
+  bool indigit;
 } Status;
 
 typedef struct {
@@ -151,18 +152,18 @@ typedef struct {
 } Map;
 
 typedef struct {
-    int x, y;
-    int w, h;
-    char label[2];
+  int x, y;
+  int w, h;
+  char label[2];
 } Button;
 
 typedef struct {
-    Button buttons[12];
-    char enteredCode[15];
-    char* code;
-    int codeIndex;
+  Button buttons[12];
+  char enteredCode[15];
+  char *code;
+  int codeIndex;
 
-}digicode;
+} digicode;
 
 void freeObject(Object *object);
 void freeListObj(ListObj *list);

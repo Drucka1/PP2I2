@@ -145,3 +145,23 @@ void pushBlock(Index blockIndex, Entity *player, Map *map) {
     }
   }
 }
+
+
+digicode *initdigicode(char *code) {
+  digicode *digi = malloc(sizeof(digicode)); //je crée un digicode c'est pour facilité le renderer
+  const char *labels = "123456789<0V";
+  for (int i = 0; i < 12; ++i)
+  {
+    digi->buttons[i].x = (i % 3) * (BUTTON_SIZE + BUTTON_PADDING) + BUTTON_PADDING;
+    digi->buttons[i].y = (i / 3) * (BUTTON_SIZE + BUTTON_PADDING) + 150;
+    digi->buttons[i].w = BUTTON_SIZE;
+    digi->buttons[i].h = BUTTON_SIZE;
+    digi->buttons[i].label[0] = labels[i];
+    digi->buttons[i].label[1] = '\0';
+  }
+  digi->code = code;
+  digi->enteredCode[0] = '\0';  //on stocke le code entré par le joueur
+  digi->codeIndex = 0;
+  return digi;
+
+}

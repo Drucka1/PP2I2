@@ -10,5 +10,6 @@ void openDoorc(Index doorIndex, Map *map, Map **rooms);
 void switchLever(Index leverIndex, Map *map, Map **rooms);
 void moveObject(int objecType, Index src, Map *map, Index dest);
 void pushBlock(Index blockIndex, Entity *player, Map *map);
+digicode *initdigicode(char *code);
 
 #endif // __OBJECTS_H__
