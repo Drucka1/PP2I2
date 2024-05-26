@@ -51,6 +51,7 @@ void launchGame(SDL_Renderer *renderer,TTF_Font * font)
                     printf("Code correct\n");
                     player->status.indigit = false;
                     digi->enteredCode[0] = '\0';
+                    digi->codeIndex = 0;
                   } else {
                     strcpy(digi->enteredCode, "Incorrect");
                   }
@@ -343,9 +344,9 @@ void rendercode(SDL_Renderer *renderer, Entity * player,TTF_Font * font,digicode
   if(player->status.indigit){ //horrible mais bon pour le moment je test hein
          // Définir les dimensions du rectangle
         int rectX = BUTTON_PADDING - 5;  
-        int rectY = 50;  
+        int rectY = 70;  
         int rectW = 3 * BUTTON_SIZE + 4 * BUTTON_PADDING + 10;
-        int rectH = 4 * BUTTON_SIZE + 5 * BUTTON_PADDING + 70;
+        int rectH = 4 * BUTTON_SIZE + 5 * BUTTON_PADDING + 50;
 
         // Dessiner le rectangle gris
         SDL_Rect rect = {rectX, rectY, rectW, rectH};
@@ -354,10 +355,23 @@ void rendercode(SDL_Renderer *renderer, Entity * player,TTF_Font * font,digicode
         for (int i = 0; i < 12; ++i) {
             drawButton(renderer, font, digi->buttons[i]);
         }
+        // Define the dimensions of the black rectangle for the code
+        int codeRectX = BUTTON_PADDING;
+        int codeRectY = rectY + BUTTON_PADDING; // Adjust position to be inside the grey rectangle
+        int codeRectW = rectW - 2 * BUTTON_PADDING;
+        int codeRectH = 40; // Height of the code display area
+
+        // Draw the black rectangle for the code
+        SDL_Rect codeRect = {codeRectX, codeRectY, codeRectW, codeRectH};
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Black
+        SDL_RenderFillRect(renderer, &codeRect);
 
         // Render entered code if not empty
         if (strlen(digi->enteredCode) > 0) {
-            drawText(renderer, font, digi->enteredCode, BUTTON_PADDING, 50);
+
+        int textX = BUTTON_PADDING;
+        int textY = 100;
+        drawText(renderer, font, digi->enteredCode, textX, textY);
         }
       }
 }

@@ -126,6 +126,13 @@ Map *loadMap(int room, SDL_Texture **textures) {
         object->texture = textures[DIGIC];
         object->objectType = DIGIC;
         object->switchObj.state = false;
+        SDL_QueryTexture(object->texture, NULL, NULL, &w, &h);
+
+        object->textureBuffer = malloc(sizeof(SDL_Rect));
+        object->textureBuffer->x = w / 3;
+        object->textureBuffer->y = 0;
+        object->textureBuffer->w = h;
+        object->textureBuffer->h = h;
         listObjAppend(&objects, object);
       }
       else if (atoi(token) == PUSH) {

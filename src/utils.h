@@ -16,7 +16,7 @@
 #define DOORC 8
 
 #define TEXTURE_TAGS                                                           \
-  { "ground", "wall", "door", "key", "lever", "ice", "push", "digic", "door" }
+  { "ground", "wall", "door", "key", "lever", "ice", "push", "digic", "doorc" }
 
 #define ROOM_COUNT 4
 
