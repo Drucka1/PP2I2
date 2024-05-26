@@ -107,6 +107,7 @@ typedef struct {
   bool speaking;
   bool home;
   bool indigit;
+  bool scary;
 } Status;
 
 typedef struct {
