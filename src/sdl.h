@@ -8,8 +8,8 @@
 
 #include "defs.h"
 
-void initSDL(SDL_Window **window, SDL_Renderer **renderer);
-void quitSDL(SDL_Window *window, SDL_Renderer *renderer);
+void initSDL(SDL_Window **window, SDL_Renderer **renderer,TTF_Font **font);
+void quitSDL(SDL_Window *window, SDL_Renderer *renderer,TTF_Font * font);
 
 SDL_Texture *getTexture(char *tag, SDL_Renderer *renderer);
 

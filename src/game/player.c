@@ -31,6 +31,7 @@ Entity *loadPlayer(Index index, SDL_Renderer *renderer) {
   player->inventory = NULL;
 
   player->status = (Status){false};
+  player->status.indigit = false;
 
   return player;
 }

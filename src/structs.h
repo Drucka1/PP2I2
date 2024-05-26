@@ -11,6 +11,9 @@
 #define roomCell(room, i, j) (rooms[room]->data[i][j])
 #define roomObjects(room, i, j) (rooms[room]->data[i][j]->objects)
 
+#define BUTTON_SIZE 80
+#define BUTTON_PADDING 20
+
 #define RIGHT 0
 #define UP 1
 #define LEFT 2
@@ -102,6 +105,7 @@ typedef struct {
   bool icy;
   bool blind;
   bool scary;
+  bool indigit;
 } Status;
 
 typedef struct {
@@ -145,10 +149,26 @@ typedef struct {
   Index offset;
 } Map;
 
+typedef struct {
+    int x, y;
+    int w, h;
+    char label[2];
+} Button;
+
+typedef struct {
+    Button buttons[12];
+    char enteredCode[15];
+    char* code;
+    int codeIndex;
+
+}digicode;
+
 void freeObject(Object *object);
 void freeListObj(ListObj *list);
 void freeCell(Cell *cell);
 void freeMap(Map *map);
+
+digicode* initdigicode(char* code);
 
 bool isIndexEqual(Index index1, Index index2);
 Index nextIndex(Index index, int direction);
