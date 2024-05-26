@@ -81,6 +81,10 @@ void launchGame(SDL_Renderer *renderer,TTF_Font * font)
           }
           break;
         }
+        if(event.key.keysym.sym == SDLK_ESCAPE){
+          quit = 1;
+          break;
+        }
         play(event, player, map, rooms);
         break;
       default:
