@@ -4,6 +4,73 @@
 
 void launchGame(SDL_Renderer *renderer, TTF_Font *font) {
   printf("Launching game...\n");
+
+  bool saveExists = false;
+  DIR *dir = opendir(SAVE_DIRECTORY);
+  if (dir == NULL) {
+    perror("Failed to open directory");
+    exit(-1);
+  }
+
+  struct dirent *entry;
+  printf("Save files found in %s:\n", SAVE_DIRECTORY);
+  while ((entry = readdir(dir)) != NULL) {
+    char filepath[PATH_MAX];
+    snprintf(filepath, PATH_MAX, "%s%s", SAVE_DIRECTORY, entry->d_name);
+
+    struct stat filestat;
+    if (stat(filepath, &filestat) == 0 && S_ISREG(filestat.st_mode)) {
+      saveExists = true;
+      break;
+    }
+  }
+  closedir(dir);
+
+
+  Game *game = malloc(sizeof(Game));
+  if (!game) {
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't allocate memory");
+    exit(-1);
+  }
+  int launch = false;
+  SDL_Event event;
+  while (!launch) {
+    SDL_RenderClear(renderer);
+    renderHomepage(renderer);
+    SDL_RenderPresent(renderer);
+    while (SDL_PollEvent(&event)) {
+      switch (event.type) {
+      case SDL_QUIT:
+        launch = true;
+        break;
+      case SDL_MOUSEBUTTONDOWN:
+        int x, y;
+        SDL_GetMouseState(&x, &y);
+
+        SDL_Rect newRect = {(WINDOW_WIDTH - 200) / 2, (WINDOW_HEIGHT - 150) / 2,
+                            200, 50};
+        SDL_Rect continueRect = {(WINDOW_WIDTH - 200) / 2,
+                                 (WINDOW_HEIGHT - 150) / 2 + 50, 200, 50};
+        SDL_Rect quitRect = {(WINDOW_WIDTH - 200) / 2,
+                             (WINDOW_HEIGHT - 150) / 2 + 100, 200, 50};
+        // Check if start button is clicked
+        if (x >= newRect.x && x <= newRect.x + newRect.w && y >= newRect.y &&
+            y <= newRect.y + newRect.h) {
+          launch = true;
+        }
+
+        // Check if quit button is clicked
+        if (x >= quitRect.x && x <= quitRect.x + quitRect.w &&
+            y >= quitRect.y && y <= quitRect.y + quitRect.h) {
+          launch = true;
+        }
+        break;
+      default:
+        break;
+      }
+    }
+  }
+
   SDL_Texture **textures = loadTextures(renderer);
   Map **rooms = loadRooms(textures);
 
@@ -14,7 +81,6 @@ void launchGame(SDL_Renderer *renderer, TTF_Font *font) {
   player->moving = 0;
   tell(player, "It's so dark in here, how could i turn on the lights ?");
 
-  SDL_Event event;
   int quit = 0;
 
   ///////////////////////////
@@ -36,13 +102,13 @@ void launchGame(SDL_Renderer *renderer, TTF_Font *font) {
           int x, y;
           SDL_GetMouseState(&x, &y);
 
-          SDL_Rect startRect = {(WINDOW_WIDTH - 200) / 2,
-                                (WINDOW_HEIGHT - 150) / 2, 200, 50};
+          SDL_Rect newRect = {(WINDOW_WIDTH - 200) / 2,
+                              (WINDOW_HEIGHT - 150) / 2, 200, 50};
           SDL_Rect quitRect = {(WINDOW_WIDTH - 200) / 2,
                                (WINDOW_HEIGHT - 150) / 2 + 100, 200, 50};
           // Check if start button is clicked
-          if (x >= startRect.x && x <= startRect.x + startRect.w &&
-              y >= startRect.y && y <= startRect.y + startRect.h) {
+          if (x >= newRect.x && x <= newRect.x + newRect.w && y >= newRect.y &&
+              y <= newRect.y + newRect.h) {
             player->status.home = false;
           }
 
@@ -165,8 +231,10 @@ void play(SDL_Event event, Entity *player, Map *map, Map **rooms) {
     break;
   case SDLK_ESCAPE:
     player->status.home = true;
+    break;
   case SDLK_p:
     player->status.picture = true;
+    break;
 
   default:
     break;

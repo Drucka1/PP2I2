@@ -1,8 +1,8 @@
 main
 outputs/
-assets/screenshot/
-
+log/
 .vscode/
+
 # Prerequisites
 *.d
 

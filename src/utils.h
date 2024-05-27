@@ -2,7 +2,17 @@
 #define UTILS_H
 
 #include "sdl.h"
+#include "structs.h"
 #include "time.h"
+#include "errno.h"
+#include <dirent.h>
+#include <sys/stat.h>
+#include <limits.h>
+#ifndef PATH_MAX
+#define PATH_MAX 4096 // Define PATH_MAX if it's not available
+#endif
+
+#define SAVE_DIRECTORY "log/saves/"
 
 #define TEXTURE_COUNT 13
 
@@ -30,6 +40,8 @@
 
 SDL_Texture **loadTextures(SDL_Renderer *renderer);
 void screenshot(SDL_Renderer *renderer);
+
+void saveGame(Game *game);
 
 #endif
 

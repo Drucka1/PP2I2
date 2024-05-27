@@ -30,6 +30,8 @@ par exemple,
 - une implémentation des objets clés qui couvre plus de possibilités : une clé peut agir sur plusieurs éléments de plusieurs map diférentes
 - pareil pour les leviers : la structure permet d'ajouter plus de fonctionnalité au levier comme sa durée d'activation, en fait ça peut être un bouton minecraft.
 
+screenshot avec p.
+
 Bon le digicode est pret une seule ombre au tableau les sprites des portes qui ne se changent pas parfaitement.
 Ok pour faire fonctionner un digicode il faut une porte digicode à coté car elle fait des tests sur les murs adjacents.
 On peut quitter le digicode en appuiant sur escape. Il se rentre a la souris. Les portes doorc sont un ctrl c ctrl v de celle normale.

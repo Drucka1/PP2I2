@@ -163,6 +163,17 @@ typedef struct {
 } Map;
 
 typedef struct {
+  // État de jeu
+  bool newGame;
+  // Cartes
+  Map **rooms;
+  // Carte actuelle
+  Map *currentRoom;
+  // Joueur
+  Entity *player;
+} Game;
+
+typedef struct {
   int x, y;
   int w, h;
   char label[2];
