@@ -71,7 +71,7 @@ void openDoor(Index doorIndex, Entity *player, Map *map, Map **rooms) {
       affected = affected->next;
     }
   }
-  tell(player, "I need a key to open this door");
+  tell(player, "This door is locked, i need to find a way to open it...");
 }
 
 void openDoorc(Index doorIndex, Map *map, Map **rooms) {
@@ -80,28 +80,30 @@ void openDoorc(Index doorIndex, Map *map, Map **rooms) {
     return;
   }
   bool validate;
-  if(listObjContains(objects(doorIndex.i, doorIndex.j-1), DIGIC)){ //On verifie si à gauche ou à droite il y a un digicode -> on recupere son etat
-    validate = listObjGet(objects(doorIndex.i, doorIndex.j-1), DIGIC)->switchObj.state;
-  }else if(listObjContains(objects(doorIndex.i, doorIndex.j+1), DIGIC)){
-    validate = listObjGet(objects(doorIndex.i, doorIndex.j+1), DIGIC)->switchObj.state;
+  if (listObjContains(objects(doorIndex.i, doorIndex.j - 1),
+                      DIGIC)) { // On verifie si à gauche ou à droite il y a un
+                                // digicode -> on recupere son etat
+    validate = listObjGet(objects(doorIndex.i, doorIndex.j - 1), DIGIC)
+                   ->switchObj.state;
+  } else if (listObjContains(objects(doorIndex.i, doorIndex.j + 1), DIGIC)) {
+    validate = listObjGet(objects(doorIndex.i, doorIndex.j + 1), DIGIC)
+                   ->switchObj.state;
   }
-      if (validate){
-        cell(doorIndex.i, doorIndex.j)->steppable = true;
-        door->path.open = true;
-        Index destIndex = door->path.pairedIndex;
-        rooms[door->path.room]->data[destIndex.i][destIndex.j]->steppable =
-            true;
-        Object *destDoor = listObjGet(
-            rooms[door->path.room]->data[destIndex.i][destIndex.j]->objects,
-            DOORC);
-        if (destDoor == NULL) {
-          printf("Door is not paired\n");
-          exit(-1);
-        }
-        destDoor->path.open = true;
-        printf("Door opened\n");
-        return;
-      }
+  if (validate) {
+    cell(doorIndex.i, doorIndex.j)->steppable = true;
+    door->path.open = true;
+    Index destIndex = door->path.pairedIndex;
+    rooms[door->path.room]->data[destIndex.i][destIndex.j]->steppable = true;
+    Object *destDoor = listObjGet(
+        rooms[door->path.room]->data[destIndex.i][destIndex.j]->objects, DOORC);
+    if (destDoor == NULL) {
+      printf("Door is not paired\n");
+      exit(-1);
+    }
+    destDoor->path.open = true;
+    printf("Door opened\n");
+    return;
+  }
   printf("You need to enter the code to open this door\n");
 }
 
@@ -110,12 +112,11 @@ void openDooropen(Index doorIndex, Map *map, Map **rooms) {
   if (door->path.open) {
     return;
   }
-  
+
   cell(doorIndex.i, doorIndex.j)->steppable = true;
   door->path.open = true;
   Index destIndex = door->path.pairedIndex;
-  rooms[door->path.room]->data[destIndex.i][destIndex.j]->steppable =
-      true;
+  rooms[door->path.room]->data[destIndex.i][destIndex.j]->steppable = true;
 
   Object *destDoor = listObjGet(
       rooms[door->path.room]->data[destIndex.i][destIndex.j]->objects,
@@ -148,8 +149,7 @@ bool stackablepush(ListObj *objects) {
   if (objects == NULL) {
     return true;
   }
-  if (
-      objects->object->objectType == DOOR ||
+  if (objects->object->objectType == DOOR ||
       objects->object->objectType == LEVER ||
       objects->object->objectType == KEY ||
       objects->object->objectType == PUSH) {
@@ -158,57 +158,55 @@ bool stackablepush(ListObj *objects) {
   return stackablepush(objects->next);
 }
 
-void fleeingLever(Entity *player,Map *map){
+void fleeingLever(Entity *player, Map *map) {
   Index currentIndex = player->index;
-  Index next = nextIndex(currentIndex,player->facing);
-  Index next2 = nextIndex(next,player->facing);
-  ListObj *adjacentObj= (map)->data[next.i][next.j]->objects;
+  Index next = nextIndex(currentIndex, player->facing);
+  Index next2 = nextIndex(next, player->facing);
+  ListObj *adjacentObj = (map)->data[next.i][next.j]->objects;
   ListObj *current = (map)->data[currentIndex.i][currentIndex.j]->objects;
-  if (listObjContains(current,LEVER)){ // levier a distance 0, il essaye de se déplacer dans le meme sens que le joueur, sinon dans le sens direct
-    if (stackable(adjacentObj)){
-      moveObject(LEVER,currentIndex,map,next);
-    }
-    else if (player->facing%2==0)
-    {
-      Index nextup = nextIndex(currentIndex,1);
+  if (listObjContains(
+          current,
+          LEVER)) { // levier a distance 0, il essaye de se déplacer dans le
+                    // meme sens que le joueur, sinon dans le sens direct
+    if (stackable(adjacentObj)) {
+      moveObject(LEVER, currentIndex, map, next);
+    } else if (player->facing % 2 == 0) {
+      Index nextup = nextIndex(currentIndex, 1);
       ListObj *nextupObjects = (map)->data[nextup.i][nextup.j]->objects;
-      if (stackable(nextupObjects)){ 
-        moveObject(LEVER, currentIndex,map,nextup);
-    }
-    }
-    
-    else {
-      Index nextleft = nextIndex(currentIndex,2);
-      ListObj *nextleftObjects = (map)->data[nextleft.i][nextleft.j]->objects;
-      if (stackable(nextleftObjects)){
-        moveObject(LEVER,currentIndex,map,nextleft);
+      if (stackable(nextupObjects)) {
+        moveObject(LEVER, currentIndex, map, nextup);
       }
     }
-  if (listObjContains(adjacentObj,LEVER)){
-    ListObj *nextObj= (map)->data[next2.i][next2.j]->objects; // levier a distance 1
-    if(stackable(nextObj)){
-      moveObject(LEVER,next,map,next2);
-    }
-    else if (player->facing%2==0)
-    {
-      Index nextup = nextIndex(next2,1);
-      ListObj *nextupObjects = (map)->data[nextup.i][nextup.j]->objects;
-      if (stackable(nextupObjects)){ 
-        moveObject(LEVER, next,map,nextup);
-    }
-    }
-    
-    else {
-      Index nextleft = nextIndex(next,2);
-      ListObj *nextleftObjects = (map)->data[nextleft.i][nextleft.j]->objects;
-      if (stackable(nextleftObjects)){
-        moveObject(LEVER,next,map,nextleft);
-      }
-    }
-  }
 
+    else {
+      Index nextleft = nextIndex(currentIndex, 2);
+      ListObj *nextleftObjects = (map)->data[nextleft.i][nextleft.j]->objects;
+      if (stackable(nextleftObjects)) {
+        moveObject(LEVER, currentIndex, map, nextleft);
+      }
+    }
+    if (listObjContains(adjacentObj, LEVER)) {
+      ListObj *nextObj =
+          (map)->data[next2.i][next2.j]->objects; // levier a distance 1
+      if (stackable(nextObj)) {
+        moveObject(LEVER, next, map, next2);
+      } else if (player->facing % 2 == 0) {
+        Index nextup = nextIndex(next2, 1);
+        ListObj *nextupObjects = (map)->data[nextup.i][nextup.j]->objects;
+        if (stackable(nextupObjects)) {
+          moveObject(LEVER, next, map, nextup);
+        }
+      }
+
+      else {
+        Index nextleft = nextIndex(next, 2);
+        ListObj *nextleftObjects = (map)->data[nextleft.i][nextleft.j]->objects;
+        if (stackable(nextleftObjects)) {
+          moveObject(LEVER, next, map, nextleft);
+        }
+      }
+    }
   }
-  
 }
 
 void moveObject(int objectType, Index src, Map *map, Index dest) {
@@ -228,7 +226,7 @@ void moveObject(int objectType, Index src, Map *map, Index dest) {
 void pushBlock(Index blockIndex, Entity *player, Map *map) {
   Index next = nextIndex(blockIndex, player->facing);
   ListObj *nextObjects = objects(next.i, next.j);
-    if(cell(next.i,next.j)->steppable == false){
+  if (cell(next.i, next.j)->steppable == false) {
     return;
   }
   if (stackablepush(nextObjects)) {
@@ -241,13 +239,13 @@ void pushBlock(Index blockIndex, Entity *player, Map *map) {
   }
 }
 
-
 digicode *initdigicode(char *code) {
-  digicode *digi = malloc(sizeof(digicode)); //je crée un digicode c'est pour facilité le renderer
+  digicode *digi = malloc(
+      sizeof(digicode)); // je crée un digicode c'est pour facilité le renderer
   const char *labels = "123456789<0V";
-  for (int i = 0; i < 12; ++i)
-  {
-    digi->buttons[i].x = (i % 3) * (BUTTON_SIZE + BUTTON_PADDING) + BUTTON_PADDING;
+  for (int i = 0; i < 12; ++i) {
+    digi->buttons[i].x =
+        (i % 3) * (BUTTON_SIZE + BUTTON_PADDING) + BUTTON_PADDING;
     digi->buttons[i].y = (i / 3) * (BUTTON_SIZE + BUTTON_PADDING) + 150;
     digi->buttons[i].w = BUTTON_SIZE;
     digi->buttons[i].h = BUTTON_SIZE;
@@ -255,8 +253,7 @@ digicode *initdigicode(char *code) {
     digi->buttons[i].label[1] = '\0';
   }
   digi->code = code;
-  digi->enteredCode[0] = '\0';  //on stocke le code entré par le joueur
+  digi->enteredCode[0] = '\0'; // on stocke le code entré par le joueur
   digi->codeIndex = 0;
   return digi;
-
 }

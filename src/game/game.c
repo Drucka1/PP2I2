@@ -11,6 +11,8 @@ void launchGame(SDL_Renderer *renderer, TTF_Font *font) {
   Entity *player = loadPlayer(map->spawnIndex, renderer);
   movePlayer(player, map, map->spawnIndex);
   player->moving = 0;
+  tell(player, "It's so dark in here, how could i turn on the lights ?");
+
 
   SDL_Event event;
   int quit = 0;
@@ -151,15 +153,13 @@ void play(SDL_Event event, Entity *player, Map *map, Map **rooms) {
     player->status.blind = !player->status.blind;
     break;
   case SDLK_m:
-    printf("%d\n", player->status.indigit);
-    printf("%d\n", player->status.icy);
     player->status.indigit = !player->status.indigit;
     break;
 
   case SDLK_f:
     player->status.scary = !player->status.scary;
     break;
-      case SDLK_ESCAPE:
+  case SDLK_ESCAPE:
     player->status.home = true;
 
   default:
@@ -410,6 +410,8 @@ void render(SDL_Renderer *renderer, Map *map, Entity *player, TTF_Font *font,
   SDL_RenderClear(renderer);
   renderMap(map, player, renderer);
   renderPlayer(player, renderer);
+
+  renderMessage(renderer, player);
   rendercode(renderer, player, font, digi);
   SDL_RenderPresent(renderer);
   SDL_Delay(10);

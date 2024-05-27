@@ -67,6 +67,7 @@ Map *loadMap(int room, SDL_Texture **textures) {
   int i = 0;
   int j = 0;
   char s[128];
+  char u[128];
   int o, p, q, r;
   int h, w;
   map->data = malloc(sizeof(Cell **) * map->dimensions.i);
@@ -106,7 +107,7 @@ Map *loadMap(int room, SDL_Texture **textures) {
         listObjAppend(&objects, object);
       }
 
-      else if (atoi(token) == GENERATEUR){
+      else if (atoi(token) == GENERATEUR) {
         Object *object = initObject((Index){i, j});
         object->texture = textures[GENERATEUR];
         object->objectType = GENERATEUR;
@@ -127,8 +128,7 @@ Map *loadMap(int room, SDL_Texture **textures) {
         object->textureBuffer->w = h;
         object->textureBuffer->h = h;
         listObjAppend(&objects, object);
-      }
-      else if (atoi(token)== DIGIC){
+      } else if (atoi(token) == DIGIC) {
         Object *object = initObject((Index){i, j});
         object->texture = textures[DIGIC];
         object->objectType = DIGIC;
@@ -141,15 +141,14 @@ Map *loadMap(int room, SDL_Texture **textures) {
         object->textureBuffer->w = h;
         object->textureBuffer->h = h;
         listObjAppend(&objects, object);
-      }
-      else if (atoi(token) == PUSH) {
+      } else if (atoi(token) == PUSH) {
         cell(i, j)->steppable = false;
         Object *object = initObject((Index){i, j});
         object->texture = textures[PUSH];
         object->objectType = PUSH;
         listObjAppend(&objects, object);
       }
-      
+
       else if (sscanf(token, "2[%d(%d,%d)%d]", &p, &q, &r, &o) == 4) {
         Object *object = initObject((Index){i, j});
         object->texture = textures[DOOR];
@@ -170,8 +169,8 @@ Map *loadMap(int room, SDL_Texture **textures) {
         object->path.open = false;
 
         listObjAppend(&objects, object);
-      }
-      else if (sscanf(token, "8[%d(%d,%d)%d]", &p, &q, &r, &o) == 4) { //littéralement la meme chose qu'une porte classique.
+      } else if (sscanf(token, "8[%d(%d,%d)%d]", &p, &q, &r, &o) ==
+                 4) { // littéralement la meme chose qu'une porte classique.
         Object *object = initObject((Index){i, j});
         object->texture = textures[DOORC];
 
@@ -191,8 +190,7 @@ Map *loadMap(int room, SDL_Texture **textures) {
         object->path.open = false;
 
         listObjAppend(&objects, object);
-      }
-      else if (sscanf(token, "11[%d(%d,%d)%d]", &p, &q, &r, &o) == 4) {
+      } else if (sscanf(token, "11[%d(%d,%d)%d]", &p, &q, &r, &o) == 4) {
         Object *object = initObject((Index){i, j});
         object->texture = textures[DOOROPEN];
 
@@ -236,19 +234,19 @@ Map *loadMap(int room, SDL_Texture **textures) {
         Object *object = initObject((Index){i, j});
         object->objectType = LEVER;
         object->texture = textures[LEVER];
-        object->switchObj.state = false;
+        object->switchObj.state = (atoi(u) == 1);
         object->switchObj.affected = NULL;
 
         char *t = strtok(s, ";");
 
         while (t) {
-          if(sscanf(t, "%d(%d,%d)", &p, &q, &r) == 3){
+          if (sscanf(t, "%d(%d,%d)", &p, &q, &r) == 3) {
             listIndexAppend(&object->switchObj.affected, (Index){q, r}, p);
             object->switchObj.state = false;
           }
-          
-          else if (sscanf(t, "%d(%d,%d)%d", &p, &q, &r,&o) == 4) {
-            if(o==1){
+
+          else if (sscanf(t, "%d(%d,%d)%d", &p, &q, &r, &o) == 4) {
+            if (o == 1) {
               object->switchObj.state = true;
             }
             listIndexAppend(&object->switchObj.affected, (Index){q, r}, p);
@@ -291,7 +289,7 @@ Map **loadRooms(SDL_Texture **textures) {
                           DOOR)
                    ->path;
         }
-        if(object->objectType == DOORC){
+        if (object->objectType == DOORC) {
           Path door = object->path;
           door.pairedPath =
               &listObjGet(rooms[door.room]
@@ -300,7 +298,7 @@ Map **loadRooms(SDL_Texture **textures) {
                           DOORC)
                    ->path;
         }
-        if(object->objectType == DOOROPEN){
+        if (object->objectType == DOOROPEN) {
           Path door = object->path;
           door.pairedPath =
               &listObjGet(rooms[door.room]
@@ -309,9 +307,9 @@ Map **loadRooms(SDL_Texture **textures) {
                           DOOROPEN)
                    ->path;
         }
-        if(object->objectType == LEVER){
-          if(object->switchObj.state==true){
-            switchLever((Index){i,j}, map, rooms);
+        if (object->objectType == LEVER) {
+          if (object->switchObj.state == true) {
+            switchLever((Index){i, j}, map, rooms);
           }
         }
       }
