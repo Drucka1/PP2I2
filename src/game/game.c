@@ -269,6 +269,16 @@ void update(Entity *player, Map **map, Map **rooms)
     player->status.icy = false;
     player->moving = 0;
   }
+  if(listObjContains(current,PRESSURE)){
+    bool pressure = true;
+    turnPressure(currentIndex,*map,rooms,pressure);
+    player->status.onpressure = true;
+  }
+  if(!listObjContains(current,PRESSURE)&& player->status.onpressure){
+    bool pressure = false;
+    turnPressure(player->prevIndex,*map,rooms,pressure);
+    player->status.onpressure = false;
+  }
   moveMapBuffer(*map, player);
 }
 

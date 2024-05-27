@@ -106,6 +106,7 @@ typedef struct {
   bool blind;
   bool scary;
   bool indigit;
+  bool onpressure;
 } Status;
 
 typedef struct {

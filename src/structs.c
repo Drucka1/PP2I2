@@ -13,7 +13,7 @@ void freeListIndex(ListIndex *list)
 
 void freeObject(Object *object)
 {
-  if (object->objectType == 3 || object->objectType == 4)
+  if (object->objectType == 3 || object->objectType == 4 || object->objectType == 12)
   {
     freeListIndex(object->switchObj.affected);
   }

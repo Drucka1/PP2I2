@@ -37,6 +37,37 @@ void switchLever(Index leverIndex, Map *map, Map **rooms) {
   }
 }
 
+void turnPressure(Index pressureIndex, Map *map, Map **rooms,bool on) {
+  Object *pressure = listObjGet(objects(pressureIndex.i, pressureIndex.j), PRESSURE);
+  if (pressure == NULL) {
+    printf("No pressure found\n");
+    exit(-1);
+  }
+  if(pressure->switchObj.state == on){
+    return;
+  }
+  pressure->switchObj.state = on;
+  ListIndex *current = pressure->switchObj.affected;
+  while (current != NULL) {
+    ListObj *objects =
+        roomObjects(current->room, current->index.i, current->index.j);
+    while (objects != NULL) {
+      if (objects->object->objectType == DOOR) {
+        objects->object->path.open = !objects->object->path.open;
+        roomCell(current->room, current->index.i, current->index.j)->steppable =
+            !roomCell(current->room, current->index.i, current->index.j)
+                 ->steppable;
+      } else if (objects->object->objectType == WALL) {
+        roomCell(current->room, current->index.i, current->index.j)->steppable =
+            !roomCell(current->room, current->index.i, current->index.j)
+                 ->steppable;
+        objects->object->visible = !objects->object->visible;
+      }
+      objects = objects->next;
+    }
+    current = current->next;
+  }
+}
 void openDoor(Index doorIndex, Entity *player, Map *map, Map **rooms) {
   Object *door = listObjGet(objects(doorIndex.i, doorIndex.j), DOOR);
   if (door->path.open) {
@@ -224,18 +255,24 @@ void moveObject(int objectType, Index src, Map *map, Index dest) {
   }
 }
 
-void pushBlock(Index blockIndex, Entity *player, Map *map) {
+void pushBlock(Index blockIndex, Entity *player, Map *map, Map **rooms) {
   Index next = nextIndex(blockIndex, player->facing);
   ListObj *nextObjects = objects(next.i, next.j);
     if(cell(next.i,next.j)->steppable == false){
     return;
+  }
+  if(listObjContains(objects(blockIndex.i,blockIndex.j),PRESSURE)){
+    turnPressure(blockIndex,map,rooms,false);
+  }
+  if(listObjContains(nextObjects,PRESSURE)){
+    turnPressure(next,map,rooms,true);
   }
   if (stackablepush(nextObjects)) {
     cell(blockIndex.i, blockIndex.j)->steppable = true;
     cell(next.i, next.j)->steppable = false;
     moveObject(PUSH, blockIndex, map, next);
     if (listObjContains(objects(next.i, next.j), ICE)) {
-      pushBlock(next, player, map);
+      pushBlock(next, player, map,rooms);
     }
   }
 }
