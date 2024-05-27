@@ -2,6 +2,7 @@
 #define UTILS_H
 
 #include "sdl.h"
+#include "time.h"
 
 #define TEXTURE_COUNT 13
 
@@ -28,5 +29,7 @@
 #define ROOM_COUNT 9
 
 SDL_Texture **loadTextures(SDL_Renderer *renderer);
+void screenshot(SDL_Renderer *renderer);
 
 #endif
+

@@ -116,6 +116,11 @@ void launchGame(SDL_Renderer *renderer, TTF_Font *font) {
       default:
         break;
       }
+
+      if (player->status.picture) {
+        screenshot(renderer);
+        player->status.picture = false;
+      }
       update(player, &map, rooms);
       render(renderer, map, player, font, digi);
     }
@@ -160,6 +165,8 @@ void play(SDL_Event event, Entity *player, Map *map, Map **rooms) {
     break;
   case SDLK_ESCAPE:
     player->status.home = true;
+  case SDLK_p:
+    player->status.picture = true;
 
   default:
     break;

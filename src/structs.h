@@ -116,6 +116,7 @@ typedef struct {
   bool home;
   bool indigit;
   bool scary;
+  bool picture;
 } Status;
 
 typedef struct {
