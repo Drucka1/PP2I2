@@ -1,5 +1,6 @@
 #include "game.h"
 #include <SDL2/SDL_keycode.h>
+#include <SDL2/SDL_render.h>
 
 void launchGame(SDL_Renderer *renderer, TTF_Font *font) {
   printf("Launching game...\n");
@@ -12,7 +13,6 @@ void launchGame(SDL_Renderer *renderer, TTF_Font *font) {
   movePlayer(player, map, map->spawnIndex);
   player->moving = 0;
   tell(player, "It's so dark in here, how could i turn on the lights ?");
-
 
   SDL_Event event;
   int quit = 0;
@@ -35,7 +35,6 @@ void launchGame(SDL_Renderer *renderer, TTF_Font *font) {
         if (player->status.home) {
           int x, y;
           SDL_GetMouseState(&x, &y);
-          printf("x: %d, y: %d\n", x, y);
 
           SDL_Rect startRect = {(WINDOW_WIDTH - 200) / 2,
                                 (WINDOW_HEIGHT - 150) / 2, 200, 50};
@@ -253,6 +252,7 @@ void update(Entity *player, Map **map, Map **rooms) {
     player->status.icy = false;
     player->moving = 0;
   }
+
   moveMapBuffer(*map, player);
 }
 
@@ -330,6 +330,14 @@ void renderObject(Object *object, SDL_Renderer *renderer) {
                        object->buffer, 0, NULL, SDL_FLIP_HORIZONTAL);
       return;
     }
+    break;
+  case NUMBERS:
+    SDL_SetRenderDrawColor(renderer, object->number.r, object->number.g,
+                           object->number.b, 128);
+    SDL_RenderFillRect(renderer, object->buffer);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    break;
+
   default:
     break;
   }

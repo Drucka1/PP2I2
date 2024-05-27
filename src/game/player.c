@@ -43,6 +43,7 @@ Entity *loadPlayer(Index index, SDL_Renderer *renderer) {
 void freePlayer(Entity *player) {
   free(player->buffer);
   free(player->textureBuffer);
+
   SDL_DestroyTexture(player->texture);
   freeListObj(player->inventory);
   free(player);

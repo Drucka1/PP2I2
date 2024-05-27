@@ -68,6 +68,13 @@ typedef struct {
 } Switch;
 
 typedef struct {
+  int n;
+  int r;
+  int g;
+  int b;
+} Number;
+
+typedef struct {
   // Indices de l'objet dans la carte
   Index index;
 
@@ -91,6 +98,7 @@ typedef struct {
   int objectType;
   Path path;
   Switch switchObj;
+  Number number;
 
 } Object;
 
