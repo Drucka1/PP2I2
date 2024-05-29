@@ -274,11 +274,24 @@ Map *loadMap(int room, SDL_Texture **textures) {
             object->switchObj.state = false;
           }
 
-          else if (sscanf(t, "%d(%d,%d)%d", &p, &q, &r, &o) == 4) {
-            if (o == 1) {
-              object->switchObj.state = true;
-            }
+          t = strtok(NULL, ";");
+        }
+
+        listObjAppend(&objects, object);
+      }
+      else if (sscanf(token, "12[%s]", s) == 1) {
+        Object *object = initObject((Index){i, j});
+        object->objectType = PRESSURE;
+        object->texture = textures[PRESSURE];
+        object->switchObj.affected = NULL;
+        object->switchObj.state = false;
+
+        char *t = strtok(s, ";");
+
+        while (t) {
+          if(sscanf(t, "%d(%d,%d)", &p, &q, &r) == 3){
             listIndexAppend(&object->switchObj.affected, (Index){q, r}, p);
+            object->switchObj.state = false;
           }
 
           t = strtok(NULL, ";");

@@ -70,7 +70,7 @@ void interact(Entity *player, Map *map, Map **rooms) {
       pickItem(player, map, KEY);
       return;
     } else if (listObjContains(objects(index.i, index.j), PUSH)) {
-      pushBlock(index, player, map);
+      pushBlock(index, player, map,rooms);
       return;
     }
   }

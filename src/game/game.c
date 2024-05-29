@@ -18,9 +18,8 @@ void launchGame(SDL_Renderer *renderer, TTF_Font *font) {
   int quit = 0;
 
   ///////////////////////////
-  char *code = "1234"; // Ce c'est le code
-  digicode *digi =
-      initdigicode(code); // Initialisation du digicode c'est dans struct.c
+  char* code = "5272";
+  digicode * digi = initdigicode(code);
 
   ////////////////////////
 
@@ -99,6 +98,7 @@ void launchGame(SDL_Renderer *renderer, TTF_Font *font) {
           if (event.key.keysym.sym == SDLK_ESCAPE) { // pour pouvoir faire
                                                      // escape
             player->status.indigit = false;
+            digi->codeIndex = 0;
             digi->enteredCode[0] = '\0';
           }
           break;
@@ -259,7 +259,16 @@ void update(Entity *player, Map **map, Map **rooms) {
     player->status.icy = false;
     player->moving = 0;
   }
-
+  if(listObjContains(current,PRESSURE)){
+    bool pressure = true;
+    turnPressure(currentIndex,*map,rooms,pressure);
+    player->status.onpressure = true;
+  }
+  if(!listObjContains(current,PRESSURE)&& player->status.onpressure){
+    bool pressure = false;
+    turnPressure(player->prevIndex,*map,rooms,pressure);
+    player->status.onpressure = false;
+  }
   moveMapBuffer(*map, player);
 }
 
