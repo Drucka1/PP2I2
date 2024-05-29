@@ -77,6 +77,7 @@ void launchGame(SDL_Renderer *renderer,TTF_Font * font)
         if(player->status.indigit){
           if(event.key.keysym.sym == SDLK_ESCAPE){
             player->status.indigit = false;
+            digi->codeIndex = 0;
             digi->enteredCode[0] = '\0';
           }
           break;
