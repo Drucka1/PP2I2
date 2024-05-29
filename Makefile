@@ -53,7 +53,7 @@ test_all: $(TEST_OBJS) $(UNITY_ROOT)/unity.c
 	$(CC) $(CFLAGS) $(INC_DIRS) $(SYMBOLS) -o outputs/$@ $^ $(LIBS)
 
 run: main
-	./main
+	./outputs/main
 
 run_test: test_all
 	./outputs/test/*
