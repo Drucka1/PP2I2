@@ -79,32 +79,32 @@ void openDoor(Index doorIndex, Entity *player, Map *map, Map **rooms) {
   ListObj *currentObj = player->inventory;
   while (currentObj != NULL) {
     if (currentObj->object->objectType == KEY) {
-    ListIndex *affected = currentObj->object->switchObj.affected;
+      ListIndex *affected = currentObj->object->switchObj.affected;
 
-    while (affected != NULL) {
-      if (isIndexEqual(affected->index, doorIndex) ||
-          isIndexEqual(affected->index, destIndex)) {
-        cell(doorIndex.i, doorIndex.j)->steppable = true;
-        door->path.open = true;
-        rooms[door->path.room]->data[destIndex.i][destIndex.j]->steppable =
-            true;
+      while (affected != NULL) {
+        if (isIndexEqual(affected->index, doorIndex) ||
+            isIndexEqual(affected->index, destIndex)) {
+          cell(doorIndex.i, doorIndex.j)->steppable = true;
+          door->path.open = true;
+          rooms[door->path.room]->data[destIndex.i][destIndex.j]->steppable =
+              true;
 
-        Object *destDoor = listObjGet(
-            rooms[door->path.room]->data[destIndex.i][destIndex.j]->objects,
-            DOOR);
-        if (destDoor == NULL) {
-          printf("Door is not paired\n");
-          exit(-1);
+          Object *destDoor = listObjGet(
+              rooms[door->path.room]->data[destIndex.i][destIndex.j]->objects,
+              DOOR);
+          if (destDoor == NULL) {
+            printf("Door is not paired\n");
+            exit(-1);
+          }
+          destDoor->path.open = true;
+          // tell(player, "Door opened");
+          return;
         }
-        destDoor->path.open = true;
-        // tell(player, "Door opened");
-        return;
+        affected = affected->next;
       }
-      affected = affected->next;
     }
-    }
+    currentObj = currentObj->next;
   }
-
 
   tell(player, "This door is locked, i need to find a way to open it...");
 }
