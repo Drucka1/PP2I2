@@ -24,8 +24,8 @@ void screenshot(SDL_Renderer *renderer) {
   // Convert it to local time representation
   struct tm *localTime = localtime(&currentTime);
   char filename[50];
-  sprintf(filename, "assets/screenshot/screenshot_%d%d%d.jpg",
-          localTime->tm_hour, localTime->tm_min, localTime->tm_sec);
+  sprintf(filename, "log/screenshots/screenshot_%d%d%d.jpg", localTime->tm_hour,
+          localTime->tm_min, localTime->tm_sec);
 
   SDL_Surface *surface = SDL_CreateRGBSurfaceWithFormat(
       0, WINDOW_WIDTH, WINDOW_HEIGHT, 24, SDL_PIXELFORMAT_RGB24);

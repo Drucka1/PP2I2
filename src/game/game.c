@@ -18,8 +18,8 @@ void launchGame(SDL_Renderer *renderer, TTF_Font *font) {
   int quit = 0;
 
   ///////////////////////////
-  char* code = "5272";
-  digicode * digi = initdigicode(code);
+  char *code = "5272";
+  digicode *digi = initdigicode(code);
 
   ////////////////////////
 
@@ -165,8 +165,10 @@ void play(SDL_Event event, Entity *player, Map *map, Map **rooms) {
     break;
   case SDLK_ESCAPE:
     player->status.home = true;
+    break;
   case SDLK_p:
     player->status.picture = true;
+    break;
 
   default:
     break;
@@ -259,14 +261,14 @@ void update(Entity *player, Map **map, Map **rooms) {
     player->status.icy = false;
     player->moving = 0;
   }
-  if(listObjContains(current,PRESSURE)){
+  if (listObjContains(current, PRESSURE)) {
     bool pressure = true;
-    turnPressure(currentIndex,*map,rooms,pressure);
+    turnPressure(currentIndex, *map, rooms, pressure);
     player->status.onpressure = true;
   }
-  if(!listObjContains(current,PRESSURE)&& player->status.onpressure){
+  if (!listObjContains(current, PRESSURE) && player->status.onpressure) {
     bool pressure = false;
-    turnPressure(player->prevIndex,*map,rooms,pressure);
+    turnPressure(player->prevIndex, *map, rooms, pressure);
     player->status.onpressure = false;
   }
   moveMapBuffer(*map, player);
