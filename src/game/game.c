@@ -202,6 +202,7 @@ void update(Entity *player, Map **map, Map **rooms) {
     } else {
     }
     if (door.open) {
+      player->facing = destDoor->facing;
       teleport(door.room, spawnIndex, player, map, rooms);
     }
   }

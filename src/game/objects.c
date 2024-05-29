@@ -37,13 +37,14 @@ void switchLever(Index leverIndex, Map *map, Map **rooms) {
   }
 }
 
-void turnPressure(Index pressureIndex, Map *map, Map **rooms,bool on) {
-  Object *pressure = listObjGet(objects(pressureIndex.i, pressureIndex.j), PRESSURE);
+void turnPressure(Index pressureIndex, Map *map, Map **rooms, bool on) {
+  Object *pressure =
+      listObjGet(objects(pressureIndex.i, pressureIndex.j), PRESSURE);
   if (pressure == NULL) {
     printf("No pressure found\n");
     exit(-1);
   }
-  if(pressure->switchObj.state == on){
+  if (pressure->switchObj.state == on) {
     return;
   }
   pressure->switchObj.state = on;
@@ -102,6 +103,9 @@ void openDoor(Index doorIndex, Entity *player, Map *map, Map **rooms) {
       affected = affected->next;
     }
   }
+  freeListObjGetAll(keys);
+  free(keys);
+
   tell(player, "This door is locked, i need to find a way to open it...");
 }
 
@@ -260,18 +264,18 @@ void pushBlock(Index blockIndex, Entity *player, Map *map, Map **rooms) {
   if (cell(next.i, next.j)->steppable == false) {
     return;
   }
-  if(listObjContains(objects(blockIndex.i,blockIndex.j),PRESSURE)){
-    turnPressure(blockIndex,map,rooms,false);
+  if (listObjContains(objects(blockIndex.i, blockIndex.j), PRESSURE)) {
+    turnPressure(blockIndex, map, rooms, false);
   }
-  if(listObjContains(nextObjects,PRESSURE)){
-    turnPressure(next,map,rooms,true);
+  if (listObjContains(nextObjects, PRESSURE)) {
+    turnPressure(next, map, rooms, true);
   }
   if (stackablepush(nextObjects)) {
     cell(blockIndex.i, blockIndex.j)->steppable = true;
     cell(next.i, next.j)->steppable = false;
     moveObject(PUSH, blockIndex, map, next);
     if (listObjContains(objects(next.i, next.j), ICE)) {
-      pushBlock(next, player, map,rooms);
+      pushBlock(next, player, map, rooms);
     }
   }
 }

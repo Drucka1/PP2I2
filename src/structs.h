@@ -199,6 +199,7 @@ void listObjPrint(ListObj *list);
 
 Object *listObjGet(ListObj *list, int objectType);
 ListObj *listObjGetAll(ListObj *list, int objectType);
+void freeListObjGetAll(ListObj *list);
 Object *listObjPop(ListObj **list, int objectType);
 
 #endif // __STRUCTS_H__

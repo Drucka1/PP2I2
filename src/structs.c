@@ -197,6 +197,16 @@ ListObj *listObjGetAll(ListObj *list, int objectType)
   return listObjGetAll(list->next, objectType);
 }
 
+void freeListObjGetAll(ListObj *list)
+{
+  if (list == NULL)
+  {
+    return;
+  }
+  freeListObjGetAll(list->next);
+  free(list);
+}
+
 Object *listObjPop(ListObj **list, int objectType)
 {
   if (*list == NULL || (*list)->object == NULL)
