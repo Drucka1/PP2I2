@@ -113,8 +113,9 @@ typedef struct {
   bool icy;
   bool blind;
   bool speaking;
-  bool home;
+  bool menu;
   bool indigit;
+  bool home;
   bool scary;
   bool picture;
 } Status;
@@ -163,8 +164,6 @@ typedef struct {
 } Map;
 
 typedef struct {
-  // État de jeu
-  bool newGame;
   // Cartes
   Map **rooms;
   // Carte actuelle

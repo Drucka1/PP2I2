@@ -20,6 +20,6 @@ void renderMap(Map *map, Entity *player, SDL_Renderer *renderer);
 void render(SDL_Renderer *renderer, Map *map, Entity *player, TTF_Font * font, digicode*digi);
 void drawButton(SDL_Renderer *renderer, TTF_Font *font, Button button);
 void drawText(SDL_Renderer *renderer, TTF_Font *font, const char *text, int x, int y);
-void freeGame(Entity *player, SDL_Texture **textures, Map **rooms);
+void freeGame(Game *game, SDL_Texture **textures);
 
 #endif

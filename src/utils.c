@@ -24,8 +24,8 @@ void screenshot(SDL_Renderer *renderer) {
   // Convert it to local time representation
   struct tm *localTime = localtime(&currentTime);
   char filename[50];
-  sprintf(filename, "log/screenshots/screenshot_%d%d%d.jpg",
-          localTime->tm_hour, localTime->tm_min, localTime->tm_sec);
+  sprintf(filename, "log/screenshots/screenshot_%d%d%d.jpg", localTime->tm_hour,
+          localTime->tm_min, localTime->tm_sec);
 
   SDL_Surface *surface = SDL_CreateRGBSurfaceWithFormat(
       0, WINDOW_WIDTH, WINDOW_HEIGHT, 24, SDL_PIXELFORMAT_RGB24);
@@ -49,26 +49,5 @@ void screenshot(SDL_Renderer *renderer) {
   SDL_Delay(1000);
   SDL_FreeSurface(surface);
 }
-
-void saveGame(Game *game) {
-// Get the current time
-  time_t currentTime;
-  time(&currentTime);
-
-  // Convert it to local time representation
-  struct tm *localTime = localtime(&currentTime);
-  char filename[50];
-  sprintf(filename, "log/save/save%d%d%d.sav",
-          localTime->tm_hour, localTime->tm_min, localTime->tm_sec);
-
-  FILE *file = fopen(filename, "w");
-  if (!file) {
-    printf("Failed to create file: %s\n", SDL_GetError());
-    return;
-  }
-
-  fwrite(game, sizeof(Game), 1, file);
-}
-
 
 

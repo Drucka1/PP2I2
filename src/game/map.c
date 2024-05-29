@@ -76,15 +76,6 @@ Map *loadMap(int room, SDL_Texture **textures) {
 
   while (fscanf(file, "%s", token) != EOF) {
     ListObj *objects = objects(i, j);
-    if (strcmp(token, "n2") == 0) {
-      printf("token %s\n", token);
-      printf("%d", sscanf(token, "n%d", &p)) ;
-      printf("p = %d\n", p);
-    }
-    if (sscanf(token, "n%d", &p) == 1) {
-      printf("found number %d at %d %d\n", p, i, j);
-    }
-
 
     if (strcmp(token, "/") == 0) {
       i++;
@@ -163,7 +154,6 @@ Map *loadMap(int room, SDL_Texture **textures) {
       }
 
       else if (sscanf(token, "13[%d(%d,%d,%d)]", &p, &q, &r, &o) == 4) {
-        printf("found number %d at %d %d\n", p, i, j);
         Object *object = initObject((Index){i, j});
         object->texture = textures[NUMBERS];
         object->objectType = NUMBERS;
@@ -171,8 +161,8 @@ Map *loadMap(int room, SDL_Texture **textures) {
         object->number = (Number){p, q, r, o};
 
         object->textureBuffer = malloc(sizeof(SDL_Rect));
-        object->textureBuffer->x = 2+80*(p%5);
-        object->textureBuffer->y = 2+120*(p/5);
+        object->textureBuffer->x = 2 + 80 * (p % 5);
+        object->textureBuffer->y = 2 + 120 * (p / 5);
         object->textureBuffer->w = 76;
         object->textureBuffer->h = 116;
         listObjAppend(&objects, object);

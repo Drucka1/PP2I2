@@ -1,198 +1,152 @@
 #include "game.h"
 #include <SDL2/SDL_keycode.h>
-#include <SDL2/SDL_render.h>
 
 void launchGame(SDL_Renderer *renderer, TTF_Font *font) {
   printf("Launching game...\n");
-
-  bool saveExists = false;
-  DIR *dir = opendir(SAVE_DIRECTORY);
-  if (dir == NULL) {
-    perror("Failed to open directory");
-    exit(-1);
-  }
-
-  struct dirent *entry;
-  printf("Save files found in %s:\n", SAVE_DIRECTORY);
-  while ((entry = readdir(dir)) != NULL) {
-    char filepath[PATH_MAX];
-    snprintf(filepath, PATH_MAX, "%s%s", SAVE_DIRECTORY, entry->d_name);
-
-    struct stat filestat;
-    if (stat(filepath, &filestat) == 0 && S_ISREG(filestat.st_mode)) {
-      saveExists = true;
-      break;
-    }
-  }
-  closedir(dir);
-
-
-  Game *game = malloc(sizeof(Game));
-  if (!game) {
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't allocate memory");
-    exit(-1);
-  }
-  int launch = false;
-  SDL_Event event;
-  while (!launch) {
-    SDL_RenderClear(renderer);
-    renderHomepage(renderer);
-    SDL_RenderPresent(renderer);
-    while (SDL_PollEvent(&event)) {
-      switch (event.type) {
-      case SDL_QUIT:
-        launch = true;
-        break;
-      case SDL_MOUSEBUTTONDOWN:
-        int x, y;
-        SDL_GetMouseState(&x, &y);
-
-        SDL_Rect newRect = {(WINDOW_WIDTH - 200) / 2, (WINDOW_HEIGHT - 150) / 2,
-                            200, 50};
-        SDL_Rect continueRect = {(WINDOW_WIDTH - 200) / 2,
-                                 (WINDOW_HEIGHT - 150) / 2 + 50, 200, 50};
-        SDL_Rect quitRect = {(WINDOW_WIDTH - 200) / 2,
-                             (WINDOW_HEIGHT - 150) / 2 + 100, 200, 50};
-        // Check if start button is clicked
-        if (x >= newRect.x && x <= newRect.x + newRect.w && y >= newRect.y &&
-            y <= newRect.y + newRect.h) {
-          launch = true;
-        }
-
-        // Check if quit button is clicked
-        if (x >= quitRect.x && x <= quitRect.x + quitRect.w &&
-            y >= quitRect.y && y <= quitRect.y + quitRect.h) {
-          launch = true;
-        }
-        break;
-      default:
-        break;
-      }
-    }
-  }
-
   SDL_Texture **textures = loadTextures(renderer);
-  Map **rooms = loadRooms(textures);
-
-  Map *map = rooms[0];
-  printf("Map loaded\n");
-  Entity *player = loadPlayer(map->spawnIndex, renderer);
-  movePlayer(player, map, map->spawnIndex);
-  player->moving = 0;
-  tell(player, "It's so dark in here, how could i turn on the lights ?");
 
   int quit = 0;
-
-  ///////////////////////////
-  char *code = "1234"; // Ce c'est le code
-  digicode *digi =
-      initdigicode(code); // Initialisation du digicode c'est dans struct.c
-
-  ////////////////////////
-
   while (!quit) {
-    update(player, &map, rooms);
-    while (SDL_PollEvent(&event)) {
-      switch (event.type) {
-      case SDL_QUIT:
-        quit = 1;
-        break;
-      case SDL_MOUSEBUTTONDOWN:
-        if (player->status.home) {
-          int x, y;
-          SDL_GetMouseState(&x, &y);
 
-          SDL_Rect newRect = {(WINDOW_WIDTH - 200) / 2,
-                              (WINDOW_HEIGHT - 150) / 2, 200, 50};
-          SDL_Rect quitRect = {(WINDOW_WIDTH - 200) / 2,
-                               (WINDOW_HEIGHT - 150) / 2 + 100, 200, 50};
-          // Check if start button is clicked
-          if (x >= newRect.x && x <= newRect.x + newRect.w && y >= newRect.y &&
-              y <= newRect.y + newRect.h) {
-            player->status.home = false;
-          }
+    Game *game = NULL;
+    int launch = launchTitlePage(renderer, textures, &game);
 
-          // Check if quit button is clicked
-          if (x >= quitRect.x && x <= quitRect.x + quitRect.w &&
-              y >= quitRect.y && y <= quitRect.y + quitRect.h) {
-            quit = true;
-          }
-        }
-        if (player->status.indigit) {
-          int x = event.button.x;
-          int y = event.button.y;
-          for (int i = 0; i < 12; ++i) {
-            Button b = digi->buttons[i];
-            if (x > b.x && x < b.x + b.w && y > b.y &&
-                y < b.y + b.h) { // on check sur quel bouton on a cliqué
-              if (strcmp(digi->enteredCode, "Incorrect") == 0) {
-                digi->codeIndex = 0;
-                digi->enteredCode[0] = '\0';
-              }
-              if (b.label[0] == '<') {
-                if (digi->codeIndex > 0) {
-                  digi->enteredCode[--digi->codeIndex] = '\0';
-                }
-              } else if (b.label[0] == 'V') {
-                if (strcmp(digi->enteredCode, code) == 0) {
-                  listObjGet(objects(player->index.i - 1, player->index.j),
-                             DIGIC)
-                      ->switchObj.state = true; // je me sert de l'etat activé
-                  printf("Code correct\n");
-                  player->status.indigit = false;
-                  digi->enteredCode[0] = '\0';
-                  digi->codeIndex = 0;
-                } else {
-                  strcpy(digi->enteredCode, "Incorrect");
-                }
-              } else if (digi->codeIndex < 15) {
-                digi->enteredCode[digi->codeIndex++] = b.label[0];
-                digi->enteredCode[digi->codeIndex] = '\0';
+    if (launch) {
+
+      Map **rooms = game->rooms;
+      Map *map = game->currentRoom;
+
+      printf("Map loaded\n");
+      Entity *player = game->player;
+      movePlayer(player, map, player->index);
+
+      ///////////////////////////
+      char *code = "1234"; // Ce c'est le code
+      digicode *digi =
+          initdigicode(code); // Initialisation du digicode c'est dans struct.c
+
+      ////////////////////////
+      int run = true;
+      SDL_Event event;
+
+      while (run) {
+        update(player, &map, rooms);
+        while (SDL_PollEvent(&event)) {
+          switch (event.type) {
+          case SDL_QUIT:
+            quit = 1;
+            run = 0;
+            break;
+          case SDL_MOUSEBUTTONDOWN:
+            if (player->status.menu) {
+              int x, y;
+              SDL_GetMouseState(&x, &y);
+              printf("x: %d, y: %d\n", x, y);
+
+              SDL_Rect resumeRect = {(WINDOW_WIDTH - 200) / 2,
+                                     (WINDOW_HEIGHT - 250) / 2, 200, 50};
+              SDL_Rect saveRect = {(WINDOW_WIDTH - 200) / 2,
+                                   (WINDOW_HEIGHT - 250) / 2 + 100, 200, 50};
+              SDL_Rect quitRect = {(WINDOW_WIDTH - 200) / 2,
+                                   (WINDOW_HEIGHT - 250) / 2 + 200, 200, 50};
+
+              if (x >= resumeRect.x && x <= resumeRect.x + resumeRect.w &&
+                  y >= resumeRect.y && y <= resumeRect.y + resumeRect.h) {
+                player->status.menu = false;
+              } else if (x >= saveRect.x && x <= saveRect.x + saveRect.w &&
+                         y >= saveRect.y && y <= saveRect.y + saveRect.h) {
+                saveGame(game);
+                printf("Game saved\n");
+                player->status.menu = false;
+              } else if (x >= quitRect.x && x <= quitRect.x + quitRect.w &&
+                         y >= quitRect.y && y <= quitRect.y + quitRect.h) {
+                printf("Quit\n");
+                run = 0;
+                  quit = 1;
+                player->status.menu = false;
               }
             }
-          }
-        }
+            if (player->status.indigit) {
+              int x = event.button.x;
+              int y = event.button.y;
+              for (int i = 0; i < 12; ++i) {
+                Button b = digi->buttons[i];
+                if (x > b.x && x < b.x + b.w && y > b.y &&
+                    y < b.y + b.h) { // on check sur quel bouton on a cliqué
+                  if (strcmp(digi->enteredCode, "Incorrect") == 0) {
+                    digi->codeIndex = 0;
+                    digi->enteredCode[0] = '\0';
+                  }
+                  if (b.label[0] == '<') {
+                    if (digi->codeIndex > 0) {
+                      digi->enteredCode[--digi->codeIndex] = '\0';
+                    }
+                  } else if (b.label[0] == 'V') {
+                    if (strcmp(digi->enteredCode, code) == 0) {
+                      listObjGet(objects(player->index.i - 1, player->index.j),
+                                 DIGIC)
+                          ->switchObj.state =
+                          true; // je me sert de l'etat activé
+                      printf("Code correct\n");
+                      player->status.indigit = false;
+                      digi->enteredCode[0] = '\0';
+                      digi->codeIndex = 0;
+                    } else {
+                      strcpy(digi->enteredCode, "Incorrect");
+                    }
+                  } else if (digi->codeIndex < 15) {
+                    digi->enteredCode[digi->codeIndex++] = b.label[0];
+                    digi->enteredCode[digi->codeIndex] = '\0';
+                  }
+                }
+              }
+            }
 
-        break;
-      case SDL_KEYUP:
-        player->moving = 0;
-        break;
-      case SDL_KEYDOWN:
-        if (player->status.icy) {
-          break;
-        }
-        if (player->status.indigit) {
-          if (event.key.keysym.sym == SDLK_ESCAPE) { // pour pouvoir faire
-                                                     // escape
-            player->status.indigit = false;
-            digi->enteredCode[0] = '\0';
-          }
-          break;
-        }
-        if (player->status.speaking) {
-          if (event.key.keysym.sym == SDLK_SPACE) {
-            free(player->tells);
-            player->status.speaking = false;
+            break;
+          case SDL_KEYUP:
+            player->moving = 0;
+            break;
+          case SDL_KEYDOWN:
+            if (player->status.icy) {
+              break;
+            }
+            if (player->status.indigit) {
+              if (event.key.keysym.sym == SDLK_ESCAPE) { // pour pouvoir faire
+                                                         // escape
+                player->status.indigit = false;
+                digi->enteredCode[0] = '\0';
+              }
+              break;
+            }
+            if (player->status.speaking) {
+              if (event.key.keysym.sym == SDLK_SPACE) {
+                free(player->tells);
+                player->status.speaking = false;
+                break;
+              }
+              break;
+            }
+            play(event, player, map, rooms);
+            break;
+          default:
             break;
           }
-          break;
-        }
-        play(event, player, map, rooms);
-        break;
-      default:
-        break;
-      }
 
-      if (player->status.picture) {
-        screenshot(renderer);
-        player->status.picture = false;
+          if (player->status.picture) {
+            screenshot(renderer);
+            player->status.picture = false;
+          }
+          update(player, &map, rooms);
+          render(renderer, map, player, font, digi);
+        }
       }
-      update(player, &map, rooms);
-      render(renderer, map, player, font, digi);
+      free(digi);
+    } else {
+      quit = 1;
+
     }
+    freeGame(game, textures);
   }
-  free(digi);
-  freeGame(player, textures, rooms);
 }
 
 void play(SDL_Event event, Entity *player, Map *map, Map **rooms) {
@@ -230,7 +184,7 @@ void play(SDL_Event event, Entity *player, Map *map, Map **rooms) {
     player->status.scary = !player->status.scary;
     break;
   case SDLK_ESCAPE:
-    player->status.home = true;
+    player->status.menu = true;
     break;
   case SDLK_p:
     player->status.picture = true;
@@ -443,6 +397,7 @@ void renderMap(Map *map, Entity *player, SDL_Renderer *renderer) {
     }
   }
 }
+
 void rendercode(SDL_Renderer *renderer, Entity *player, TTF_Font *font,
                 digicode *digi) {
   if (player->status.indigit) { // horrible mais bon pour le moment je test hein
@@ -484,8 +439,8 @@ void rendercode(SDL_Renderer *renderer, Entity *player, TTF_Font *font,
 
 void render(SDL_Renderer *renderer, Map *map, Entity *player, TTF_Font *font,
             digicode *digi) {
-  if (player->status.home) {
-    renderHomepage(renderer);
+  if (player->status.menu) {
+    renderMenuPage(renderer);
     return;
   }
   moveMapBuffer(map, player);
@@ -500,16 +455,19 @@ void render(SDL_Renderer *renderer, Map *map, Entity *player, TTF_Font *font,
   SDL_Delay(10);
 }
 
-void freeGame(Entity *player, SDL_Texture **textures, Map **rooms) {
-  for (int i = 0; i < ROOM_COUNT; i++) {
-    freeMap(rooms[i]);
-  }
-  free(rooms);
+void freeGame(Game *game, SDL_Texture **textures) {
   for (int i = 0; i < TEXTURE_COUNT; i++) {
     SDL_DestroyTexture(textures[i]);
   }
   free(textures);
-  freePlayer(player);
+  if (game != NULL) {
+    for (int i = 0; i < ROOM_COUNT; i++) {
+      freeMap(game->rooms[i]);
+    }
+    free(game->rooms);
+    freePlayer(game->player);
+    free(game);
+  }
 }
 
 void drawButton(SDL_Renderer *renderer, TTF_Font *font, Button button) {

@@ -41,7 +41,5 @@
 SDL_Texture **loadTextures(SDL_Renderer *renderer);
 void screenshot(SDL_Renderer *renderer);
 
-void saveGame(Game *game);
-
 #endif
 

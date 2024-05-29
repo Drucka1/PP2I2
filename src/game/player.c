@@ -32,7 +32,7 @@ Entity *loadPlayer(Index index, SDL_Renderer *renderer) {
 
   player->status = (Status){false};
   player->status.indigit = false;
-  player->status.home = true;
+  player->status.menu = false;
   player->status.blind = true;
 
   player->tells = NULL;
