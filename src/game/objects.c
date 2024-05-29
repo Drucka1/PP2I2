@@ -109,7 +109,7 @@ void openDoor(Index doorIndex, Entity *player, Map *map, Map **rooms) {
   tell(player, "This door is locked, i need to find a way to open it...");
 }
 
-void openDoorc(Index doorIndex, Map *map, Map **rooms) {
+void openDoorc(Entity *player, Index doorIndex, Map *map, Map **rooms) {
   Object *door = listObjGet(objects(doorIndex.i, doorIndex.j), DOORC);
   if (door->path.open) {
     return;
@@ -139,10 +139,10 @@ void openDoorc(Index doorIndex, Map *map, Map **rooms) {
     printf("Door opened\n");
     return;
   }
-  printf("You need to enter the code to open this door\n");
+  tell(player, "You need to enter the code to open this door");
 }
 
-void openDooropen(Index doorIndex, Map *map, Map **rooms) {
+void openDooropen(Entity *player, Index doorIndex, Map *map, Map **rooms) {
   Object *door = listObjGet(objects(doorIndex.i, doorIndex.j), DOOROPEN);
   if (door->path.open) {
     return;
@@ -163,7 +163,7 @@ void openDooropen(Index doorIndex, Map *map, Map **rooms) {
   destDoor->path.open = true;
   printf("Door opened\n");
   return;
-  printf("You need to enter the code to open this door\n");
+  tell(player, "You need to enter the code to open this door\n");
 }
 
 bool stackable(ListObj *objects) {

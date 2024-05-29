@@ -18,7 +18,7 @@ void interact(Entity *player, Map *map, Map **rooms) {
     }
   }
   if (listObjContains(objects(player->index.i, player->index.j), GENERATEUR)) {
-    printf("Switching electrical generator on\n");
+    tell(player, "Lights are back on\n");
     player->status.blind = false;
     return;
   }
@@ -45,11 +45,11 @@ void interact(Entity *player, Map *map, Map **rooms) {
       return;
     } else if (listObjContains(objects(index.i, index.j), DIGIC)) {
       if (player->status.blind) { // on verifie si il est powered
-        printf("Turn on the power\n");
+        tell(player, "Seems like there is no power\n");
         return;
       }
       if (listObjGet(objects(index.i, index.j), DIGIC)->switchObj.state) {
-        printf("Code already entered\n");
+        tell(player, "Code already entered");
         return;
       }
       printf("Enter code\n");
@@ -57,11 +57,11 @@ void interact(Entity *player, Map *map, Map **rooms) {
       return;
     } else if (listObjContains(objects(index.i, index.j), DOORC)) {
       printf("opening door\n");
-      openDoorc(index, map, rooms);
+      openDoorc(player, index, map, rooms);
       return;
     } else if (listObjContains(objects(index.i, index.j), DOOROPEN)) {
       printf("opening door\n");
-      openDooropen(index, map, rooms);
+      openDooropen(player, index, map, rooms);
       return;
     } else if (listObjContains(objects(index.i, index.j), LEVER)) {
       switchLever(index, map, rooms);
@@ -70,7 +70,7 @@ void interact(Entity *player, Map *map, Map **rooms) {
       pickItem(player, map, KEY);
       return;
     } else if (listObjContains(objects(index.i, index.j), PUSH)) {
-      pushBlock(index, player, map,rooms);
+      pushBlock(index, player, map, rooms);
       return;
     }
   }
