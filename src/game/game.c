@@ -17,7 +17,7 @@ void launchGame(SDL_Renderer *renderer,TTF_Font * font)
   int quit = 0;
 
   ///////////////////////////
-  char* code = "1234";
+  char* code = "5272";
   digicode * digi = initdigicode(code);
 
   ////////////////////////
