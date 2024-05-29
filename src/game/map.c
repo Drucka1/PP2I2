@@ -1,5 +1,4 @@
 #include "map.h"
-#include <SDL2/SDL_render.h>
 #include <stdio.h>
 
 Object *initObject(Index index) {
@@ -78,13 +77,12 @@ Map *loadMap(int room, SDL_Texture **textures) {
     ListObj *objects = objects(i, j);
     if (strcmp(token, "n2") == 0) {
       printf("token %s\n", token);
-      printf("%d", sscanf(token, "n%d", &p)) ;
+      printf("%d", sscanf(token, "n%d", &p));
       printf("p = %d\n", p);
     }
     if (sscanf(token, "n%d", &p) == 1) {
       printf("found number %d at %d %d\n", p, i, j);
     }
-
 
     if (strcmp(token, "/") == 0) {
       i++;
@@ -163,18 +161,19 @@ Map *loadMap(int room, SDL_Texture **textures) {
       }
 
       else if (sscanf(token, "13[%d(%d,%d,%d)]", &p, &q, &r, &o) == 4) {
-        printf("found number %d at %d %d\n", p, i, j);
+
         Object *object = initObject((Index){i, j});
-        object->texture = textures[NUMBERS];
         object->objectType = NUMBERS;
 
         object->number = (Number){p, q, r, o};
-
-        object->textureBuffer = malloc(sizeof(SDL_Rect));
-        object->textureBuffer->x = 2+80*(p%5);
-        object->textureBuffer->y = 2+120*(p/5);
-        object->textureBuffer->w = 76;
-        object->textureBuffer->h = 116;
+        if (p != -1) {
+          object->texture = textures[NUMBERS];
+          object->textureBuffer = malloc(sizeof(SDL_Rect));
+          object->textureBuffer->x = 2 + 80 * (p % 5);
+          object->textureBuffer->y = 2 + 120 * (p / 5);
+          object->textureBuffer->w = 76;
+          object->textureBuffer->h = 116;
+        }
         listObjAppend(&objects, object);
       }
 
@@ -278,8 +277,7 @@ Map *loadMap(int room, SDL_Texture **textures) {
         }
 
         listObjAppend(&objects, object);
-      }
-      else if (sscanf(token, "12[%s]", s) == 1) {
+      } else if (sscanf(token, "12[%s]", s) == 1) {
         Object *object = initObject((Index){i, j});
         object->objectType = PRESSURE;
         object->texture = textures[PRESSURE];
@@ -289,7 +287,7 @@ Map *loadMap(int room, SDL_Texture **textures) {
         char *t = strtok(s, ";");
 
         while (t) {
-          if(sscanf(t, "%d(%d,%d)", &p, &q, &r) == 3){
+          if (sscanf(t, "%d(%d,%d)", &p, &q, &r) == 3) {
             listIndexAppend(&object->switchObj.affected, (Index){q, r}, p);
             object->switchObj.state = false;
           }

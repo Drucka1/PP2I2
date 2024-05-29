@@ -1,6 +1,7 @@
 main
 outputs/
 log/screenshots/*
+log/saves/*
 
 .vscode/
 # Prerequisites

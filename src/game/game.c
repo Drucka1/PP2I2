@@ -324,6 +324,12 @@ void renderPlayer(Entity *player, SDL_Renderer *renderer) {
 
 void renderObject(Object *object, SDL_Renderer *renderer) {
   if (object->texture == NULL) {
+    if (object->objectType == NUMBERS) {
+      SDL_SetRenderDrawColor(renderer, object->number.r, object->number.g,
+                             object->number.b, 128);
+      SDL_RenderFillRect(renderer, object->buffer);
+      SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    }
     return;
   }
   if (object->visible == false) {
