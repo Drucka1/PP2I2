@@ -282,7 +282,7 @@ void pushBlock(Index blockIndex, Entity *player, Map *map, Map **rooms) {
 
 digicode *initdigicode(char *code) {
   digicode *digi = malloc(
-      sizeof(digicode)); // je crée un digicode c'est pour facilité le renderer
+      sizeof(digicode)); // je crée un digicode c'est pour faciliter le renderer
   const char *labels = "123456789<0V";
   for (int i = 0; i < 12; ++i) {
     digi->buttons[i].x =
