@@ -1,4 +1,5 @@
 main
+test_all
 outputs/
 log/screenshots/*
 log/saves/*
