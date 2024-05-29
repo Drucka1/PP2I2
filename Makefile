@@ -24,7 +24,8 @@ OBJS = $(patsubst src/%.c,outputs/%.o,$(SRCS))
 DEPS = $(SRCS:.c=.h)
 
 TEST_SRCS = \
-	test/test_main.c
+	test/test_main.c \
+
 TEST_OBJS = $(patsubst test/%.c,outputs/test/%.o,$(TEST_SRCS))
 
 LIBS = -lSDL2 -lSDL2_image -lSDL2_ttf -lm
@@ -38,7 +39,7 @@ TARGETS = main test_all
 all: $(TARGETS)
 
 main: $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
+	$(CC) $(CFLAGS) -o outputs/$@ $^ $(LIBS)
 
 outputs/%.o: src/%.c
 	$(MKDIR) outputs/game
@@ -49,7 +50,13 @@ outputs/test/%.o: test/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 test_all: $(TEST_OBJS) $(UNITY_ROOT)/unity.c
-	$(CC) $(CFLAGS) $(INC_DIRS) $(SYMBOLS) -o $@ $^ $(LIBS)
+	$(CC) $(CFLAGS) $(INC_DIRS) $(SYMBOLS) -o outputs/$@ $^ $(LIBS)
+
+run: main
+	./main
+
+run_test: test_all
+	./outputs/test/*
 
 clean:
 	rm -rf outputs
