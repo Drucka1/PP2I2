@@ -27,7 +27,7 @@
         "lever", "generateur", "dooropen","pressure", "numbers"                           \
   }
 
-#define ROOM_COUNT 13
+#define ROOM_COUNT 14
 
 SDL_Texture **loadTextures(SDL_Renderer *renderer);
 void screenshot(SDL_Renderer *renderer);
