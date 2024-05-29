@@ -76,10 +76,10 @@ void openDoor(Index doorIndex, Entity *player, Map *map, Map **rooms) {
   }
   Index destIndex = door->path.pairedIndex;
 
-  ListObj *keys = listObjGetAll(player->inventory, KEY);
-  while (keys != NULL) {
-    Object *currentKey = listObjPop(&keys, KEY);
-    ListIndex *affected = currentKey->switchObj.affected;
+  ListObj *currentObj = player->inventory;
+  while (currentObj != NULL) {
+    if (currentObj->object->objectType == KEY) {
+    ListIndex *affected = currentObj->object->switchObj.affected;
 
     while (affected != NULL) {
       if (isIndexEqual(affected->index, doorIndex) ||
@@ -102,9 +102,9 @@ void openDoor(Index doorIndex, Entity *player, Map *map, Map **rooms) {
       }
       affected = affected->next;
     }
+    }
   }
-  freeListObjGetAll(keys);
-  free(keys);
+
 
   tell(player, "This door is locked, i need to find a way to open it...");
 }
