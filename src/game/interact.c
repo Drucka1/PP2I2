@@ -38,6 +38,7 @@ void interact(Entity *player, Map *map, Map **rooms) {
     break;
   }
 
+
   if (VALID_INDEX(index)) {
     if (listObjContains(objects(index.i, index.j), DOOR)) {
       printf("opening door\n");

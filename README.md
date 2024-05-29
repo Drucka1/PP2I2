@@ -29,4 +29,3 @@ par exemple,
 
 - une implémentation des objets clés qui couvre plus de possibilités : une clé peut agir sur plusieurs éléments de plusieurs map diférentes
 - pareil pour les leviers : la structure permet d'ajouter plus de fonctionnalité au levier comme sa durée d'activation, en fait ça peut être un bouton minecraft.
-
