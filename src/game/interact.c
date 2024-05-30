@@ -18,7 +18,7 @@ void interact(Entity *player, Map *map, Map **rooms) {
     }
   }
   if (listObjContains(objects(player->index.i, player->index.j), GENERATEUR)) {
-    tell(player, "Lights are back on\n");
+    tell(player, "Lights are back on");
     player->status.blind = false;
     return;
   }
