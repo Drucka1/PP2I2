@@ -2,7 +2,7 @@
 #define __TEXT_H__
 
 #include "structs.h"
-#define COUPAGE 90
+#define COUPAGE 75
 
 #define RECT_HEIGHT 200
 #define RECT_X_OFFSET 50

@@ -12,7 +12,10 @@ void launchGame(SDL_Renderer *renderer, TTF_Font *font) {
   Entity *player = loadPlayer(map->spawnIndex, renderer);
   movePlayer(player, map, map->spawnIndex);
   player->moving = 0;
-  tell(player, "It's so dark in here, how could i turn on the lights ?");
+  tell(player, "This house seems to be abandonned but we are hearing weird "
+               "from the outside. Let's explore this mysterious house to found "
+               "out what is happening in here. To begin it's so dark in here, "
+               "how could i turn on the lights ?");
 
   SDL_Event event;
   int quit = 0;
