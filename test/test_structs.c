@@ -9,46 +9,6 @@ void tearDown(void) {
   // clean stuff up here
 }
 
-void test_freeObject(void) {
-
-  Object *object = malloc(sizeof(Object));
-  object->objectType = 3;
-  object->switchObj.affected = malloc(sizeof(ListIndex));
-  object->switchObj.affected->next = NULL;
-  freeObject(object);
-  TEST_ASSERT_NULL(object);
-}
-
-void test_freeListObj(void) {
-
-  ListObj *list = malloc(sizeof(ListObj));
-  list->next = malloc(sizeof(ListObj));
-  list->next->next = NULL;
-  freeListObj(list);
-  TEST_ASSERT_NULL(list);
-}
-
-void test_freeCell(void) {
-
-  Cell *cell = malloc(sizeof(Cell));
-  cell->objects = malloc(sizeof(ListObj));
-  cell->objects->next = NULL;
-  freeCell(cell);
-  TEST_ASSERT_NULL(cell);
-}
-
-void test_freeMap(void) {
-
-  Map *map = malloc(sizeof(Map));
-  map->dimensions.i = 2;
-  map->dimensions.j = 2;
-  map->data = malloc(2 * sizeof(Cell *));
-  for (int i = 0; i < 2; i++) {
-    map->data[i] = malloc(2 * sizeof(Cell));
-  }
-  freeMap(map);
-  TEST_ASSERT_NULL(map);
-}
 
 void test_isIndexEqual(void) {
 
@@ -109,22 +69,31 @@ void test_listObjRemove(void) {
 
   ListObj *list = malloc(sizeof(ListObj));
   Object *obj = malloc(sizeof(Object));
-  obj->objectType = 3;
+  obj->objectType = 2;
+  obj->buffer = NULL;
+  obj->textureBuffer= NULL;
+  obj->texture = NULL;
   list->object = obj;
   list->next = NULL;
-  listObjRemove(&list, 3);
+  listObjRemove(&list, 2);
   TEST_ASSERT_NULL(list);
+  
+  freeListObj(list);
 }
 
 void test_listObjContains(void) {
 
   ListObj *list = malloc(sizeof(ListObj));
   Object *obj = malloc(sizeof(Object));
-  obj->objectType = 3;
+  obj->objectType = 2;
   list->object = obj;
+  obj->buffer = NULL;
+  obj->textureBuffer= NULL;
+  obj->texture = NULL;
   list->next = NULL;
-  bool contains = listObjContains(list, 3);
+  bool contains = listObjContains(list, 2);
   TEST_ASSERT_TRUE(contains);
+  freeListObj(list);
 }
 
 void test_listObjAdd(void) {
@@ -133,16 +102,23 @@ void test_listObjAdd(void) {
   Object *obj1 = malloc(sizeof(Object));
   obj1->objectType = 1;
   list1->object = obj1;
+    obj1->buffer = NULL;
+  obj1->textureBuffer= NULL;
+  obj1->texture = NULL;
   list1->next = NULL;
 
   ListObj *list2 = malloc(sizeof(ListObj));
   Object *obj2 = malloc(sizeof(Object));
   obj2->objectType = 2;
   list2->object = obj2;
+    obj2->buffer = NULL;
+  obj2->textureBuffer= NULL;
+  obj2->texture = NULL;
   list2->next = NULL;
 
   listObjAdd(&list1, list2);
   TEST_ASSERT_EQUAL(obj2, list1->next->object);
+  freeListObj(list1);
 }
 
 void test_listObjPrint(void) {
@@ -150,29 +126,42 @@ void test_listObjPrint(void) {
   ListObj *list = malloc(sizeof(ListObj));
   Object *obj1 = malloc(sizeof(Object));
   obj1->objectType = 1;
+    obj1->buffer = NULL;
+  obj1->textureBuffer= NULL;
+  obj1->texture = NULL;
   list->object = obj1;
 
   ListObj *next = malloc(sizeof(ListObj));
   Object *obj2 = malloc(sizeof(Object));
   obj2->objectType = 2;
+    obj2->buffer = NULL;
+  obj2->textureBuffer= NULL;
+  obj2->texture = NULL;
   next->object = obj2;
   next->next = NULL;
 
   list->next = next;
 
   listObjPrint(list);
+  freeListObj(list);
 }
 
 void test_listObjGet(void) {
 
   ListObj *list = malloc(sizeof(ListObj));
   Object *obj1 = malloc(sizeof(Object));
+    obj1->buffer = NULL;
+  obj1->textureBuffer= NULL;
+  obj1->texture = NULL;
   obj1->objectType = 1;
   list->object = obj1;
 
   ListObj *next = malloc(sizeof(ListObj));
   Object *obj2 = malloc(sizeof(Object));
   obj2->objectType = 2;
+    obj2->buffer = NULL;
+  obj2->textureBuffer= NULL;
+  obj2->texture = NULL;
   next->object = obj2;
   next->next = NULL;
 
@@ -180,6 +169,8 @@ void test_listObjGet(void) {
 
   Object *result = listObjGet(list, 2);
   TEST_ASSERT_EQUAL(obj2, result);
+  freeListObj(list);
+
 }
 
 void test_listObjGetAll(void) {
@@ -187,11 +178,17 @@ void test_listObjGetAll(void) {
   ListObj *list = malloc(sizeof(ListObj));
   Object *obj1 = malloc(sizeof(Object));
   obj1->objectType = 1;
+    obj1->buffer = NULL;
+  obj1->textureBuffer= NULL;
+  obj1->texture = NULL;
   list->object = obj1;
 
   ListObj *next = malloc(sizeof(ListObj));
   Object *obj2 = malloc(sizeof(Object));
   obj2->objectType = 2;
+    obj2->buffer = NULL;
+  obj2->textureBuffer= NULL;
+  obj2->texture = NULL;
   next->object = obj2;
   next->next = NULL;
 
@@ -207,11 +204,17 @@ void test_listObjPop(void) {
   ListObj *list = malloc(sizeof(ListObj));
   Object *obj1 = malloc(sizeof(Object));
   obj1->objectType = 1;
+    obj1->buffer = NULL;
+  obj1->textureBuffer= NULL;
+  obj1->texture = NULL;
   list->object = obj1;
 
   ListObj *next = malloc(sizeof(ListObj));
   Object *obj2 = malloc(sizeof(Object));
   obj2->objectType = 2;
+    obj2->buffer = NULL;
+  obj2->textureBuffer= NULL;
+  obj2->texture = NULL;
   next->object = obj2;
   next->next = NULL;
 
@@ -220,6 +223,7 @@ void test_listObjPop(void) {
   Object *result = listObjPop(&list, 2);
   TEST_ASSERT_EQUAL(obj2, result);
   TEST_ASSERT_NULL(list->next);
+  freeListObj(list);
 }
 
 void test_listObjCopy(void) {
@@ -227,11 +231,17 @@ void test_listObjCopy(void) {
   ListObj *list = malloc(sizeof(ListObj));
   Object *obj1 = malloc(sizeof(Object));
   obj1->objectType = 1;
+    obj1->buffer = NULL;
+  obj1->textureBuffer= NULL;
+  obj1->texture = NULL;
   list->object = obj1;
 
   ListObj *next = malloc(sizeof(ListObj));
   Object *obj2 = malloc(sizeof(Object));
   obj2->objectType = 2;
+  obj2->buffer = NULL;
+  obj2->textureBuffer= NULL;
+  obj2->texture = NULL;
   next->object = obj2;
   next->next = NULL;
 
@@ -241,14 +251,11 @@ void test_listObjCopy(void) {
   TEST_ASSERT_EQUAL(obj1, copy->object);
   TEST_ASSERT_EQUAL(obj2, copy->next->object);
   TEST_ASSERT_NULL(copy->next->next);
+  freeListObj(list);
 }
 
 int main(void) {
   UNITY_BEGIN();
-  RUN_TEST(test_freeObject);
-  RUN_TEST(test_freeListObj);
-  RUN_TEST(test_freeCell);
-  RUN_TEST(test_freeMap);
   RUN_TEST(test_isIndexEqual);
   RUN_TEST(test_nextIndex);
   RUN_TEST(test_distance);
