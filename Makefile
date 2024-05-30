@@ -1,44 +1,62 @@
+MKDIR = mkdir -p
 CC = gcc
-CFLAGS = -std=c99 -Wall -Wextra -pedantic -fsanitize=address
-LDFLAGS = -fsanitize=address
 
-SRCS = src/struct.c src/game.c src/utils.c src/init.c src/main.c 
+CFLAGS = -std=c99
+CFLAGS += -Wall
+CFLAGS += -Wextra
+CFLAGS += -g3
+CFLAGS += -pedantic
+CFLAGS += -fsanitize=address
+
+SRCS = \
+	src/main.c \
+	src/sdl.c \
+	src/utils.c \
+	src/structs.c \
+	src/game/map.c \
+	src/game/player.c \
+	src/game/game.c \
+	src/game/interact.c \
+	src/game/objects.c \
+	src/text.c \
+	src/game/homepage.c
 OBJS = $(patsubst src/%.c,outputs/%.o,$(SRCS))
 DEPS = $(SRCS:.c=.h)
-TARGETS = main
 
-LIBS = -lSDL2 -lSDL2_image
+TEST_SRCS = \
+	test/test_main.c \
+
+TEST_OBJS = $(patsubst test/%.c,outputs/test/%.o,$(TEST_SRCS))
+
+LIBS = -lSDL2 -lSDL2_image -lSDL2_ttf -lm
+
+UNITY_ROOT = Unity
+INC_DIRS = -Isrc -I$(UNITY_ROOT)/
+SYMBOLS = -DUNITY_FIXTURE_NO_EXTRAS
+
+TARGETS = main test_all
 
 all: $(TARGETS)
 
 main: $(OBJS)
-	$(CC) -o $@ $(LDFLAGS) $^ $(LIBS)
+	$(CC) $(CFLAGS) -o outputs/$@ $^ $(LIBS)
 
 outputs/%.o: src/%.c
-	@mkdir -p $(@D)
-	$(CC) -o $@ $(CFLAGS) -c $< 
+	$(MKDIR) outputs/game
+	$(CC) $(CFLAGS) -c -o $@ $<
 
-map: src/create_map.c
-	$(CC) -o map src/create_map.c
+outputs/test/%.o: test/%.c
+	$(MKDIR) outputs/test
+	$(CC) $(CFLAGS) -c -o $@ $<
 
-	
-clean: 
-	rm -rf $(TARGETS) outputs
+test_all: $(TEST_OBJS) $(UNITY_ROOT)/unity.c
+	$(CC) $(CFLAGS) $(INC_DIRS) $(SYMBOLS) -o outputs/$@ $^ $(LIBS)
 
-run : main
-	./main
+run: main
+	./outputs/main
 
-test: 
-	make clean
-	make run
-push: 
-	make clean
-	git add .
-	git commit -m "$(COMMENT)"
-	git push
-	
- 	
+run_test: test_all
+	./outputs/test/*
 
-
-
-
+clean:
+	rm -rf outputs

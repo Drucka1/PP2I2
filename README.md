@@ -1,23 +1,31 @@
 # PPII 2
 
-git branch blabla
-git checkout blabla
+Dans cette branch, j'ai repris ce que Clément avait fait.
 
-git pull origin master
-git push --set-upstream origin blabla
+Quelques modifications :
 
-LES TOUCHES :
-    d : active/desactive en place un assombrissement
-    e : interaction avec object (pour l'instant seulement les clés)
-    echap : quit de jeu
-    i : active/desactive l'état de glace (mouvement impossible)
-    r : reset du level
-    s : prend un screenshot
-    esc : ferme le jeu + sauvegarde
+- globalement, j'ai décomposé l'ancien main et init pour qu'on s'y retrouve plus facilement.
+- j'ai viré le dossier include c'est plus chiant qu'autre chose
+- j'ai préféré que les cellules aussi soient malloc, il y a une fonction freeCell.
 
-J'adore la glace surtout sur Trackmania donc elle est dispo maintenant(numero 5 ou ICE)
-Nouveau type de bloc les bloc poussables tres sympathiques vous pouvez les daplacer d'une case à l'autre.(numero 6 ou PUSH)
-Quelques regles on ne pas pousser un bloc si il est contre un mur ou contre un autre bloc.
-Ils fonctionnent sur la glace et peuvent servire à stopper le joueurs meme si il peut les redéplacer après.
+- les fonctions de gestions de liste d'objets sont désormais void, ça change rien en soit juste plus besoin d'écrire
 
-PS: dsl j'ai demolis le level 1
+```
+  list = listObjAppend(list, object)
+
+```
+
+juste
+
+```
+listObjAppend(list, object)
+```
+
+par exemple,
+
+- le "centrage" du joueur est automatique du moment qu'on appelle la fonction movePlayer, cette fonction est appelé par les functions moveRight, moveLeft etc. L'intéret de centrer automiquement permet notemment de simplifier la mise en place de téleporteur.
+
+- pour la génération de map, plus besoin de check si le strlen >= 10 pour récup la map associé à la porte
+
+- une implémentation des objets clés qui couvre plus de possibilités : une clé peut agir sur plusieurs éléments de plusieurs map diférentes
+- pareil pour les leviers : la structure permet d'ajouter plus de fonctionnalité au levier comme sa durée d'activation, en fait ça peut être un bouton minecraft.
