@@ -8,25 +8,14 @@ CFLAGS += -g3
 CFLAGS += -pedantic
 CFLAGS += -fsanitize=address
 
-SRCS = \
-	src/main.c \
-	src/sdl.c \
-	src/utils.c \
-	src/structs.c \
-	src/game/map.c \
-	src/game/player.c \
-	src/game/game.c \
-	src/game/interact.c \
-	src/game/objects.c \
-	src/text.c \
-	src/game/homepage.c
+SRCS = $(wildcard src/*.c) $(wildcard src/game/*.c)
 OBJS = $(patsubst src/%.c,outputs/%.o,$(SRCS))
 DEPS = $(SRCS:.c=.h)
 
-TEST_SRCS = \
-	test/test_main.c \
+TEST_SRCS = $(wildcard test/*.c)
 
 TEST_OBJS = $(patsubst test/%.c,outputs/test/%.o,$(TEST_SRCS))
+TEST_TARGETS = $(patsubst test/%.c,%,$(TEST_SRCS))
 
 LIBS = -lSDL2 -lSDL2_image -lSDL2_ttf -lm
 
@@ -42,15 +31,24 @@ main: $(OBJS)
 	$(CC) $(CFLAGS) -o outputs/$@ $^ $(LIBS)
 
 outputs/%.o: src/%.c
-	$(MKDIR) outputs/game
+	@$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 outputs/test/%.o: test/%.c
-	$(MKDIR) outputs/test
+	@$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-test_all: $(TEST_OBJS) $(UNITY_ROOT)/unity.c
-	$(CC) $(CFLAGS) $(INC_DIRS) $(SYMBOLS) -o outputs/$@ $^ $(LIBS)
+test_all: $(TEST_TARGETS)
+
+test_main: outputs/test/test_main.o $(UNITY_ROOT)/unity.c
+	@$(MKDIR) outputs/test/game
+	$(CC) $(CFLAGS) $(INC_DIRS) $(SYMBOLS) -o outputs/test/$@ $^ $(LIBS)
+	./outputs/test/$@
+
+test_%: outputs/test/test_%.o $(UNITY_ROOT)/unity.c src/%.c
+	@$(MKDIR) outputs/test/game
+	$(CC) $(CFLAGS) $(INC_DIRS) $(SYMBOLS) -o outputs/test/$@ $^ $(LIBS)
+	./outputs/test/$@
 
 run: main
 	./outputs/main
