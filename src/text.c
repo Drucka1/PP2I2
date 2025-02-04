@@ -88,7 +88,7 @@ void text_display(SDL_Renderer *renderer, TTF_Font *font, const char *text,
 
   SDL_Surface *surface_text;
   SDL_Texture *texture_text;
-  SDL_Color color_text = {0, 255, 0};
+  SDL_Color color_text = {0, 255, 0,255};
 
   surface_text = TTF_RenderText_Blended(font, text, color_text);
   if (!surface_text) {

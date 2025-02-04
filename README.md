@@ -1,31 +1,71 @@
-# PPII 2
+# PPII 2 - Jeu d'Énigmes en 2D
 
-Dans cette branch, j'ai repris ce que Clément avait fait.
+## Dépendances
 
-Quelques modifications :
+- `gcc` : compilateur C
+- `make` : outil de gestion de compilation
+  - Pour installer `make`, suivez les instructions disponibles sur la documentation officielle de GNU [ici](https://www.gnu.org/software/make/).
 
-- globalement, j'ai décomposé l'ancien main et init pour qu'on s'y retrouve plus facilement.
-- j'ai viré le dossier include c'est plus chiant qu'autre chose
-- j'ai préféré que les cellules aussi soient malloc, il y a une fonction freeCell.
 
-- les fonctions de gestions de liste d'objets sont désormais void, ça change rien en soit juste plus besoin d'écrire
+## Installation
 
-```
-  list = listObjAppend(list, object)
+1. Clonez le répertoire du projet :
+    ```bash
+    git clone https://github.com/Drucka1/PP2I2.git
+    ```
 
-```
+2. Accédez au dossier du projet :
+    ```bash
+    cd PP2I2
+    ```
 
-juste
+3. Compilez et lancez le jeu avec la commande suivante :
+    ```bash
+    make run
+    ```
 
-```
-listObjAppend(list, object)
-```
+## Comment jouer ?
 
-par exemple,
+Dans ce jeu d'énigmes en 2D, vous incarnez un explorateur à la recherche de secrets dans un manoir abandonné. Votre objectif : résoudre des énigmes pour progresser à travers différents niveaux du manoir. Voici quelques actions clés à réaliser :
 
-- le "centrage" du joueur est automatique du moment qu'on appelle la fonction movePlayer, cette fonction est appelé par les functions moveRight, moveLeft etc. L'intéret de centrer automiquement permet notemment de simplifier la mise en place de téleporteur.
+- Trouver des clés pour ouvrir des portes verrouillées
+- Actionner des leviers pour débloquer de nouvelles zones
+- Trouver des codes cachés dans les différentes pièces
 
-- pour la génération de map, plus besoin de check si le strlen >= 10 pour récup la map associé à la porte
+Utilisez la touche espace pour interagir avec l'environnement.
 
-- une implémentation des objets clés qui couvre plus de possibilités : une clé peut agir sur plusieurs éléments de plusieurs map diférentes
-- pareil pour les leviers : la structure permet d'ajouter plus de fonctionnalité au levier comme sa durée d'activation, en fait ça peut être un bouton minecraft.
+# PPII 2 - 2D Puzzle Game
+
+## Dependencies
+
+- `gcc`: C compiler
+- `make`: build automation tool
+  - To install `make`, follow the instructions available in the official GNU documentation [here](https://www.gnu.org/software/make/).
+
+
+## Installation
+
+1. Clone the project repository:
+    ```bash
+    git clone https://github.com/Drucka1/PP2I2.git
+    ```
+
+2. Navigate to the project folder:
+    ```bash
+    cd PP2I2
+    ```
+
+3. Compile and run the game with the following command:
+    ```bash
+    make run
+    ```
+
+## How to Play?
+
+In this 2D puzzle game, you play as an explorer searching for secrets in an abandoned mansion. Your goal: solve puzzles to progress through different levels of the mansion. Here are some key actions to perform:
+
+- Find keys to open locked doors
+- Activate levers to unlock new areas
+- Find hidden codes in various rooms
+
+Use the spacebar to interact with the environment.
