@@ -1,4 +1,3 @@
-#include "../Unity/unity.h"
 #include "../src/structs.h"
 
 void setUp(void) {
