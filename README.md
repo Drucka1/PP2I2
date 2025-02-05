@@ -2,6 +2,8 @@
 
 ## Dépendances
 
+- `SDL2` : librairie graphique
+  - Pour installer la librairie, suivez les instructions disponibles sur ce [lien](https://wiki.libsdl.org/SDL2/Installation)
 - `gcc` : compilateur C
 - `make` : outil de gestion de compilation
   - Pour installer `make`, suivez les instructions disponibles sur la documentation officielle de GNU [ici](https://www.gnu.org/software/make/).
@@ -38,6 +40,8 @@ Utilisez la touche espace pour interagir avec l'environnement.
 
 ## Dependencies
 
+- `SDL2`: Graphics library
+  - To install the library, follow the instructions available at this [link](https://wiki.libsdl.org/SDL2/Installation)
 - `gcc`: C compiler
 - `make`: build automation tool
   - To install `make`, follow the instructions available in the official GNU documentation [here](https://www.gnu.org/software/make/).
